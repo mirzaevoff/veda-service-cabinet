@@ -185,7 +185,7 @@ export function NotificationsBell() {
                       src={imageSrc(n.imageUrl)}
                       alt=""
                       loading="lazy"
-                      className="max-h-40 w-full rounded-md object-cover"
+                      className="max-h-40 w-full rounded-md object-contain"
                     />
                   )}
                   {n.text && (

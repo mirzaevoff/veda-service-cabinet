@@ -231,7 +231,7 @@ export default function AdminNotificationsPage() {
             <img
               src={imageUrl}
               alt=""
-              className="mt-1 max-h-40 w-fit rounded-md object-cover"
+              className="mt-1 max-h-40 w-fit max-w-full rounded-md border border-border object-contain"
             />
           )}
         </div>
