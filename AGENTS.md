@@ -30,6 +30,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - `src/i18n/` — routing + request config
 - `src/components/ui/` — shadcn-компоненты, `src/components/common/` — общие
 
+## Релизный флоу (заливка)
+
+Строго в таком порядке, по команде:
+
+1. **Ченжлог**: в `CHANGELOG.md` секцию `[Unreleased]` переименовать в `[X.Y.Z] - дата`
+2. **Бамп + коммит + тег**: `pnpm version minor|patch -m "chore(release): %s"` — обновит package.json, создаст коммит `chore(release): X.Y.Z` и тег `vX.Y.Z`
+3. **Пуш**: `git push origin main --follow-tags`
+4. **Продакшн**: `git push origin main:production` — это триггерит деплой
+
 ## Деплой
 
 Как у veda-service-api: пуш в ветку `production` → GitHub Actions (`.github/workflows/deploy.yml`) прогоняет lint и по SSH делает на сервере `git reset --hard origin/production` + `docker compose up -d --build`. Секреты: `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_PORT`, `DEPLOY_PATH`.
