@@ -1,0 +1,15 @@
+# Production compose. The app listens on port 4900; the container uses host
+# networking (same convention as veda-service-api). Extra env vars, if ever
+# needed, go into .env next to this file on the server.
+services:
+  cabinet:
+    build: .
+    image: veda-service-cabinet
+    container_name: veda-service-cabinet
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      PORT: 4900
+    env_file:
+      - path: .env
+        required: false
