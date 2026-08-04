@@ -1,4 +1,5 @@
 import { LoginFlow } from "@/components/auth/login-flow";
+import { AppFooter } from "@/components/common/app-footer";
 import { LocaleSwitcher } from "@/components/common/locale-switcher";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 
@@ -16,6 +17,8 @@ export default function LoginPage() {
         </span>
         <LoginFlow />
       </div>
+
+      <AppFooter />
     </main>
   );
 }

@@ -78,7 +78,14 @@ export interface AuthTokens {
   user: UserProfile;
 }
 
+export interface ApiInfo {
+  name: string;
+  version: string;
+}
+
 export const api = {
+  info: () => request<ApiInfo>("/"),
+
   login: (phone: string) =>
     request<OtpSession>("/auth/login", {
       method: "POST",

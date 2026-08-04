@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { AppFooter } from "@/components/common/app-footer";
 import { LocaleSwitcher } from "@/components/common/locale-switcher";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { UserBar } from "@/components/common/user-bar";
@@ -31,6 +32,8 @@ export default async function HomePage() {
           {t("tagline")}
         </p>
       </div>
+
+      <AppFooter />
     </main>
   );
 }
