@@ -16,6 +16,7 @@ import type { PermissionDef, Role } from "@/lib/api";
 import { adminApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useRouter } from "@/i18n/navigation";
+import { useDelayed } from "@/hooks/use-delayed";
 
 export function RolesList() {
   const t = useTranslations("AdminRoles");
@@ -28,6 +29,7 @@ export function RolesList() {
   const [permissions, setPermissions] = useState<PermissionDef[]>([]);
   const [editing, setEditing] = useState<Role | "new" | null>(null);
   const [deleting, setDeleting] = useState<Role | null>(null);
+  const showSkeleton = useDelayed(!roles);
 
   const load = useCallback(async () => {
     try {
@@ -63,9 +65,10 @@ export function RolesList() {
 
       {!roles ? (
         <div className="flex flex-col gap-2">
-          {Array.from({ length: 3 }, (_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
-          ))}
+          {showSkeleton &&
+            Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-20 rounded-lg animate-in fade-in duration-300" />
+            ))}
         </div>
       ) : (
         <div className="flex flex-col gap-2">

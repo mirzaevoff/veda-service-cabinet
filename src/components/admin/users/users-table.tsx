@@ -29,7 +29,8 @@ import type { Page, Role, UserProfile } from "@/lib/api";
 import { adminApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
-import { formatRelativeTime } from "@/lib/format";
+import { useDelayed } from "@/hooks/use-delayed";
+import { formatRelativeTime, fullName } from "@/lib/format";
 import { useRouter } from "@/i18n/navigation";
 
 export function UsersTable() {
@@ -48,6 +49,7 @@ export function UsersTable() {
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState<Role[]>([]);
   const [selected, setSelected] = useState<UserProfile | null>(null);
+  const showSkeleton = useDelayed(loading && !data);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
@@ -156,9 +158,10 @@ export function UsersTable() {
 
       {loading && !data ? (
         <div className="flex flex-col gap-2">
-          {Array.from({ length: 6 }, (_, i) => (
-            <Skeleton key={i} className="h-12 rounded-lg" />
-          ))}
+          {showSkeleton &&
+            Array.from({ length: 6 }, (_, i) => (
+              <Skeleton key={i} className="h-12 rounded-lg animate-in fade-in duration-300" />
+            ))}
         </div>
       ) : !data || data.items.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-16 text-center duration-450 animate-in fade-in">
@@ -188,7 +191,7 @@ export function UsersTable() {
                   onClick={() => setSelected(u)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="font-medium">{u.name}</TableCell>
+                  <TableCell className="font-medium">{fullName(u)}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {u.phone}
                   </TableCell>

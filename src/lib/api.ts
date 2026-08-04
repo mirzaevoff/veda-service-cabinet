@@ -66,6 +66,10 @@ export interface UserProfile {
   id: string;
   phone: string;
   name: string;
+  /** Пустая строка — не указана */
+  lastName: string;
+  /** YYYY-MM-DD или null */
+  birthDate: string | null;
   role: { id: string; name: string; permissions: string[] };
   status: "active" | "blocked";
   createdAt: string;

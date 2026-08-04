@@ -29,6 +29,8 @@ import type { Page, Ticket, TicketCategory, TicketStatus } from "@/lib/api";
 import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatRelativeTime, pickLocalized } from "@/lib/format";
+import { useDelayed } from "@/hooks/use-delayed";
+import { getCached, setCached } from "@/lib/list-cache";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -48,9 +50,15 @@ export function TicketsList() {
   const categoryId = searchParams.get("category") ?? "";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
-  const [data, setData] = useState<Page<Ticket> | null>(null);
+  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${page}`;
+  const [data, setData] = useState<Page<Ticket> | null>(
+    () => getCached<Page<Ticket>>(cacheKey) ?? null
+  );
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<TicketCategory[]>([]);
+  const [categories, setCategories] = useState<TicketCategory[]>(
+    () => getCached<TicketCategory[]>("ticket-categories") ?? []
+  );
+  const showSkeleton = useDelayed(loading && !data);
 
   const setParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -79,6 +87,7 @@ export function TicketsList() {
         return;
       }
       setData(result);
+      setCached(cacheKey, result);
     } catch (e) {
       if (e instanceof SessionExpiredError) router.replace("/login");
       else toast.error(tc("loadError"));
@@ -89,12 +98,21 @@ export function TicketsList() {
   }, [page, status, categoryId, scope]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный (индикатор загрузки)
+    const cached = getCached<Page<Ticket>>(cacheKey);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- мгновенный показ кэша до refetch
+    if (cached) setData(cached);
     void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
   useEffect(() => {
-    ticketsApi.categories().then(setCategories).catch(() => {});
+    ticketsApi
+      .categories()
+      .then((cats) => {
+        setCategories(cats);
+        setCached("ticket-categories", cats);
+      })
+      .catch(() => {});
   }, []);
 
   useTicketListEvents({
@@ -214,9 +232,10 @@ export function TicketsList() {
 
       {loading && !data ? (
         <div className="flex flex-col gap-2">
-          {Array.from({ length: 4 }, (_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
-          ))}
+          {showSkeleton &&
+            Array.from({ length: 4 }, (_, i) => (
+              <Skeleton key={i} className="h-20 rounded-lg animate-in fade-in duration-300" />
+            ))}
         </div>
       ) : !data || data.items.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-16 text-center duration-450 animate-in fade-in slide-in-from-bottom-4">

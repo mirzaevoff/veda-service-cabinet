@@ -276,7 +276,10 @@
     "sessionTerminated": "Session terminated",
     "logoutAllConfirmTitle": "Sign out on all devices?",
     "logoutAllConfirmText": "All sessions will end, including this one. You'll need to sign in again",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "lastNameLabel": "Last name",
+    "lastNameOptional": "Optional",
+    "birthDateLabel": "Date of birth"
   },
   "ErrorPages": {
     "notFoundTitle": "This page doesn't exist",

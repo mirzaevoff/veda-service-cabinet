@@ -275,7 +275,10 @@
     "sessionTerminated": "Sessiya tugatildi",
     "logoutAllConfirmTitle": "Barcha qurilmalardan chiqilsinmi?",
     "logoutAllConfirmText": "Barcha sessiyalar, jumladan shu ham tugatiladi. Qayta kirish kerak bo'ladi",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "lastNameLabel": "Familiya",
+    "lastNameOptional": "Ixtiyoriy",
+    "birthDateLabel": "Tug'ilgan sana"
   },
   "ErrorPages": {
     "notFoundTitle": "Bunday sahifa yo'q",

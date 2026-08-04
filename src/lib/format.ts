@@ -1,5 +1,10 @@
 import type { LocalizedString } from "./api";
 
+/** «Имя Фамилия» (фамилия опциональна) */
+export function fullName(user: { name: string; lastName?: string }): string {
+  return [user.name, user.lastName].filter(Boolean).join(" ");
+}
+
 /** Выбор перевода локализованной строки API (фолбэк на ru) */
 export function pickLocalized(
   value: LocalizedString | null | undefined,

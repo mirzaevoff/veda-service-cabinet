@@ -13,7 +13,7 @@ export default function AppLayout({
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <AppHeader />
-          <main className="relative flex-1 overflow-y-auto p-4 sm:p-6">
+          <main className="relative flex-1 overflow-y-auto p-4 [scrollbar-gutter:stable] sm:p-6">
             {children}
           </main>
         </div>

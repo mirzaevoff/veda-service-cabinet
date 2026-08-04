@@ -42,16 +42,16 @@ export function MobileNav() {
             Veda Service
           </SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-1 overflow-y-auto p-3">
+        <nav className="flex flex-col gap-0.5 overflow-y-auto p-3">
           {NAV_SECTIONS.map((section, i) => {
             const items = section.items.filter(
               (item) => !item.permission || can(item.permission)
             );
             if (!items.length) return null;
             return (
-              <div key={section.key ?? i} className="flex flex-col gap-1">
+              <div key={section.key ?? i} className="flex flex-col gap-0.5">
                 {section.key && (
-                  <span className="mt-4 mb-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground">
+                  <span className="mt-3 mb-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground">
                     {t(section.key)}
                   </span>
                 )}
@@ -63,7 +63,7 @@ export function MobileNav() {
                       href={item.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
+                        "flex h-10 items-center gap-2.5 rounded-md px-3 text-sm font-medium transition-colors",
                         active
                           ? "bg-accent-light text-primary"
                           : "text-muted-foreground hover:bg-secondary hover:text-foreground"

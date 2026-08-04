@@ -121,7 +121,11 @@ export const ticketsApi = {
 
 export const usersApi = {
   me: () => authedRequest<UserProfile>("/users/me"),
-  updateMe: (body: { name: string }) =>
+  updateMe: (body: {
+    name?: string;
+    lastName?: string;
+    birthDate?: string | null;
+  }) =>
     authedRequest<UserProfile>("/users/me", {
       method: "PATCH",
       body: JSON.stringify(body),

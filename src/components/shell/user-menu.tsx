@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import { fullName } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 
 export function UserMenu() {
@@ -38,7 +39,7 @@ export function UserMenu() {
       />
       <DropdownMenuContent align="end" className="min-w-56">
         <div className="flex flex-col gap-1 px-3 py-2">
-          <span className="text-sm font-medium">{user.name}</span>
+          <span className="text-sm font-medium">{fullName(user)}</span>
           <span className="text-xs text-muted-foreground">{user.phone}</span>
           <Badge variant="secondary" className="mt-1 w-fit">
             {user.role.name}

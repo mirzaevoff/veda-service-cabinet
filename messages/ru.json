@@ -275,7 +275,10 @@
     "sessionTerminated": "Сессия завершена",
     "logoutAllConfirmTitle": "Выйти со всех устройств?",
     "logoutAllConfirmText": "Все сессии будут завершены, включая эту. Понадобится войти заново",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "lastNameLabel": "Фамилия",
+    "lastNameOptional": "Необязательно",
+    "birthDateLabel": "Дата рождения"
   },
   "ErrorPages": {
     "notFoundTitle": "Такой страницы нет",

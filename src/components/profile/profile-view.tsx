@@ -65,6 +65,8 @@ export function ProfileView() {
   const { user, reload } = useCurrentUser();
 
   const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [savingName, setSavingName] = useState(false);
 
   const [phoneDialog, setPhoneDialog] = useState(false);
@@ -80,6 +82,8 @@ export function ProfileView() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- синхронизация формы с профилем
     setName(user?.name ?? "");
+    setLastName(user?.lastName ?? "");
+    setBirthDate(user?.birthDate ?? "");
   }, [user]);
 
   useEffect(() => {
@@ -95,11 +99,22 @@ export function ProfileView() {
     );
   }
 
-  async function saveName() {
-    if (!name.trim() || name.trim() === user!.name) return;
+  const personalChanged =
+    !!user &&
+    (name.trim() !== user.name ||
+      lastName.trim() !== user.lastName ||
+      (birthDate || null) !== user.birthDate);
+
+  async function savePersonal() {
+    if (!user || !name.trim() || !personalChanged) return;
+    // PATCH частичный: отправляем только изменённое
+    const patch: { name?: string; lastName?: string; birthDate?: string | null } = {};
+    if (name.trim() !== user.name) patch.name = name.trim();
+    if (lastName.trim() !== user.lastName) patch.lastName = lastName.trim();
+    if ((birthDate || null) !== user.birthDate) patch.birthDate = birthDate || null;
     setSavingName(true);
     try {
-      await usersApi.updateMe({ name: name.trim() });
+      await usersApi.updateMe(patch);
       await reload();
       toast.success(t("nameSaved"));
     } catch {
@@ -171,11 +186,11 @@ export function ProfileView() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Имя */}
-      <section className="flex flex-col gap-3 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-4">
+      {/* Личные данные */}
+      <section className="flex flex-col gap-4 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-4">
         <h3 className="font-semibold">{t("nameSection")}</h3>
-        <div className="flex items-end gap-2">
-          <div className="flex flex-1 flex-col gap-1.5 sm:max-w-xs">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
             <Label htmlFor="profile-name" className="text-sm font-medium text-muted-foreground">
               {t("nameLabel")}
             </Label>
@@ -186,13 +201,38 @@ export function ProfileView() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <Button
-            onClick={saveName}
-            disabled={savingName || !name.trim() || name.trim() === user.name}
-          >
-            {savingName ? <Spinner className="size-4" /> : t("save")}
-          </Button>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="profile-lastname" className="text-sm font-medium text-muted-foreground">
+              {t("lastNameLabel")}
+            </Label>
+            <Input
+              id="profile-lastname"
+              value={lastName}
+              maxLength={100}
+              placeholder={t("lastNameOptional")}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="profile-birthdate" className="text-sm font-medium text-muted-foreground">
+              {t("birthDateLabel")}
+            </Label>
+            <Input
+              id="profile-birthdate"
+              type="date"
+              value={birthDate}
+              max={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => setBirthDate(e.target.value)}
+            />
+          </div>
         </div>
+        <Button
+          onClick={savePersonal}
+          disabled={savingName || !name.trim() || !personalChanged}
+          className="self-start"
+        >
+          {savingName ? <Spinner className="size-4" /> : t("save")}
+        </Button>
       </section>
 
       {/* Телефон */}

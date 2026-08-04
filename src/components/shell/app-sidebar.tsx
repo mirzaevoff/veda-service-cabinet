@@ -56,16 +56,16 @@ export function AppSidebar() {
         </Link>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
         {NAV_SECTIONS.map((section, i) => {
           const items = section.items.filter(
             (item) => !item.permission || can(item.permission)
           );
           if (!items.length || (section.key && loading)) return null;
           return (
-            <div key={section.key ?? i} className="flex flex-col gap-1">
+            <div key={section.key ?? i} className="flex flex-col gap-0.5">
               {section.key && !collapsed && (
-                <span className="mt-4 mb-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground">
+                <span className="mt-3 mb-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground">
                   {t(section.key)}
                 </span>
               )}
@@ -80,7 +80,7 @@ export function AppSidebar() {
                     href={item.href}
                     title={collapsed ? t(item.key) : undefined}
                     className={cn(
-                      "flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors duration-200",
+                      "flex h-9 items-center gap-2.5 rounded-md px-3 text-sm font-medium transition-colors duration-200",
                       collapsed && "justify-center px-0",
                       active
                         ? "bg-accent-light text-primary"

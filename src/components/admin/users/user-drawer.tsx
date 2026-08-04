@@ -37,6 +37,7 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type Role, type UserProfile } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
+import { fullName } from "@/lib/format";
 
 export function UserDrawer({
   user,
@@ -111,7 +112,7 @@ export function UserDrawer({
             <span className="flex size-10 items-center justify-center rounded-full bg-accent-light text-base font-semibold text-primary">
               {user.name.trim().charAt(0).toUpperCase()}
             </span>
-            {user.name}
+            {fullName(user)}
           </SheetTitle>
           <SheetDescription>{user.phone}</SheetDescription>
         </SheetHeader>
