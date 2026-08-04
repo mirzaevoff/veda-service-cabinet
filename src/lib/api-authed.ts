@@ -74,6 +74,7 @@ export interface TicketListParams {
   limit?: number;
   status?: TicketStatus;
   categoryId?: string;
+  legalEntityId?: string;
   all?: boolean;
 }
 
@@ -87,6 +88,7 @@ export const ticketsApi = {
     subject: string;
     categoryId: string;
     subcategoryId?: string;
+    legalEntityId?: string;
     text?: string;
     attachmentIds?: string[];
   }) =>

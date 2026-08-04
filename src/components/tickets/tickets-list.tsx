@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
+  Building2,
   ChevronLeft,
   ChevronRight,
   MessagesSquare,
@@ -25,8 +26,18 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { TicketStatusBadge } from "./ticket-status-badge";
 import { useTicketListEvents } from "@/hooks/use-ticket-socket";
-import type { Page, Ticket, TicketCategory, TicketStatus } from "@/lib/api";
-import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
+import type {
+  LegalEntity,
+  Page,
+  Ticket,
+  TicketCategory,
+  TicketStatus,
+} from "@/lib/api";
+import {
+  SessionExpiredError,
+  legalEntitiesApi,
+  ticketsApi,
+} from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatRelativeTime, pickLocalized } from "@/lib/format";
 import { useDelayed } from "@/hooks/use-delayed";
@@ -48,15 +59,19 @@ export function TicketsList() {
   const scope = searchParams.get("scope") === "all" && isStaff ? "all" : "mine";
   const status = (searchParams.get("status") ?? "") as TicketStatus | "";
   const categoryId = searchParams.get("category") ?? "";
+  const entityId = searchParams.get("entity") ?? "";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
-  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${page}`;
+  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${page}`;
   const [data, setData] = useState<Page<Ticket> | null>(
     () => getCached<Page<Ticket>>(cacheKey) ?? null
   );
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<TicketCategory[]>(
     () => getCached<TicketCategory[]>("ticket-categories") ?? []
+  );
+  const [entities, setEntities] = useState<LegalEntity[]>(
+    () => getCached<LegalEntity[]>("ticket-filter-entities") ?? []
   );
   const showSkeleton = useDelayed(loading && !data);
 
@@ -79,6 +94,7 @@ export function TicketsList() {
         page,
         status: status || undefined,
         categoryId: categoryId || undefined,
+        legalEntityId: entityId || undefined,
         all: scope === "all" || undefined,
       });
       // Страница опустела (фильтр/удаление) — откат на первую
@@ -95,7 +111,7 @@ export function TicketsList() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, status, categoryId, scope]);
+  }, [page, status, categoryId, entityId, scope]);
 
   useEffect(() => {
     const cached = getCached<Page<Ticket>>(cacheKey);
@@ -114,6 +130,19 @@ export function TicketsList() {
       })
       .catch(() => {});
   }, []);
+
+  const canListEntities = can(PERMISSIONS.legalEntitiesList);
+  useEffect(() => {
+    const promise = canListEntities
+      ? legalEntitiesApi.list({ limit: 100, sort: "name:asc" }).then((p) => p.items)
+      : legalEntitiesApi.my();
+    promise
+      .then((items) => {
+        setEntities(items);
+        setCached("ticket-filter-entities", items);
+      })
+      .catch(() => {});
+  }, [canListEntities]);
 
   useTicketListEvents({
     onUpdated: (ticket) => {
@@ -220,6 +249,31 @@ export function TicketsList() {
           </Select>
         )}
 
+        {entities.length > 0 && (
+          <Select
+            value={entityId || "any"}
+            items={Object.fromEntries([
+              ["any", t("anyEntity")],
+              ...entities.map((e) => [e.id, e.name]),
+            ])}
+            onValueChange={(v) =>
+              setParams({ entity: v === "any" ? null : (v as string), page: null })
+            }
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">{t("anyEntity")}</SelectItem>
+              {entities.map((e) => (
+                <SelectItem key={e.id} value={e.id}>
+                  {e.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
         <div className="ms-auto">
           <Link href="/tickets/new">
             <Button className="gap-2">
@@ -275,6 +329,13 @@ export function TicketsList() {
                   <span className="truncate text-sm text-muted-foreground">
                     {pickLocalized(ticket.category, locale)}
                     {ticket.subcategory && ` · ${pickLocalized(ticket.subcategory, locale)}`}
+                    {ticket.legalEntity && (
+                      <>
+                        {" · "}
+                        <Building2 className="inline size-3.5 -translate-y-px" />{" "}
+                        {ticket.legalEntity.name}
+                      </>
+                    )}
                     {scope === "all" && user?.id !== ticket.author.id && (
                       <>
                         {" · "}

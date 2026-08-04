@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,9 +23,13 @@ import {
   AttachmentPicker,
   useAttachments,
 } from "./attachment-uploader";
-import type { TicketCategory } from "@/lib/api";
+import type { LegalEntity, TicketCategory } from "@/lib/api";
 import { ApiError } from "@/lib/api";
-import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
+import {
+  SessionExpiredError,
+  legalEntitiesApi,
+  ticketsApi,
+} from "@/lib/api-authed";
 import { useRouter } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -43,6 +54,8 @@ export function CreateTicketFlow() {
   const [error, setError] = useState<string | null>(null);
   const [shaking, setShaking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [entities, setEntities] = useState<LegalEntity[]>([]);
+  const [entityId, setEntityId] = useState("");
   const attachments = useAttachments();
 
   useEffect(() => {
@@ -50,6 +63,10 @@ export function CreateTicketFlow() {
       .categories()
       .then((all) => setCategories(all.filter((c) => c.isActive).sort(byOrder)))
       .catch(() => setCategories([]));
+    legalEntitiesApi
+      .my()
+      .then(setEntities)
+      .catch(() => {});
   }, []);
 
   const activeChildren = useMemo(
@@ -87,6 +104,7 @@ export function CreateTicketFlow() {
         subject: subject.trim(),
         categoryId: category.id,
         subcategoryId: subcategory?.id,
+        legalEntityId: entityId || undefined,
         text: text.trim() || undefined,
         attachmentIds: attachments.attachmentIds.length
           ? attachments.attachmentIds
@@ -218,6 +236,34 @@ export function CreateTicketFlow() {
               className="h-[54px] rounded-md border-[1.5px] !text-base"
             />
           </div>
+
+          {entities.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("entityLabel")}
+              </Label>
+              <Select
+                value={entityId || "none"}
+                items={Object.fromEntries([
+                  ["none", t("entityNone")],
+                  ...entities.map((e) => [e.id, e.name]),
+                ])}
+                onValueChange={(v) => setEntityId(v === "none" ? "" : (v as string))}
+              >
+                <SelectTrigger className="h-[54px] w-full rounded-md border-[1.5px] !text-base">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("entityNone")}</SelectItem>
+                  {entities.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="text" className="text-sm font-medium text-muted-foreground">

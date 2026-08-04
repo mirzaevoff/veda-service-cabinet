@@ -157,12 +157,20 @@ export interface FileAttachment {
   url: string;
 }
 
+/** Юрлицо, к которому привязан тикет (сокращённая форма) */
+export interface TicketLegalEntity {
+  id: string;
+  name: string;
+  taxId: string;
+}
+
 export interface Ticket {
   id: string;
   subject: string;
   author: TicketAuthor;
   category: LocalizedString;
   subcategory: LocalizedString | null;
+  legalEntity: TicketLegalEntity | null;
   status: TicketStatus;
   assignee: TicketAuthor | null;
   lastMessageAt: string;
