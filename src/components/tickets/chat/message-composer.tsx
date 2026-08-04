@@ -69,7 +69,7 @@ export function MessageComposer({
           disabled={disabled}
           placeholder={t("placeholder")}
           rows={1}
-          maxLength={5000}
+          maxLength={2000}
           onChange={(e) => {
             setText(e.target.value);
             sendTyping(ticketId);

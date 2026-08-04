@@ -39,6 +39,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { PhoneInput } from "@/components/auth/phone-input";
+import { DatePicker } from "@/components/common/date-picker";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import type { AuthSession } from "@/lib/api";
 import { ApiError } from "@/lib/api";
@@ -217,12 +218,11 @@ export function ProfileView() {
             <Label htmlFor="profile-birthdate" className="text-sm font-medium text-muted-foreground">
               {t("birthDateLabel")}
             </Label>
-            <Input
+            <DatePicker
               id="profile-birthdate"
-              type="date"
               value={birthDate}
-              max={new Date().toISOString().slice(0, 10)}
-              onChange={(e) => setBirthDate(e.target.value)}
+              onChange={setBirthDate}
+              placeholder={t("birthDatePlaceholder")}
             />
           </div>
         </div>

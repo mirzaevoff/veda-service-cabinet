@@ -196,7 +196,14 @@ export function UsersTable() {
                     {u.phone}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{u.role.name}</Badge>
+                    {/* Фолбэк: список /users может не отдавать role.name */}
+                    {(u.role.name ??
+                      roles.find((r) => r.id === u.role.id)?.name) && (
+                      <Badge variant="secondary">
+                        {u.role.name ??
+                          roles.find((r) => r.id === u.role.id)?.name}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge

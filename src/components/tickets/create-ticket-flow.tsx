@@ -208,7 +208,7 @@ export function CreateTicketFlow() {
             <Input
               id="subject"
               autoFocus
-              maxLength={200}
+              maxLength={50}
               value={subject}
               onChange={(e) => {
                 setSubject(e.target.value);
@@ -226,7 +226,7 @@ export function CreateTicketFlow() {
             <Textarea
               id="text"
               rows={5}
-              maxLength={5000}
+              maxLength={2000}
               value={text}
               onChange={(e) => {
                 setText(e.target.value);
@@ -236,7 +236,7 @@ export function CreateTicketFlow() {
               className="rounded-md border-[1.5px] !text-base"
             />
             <span className="self-end text-xs text-muted-foreground tabular-nums">
-              {text.length}/5000
+              {text.length}/2000
             </span>
           </div>
 

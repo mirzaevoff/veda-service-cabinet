@@ -1,7 +1,7 @@
 {
   "Nav": {
     "dashboard": "Dashboard",
-    "tickets": "Tickets",
+    "tickets": "Support",
     "admin": "Administration",
     "users": "Users",
     "roles": "Roles",
@@ -9,7 +9,8 @@
     "collapse": "Collapse",
     "expand": "Expand",
     "menu": "Menu",
-    "notificationsSend": "Broadcast"
+    "notificationsSend": "Broadcast",
+    "main": "Main"
   },
   "Shell": {
     "logout": "Sign out",
@@ -279,7 +280,8 @@
     "cancel": "Cancel",
     "lastNameLabel": "Last name",
     "lastNameOptional": "Optional",
-    "birthDateLabel": "Date of birth"
+    "birthDateLabel": "Date of birth",
+    "birthDatePlaceholder": "Pick a date"
   },
   "ErrorPages": {
     "notFoundTitle": "This page doesn't exist",

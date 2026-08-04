@@ -26,10 +26,11 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    items: [
-      { key: "dashboard", href: "/", icon: LayoutDashboard },
-      { key: "tickets", href: "/tickets", icon: Ticket },
-    ],
+    items: [{ key: "dashboard", href: "/", icon: LayoutDashboard }],
+  },
+  {
+    key: "main",
+    items: [{ key: "tickets", href: "/tickets", icon: Ticket }],
   },
   {
     key: "admin",

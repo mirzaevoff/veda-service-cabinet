@@ -1,7 +1,7 @@
 {
   "Nav": {
     "dashboard": "Boshqaruv paneli",
-    "tickets": "Murojaatlar",
+    "tickets": "Yordam",
     "admin": "Administratsiya",
     "users": "Foydalanuvchilar",
     "roles": "Rollar",
@@ -9,7 +9,8 @@
     "collapse": "Yig'ish",
     "expand": "Yoyish",
     "menu": "Menyu",
-    "notificationsSend": "Xabarnoma"
+    "notificationsSend": "Xabarnoma",
+    "main": "Asosiy"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -278,7 +279,8 @@
     "cancel": "Bekor qilish",
     "lastNameLabel": "Familiya",
     "lastNameOptional": "Ixtiyoriy",
-    "birthDateLabel": "Tug'ilgan sana"
+    "birthDateLabel": "Tug'ilgan sana",
+    "birthDatePlaceholder": "Sanani tanlang"
   },
   "ErrorPages": {
     "notFoundTitle": "Bunday sahifa yo'q",
