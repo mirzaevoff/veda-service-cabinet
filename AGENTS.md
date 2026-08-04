@@ -18,7 +18,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tailwind CSS v4, shadcn/ui (style `base-nova`, @base-ui/react, lucide-react)
 - next-intl 4 — локали `ru` (дефолт), `en`, `uz`; тексты в `messages/*.json`
 - next-themes — тёмная/светлая тема (class на `<html>`)
-- Шрифт: Unbounded (`--font-unbounded`, задан в `src/app/[locale]/layout.tsx`)
+- Шрифты: Inter (`font-sans`, весь текст) + Unbounded (`font-brand`, ТОЛЬКО бренд/вордмарки)
+- Дизайн: см. **STYLEGUIDE.md** — белый фон, красный `#A21500` как единственный акцент, pill-кнопки, без эмодзи в UI (иконки lucide)
 - Пакетный менеджер: **pnpm**
 
 ## Структура

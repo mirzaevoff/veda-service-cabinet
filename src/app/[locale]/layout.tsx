@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Unbounded } from "next/font/google";
+import { Geist_Mono, Inter, Unbounded } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -7,9 +7,15 @@ import { ThemeProvider } from "@/components/common/theme-provider";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "cyrillic"],
+});
+
 const unbounded = Unbounded({
   variable: "--font-unbounded",
   subsets: ["latin", "cyrillic"],
+  weight: ["600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -37,7 +43,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${unbounded.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${unbounded.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
