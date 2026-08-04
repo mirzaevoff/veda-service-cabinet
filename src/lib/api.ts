@@ -28,7 +28,7 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${API_URL}${path}`, {
@@ -81,6 +81,63 @@ export interface AuthTokens {
 export interface ApiInfo {
   name: string;
   version: string;
+}
+
+export interface Page<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export type TicketStatus = "open" | "closed";
+
+export interface TicketAuthor {
+  id: string;
+  name: string;
+  phone: string;
+}
+
+export type FileKind = "image" | "video" | "audio" | "file";
+
+export interface FileAttachment {
+  id: string;
+  kind: FileKind;
+  mime: string;
+  size: number;
+  originalName: string;
+  url: string;
+}
+
+export interface Ticket {
+  id: string;
+  subject: string;
+  author: TicketAuthor;
+  /** Имя категории (не id) */
+  category: string;
+  subcategory: string | null;
+  status: TicketStatus;
+  assignee: TicketAuthor | null;
+  lastMessageAt: string;
+  createdAt: string;
+}
+
+export interface TicketMessage {
+  id: string;
+  ticketId: string;
+  author: TicketAuthor;
+  text: string;
+  attachments: FileAttachment[];
+  createdAt: string;
+}
+
+export interface TicketCategory {
+  id: string;
+  name: string;
+  isActive: boolean;
+  order: number;
+  /** Только у корневых */
+  children: TicketCategory[];
 }
 
 export const api = {

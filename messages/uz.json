@@ -1,4 +1,93 @@
 {
+  "Nav": {
+    "dashboard": "Boshqaruv paneli",
+    "tickets": "Murojaatlar",
+    "admin": "Administratsiya",
+    "users": "Foydalanuvchilar",
+    "roles": "Rollar",
+    "categories": "Kategoriyalar",
+    "collapse": "Yig'ish",
+    "expand": "Yoyish",
+    "menu": "Menyu"
+  },
+  "Shell": {
+    "logout": "Chiqish"
+  },
+  "Common": {
+    "loadError": "Ma'lumotlarni yuklab bo'lmadi. Sahifani yangilang",
+    "prevPage": "Orqaga",
+    "nextPage": "Oldinga"
+  },
+  "Tickets": {
+    "list": {
+      "title": "Murojaatlar",
+      "description": "Veda Service qo'llab-quvvatlash xizmatiga savollar va arizalar",
+      "tabMine": "Meniki",
+      "tabAll": "Hammasi",
+      "anyStatus": "Istalgan holat",
+      "statusOpen": "Ochiq",
+      "statusClosed": "Yopiq",
+      "anyCategory": "Barcha kategoriyalar",
+      "newTicket": "Yangi murojaat",
+      "newTicketToast": "Yangi murojaat: {subject}",
+      "emptyTitle": "Hozircha murojaatlar yo'q",
+      "emptyHint": "Birinchisini yarating — chatda javob beramiz",
+      "pageOf": "{page} / {total}"
+    },
+    "create": {
+      "title": "Yangi murojaat",
+      "description": "Mavzuni tanlang — shunda tezroq javob beramiz",
+      "pickCategory": "Qaysi masalada yordam kerak?",
+      "pickSubcategory": "{category} — mavzuni aniqlashtiring",
+      "skipSubcategory": "O'tkazib yuborish",
+      "back": "Orqaga",
+      "subjectLabel": "Mavzu",
+      "subjectPlaceholder": "Qisqacha: nima bo'ldi?",
+      "subjectRequired": "Murojaat mavzusini yozing",
+      "textLabel": "Tavsif",
+      "textPlaceholder": "Batafsil yozing — qancha ko'p ma'lumot bo'lsa, shuncha tez hal qilamiz",
+      "submit": "Murojaat yaratish",
+      "noCategories": "Kategoriyalar hali sozlanmagan. Keyinroq urinib ko'ring"
+    },
+    "chat": {
+      "back": "Murojaatlarga",
+      "placeholder": "Xabar…",
+      "send": "Yuborish",
+      "retry": "Qayta yuborish",
+      "reconnecting": "Ulanmoqda…",
+      "assignee": "Mas'ul: {name}",
+      "takeToWork": "Ishga olish",
+      "reopen": "Qayta ochish",
+      "closeTicket": "Murojaatni yopish",
+      "closeConfirmTitle": "Murojaat yopilsinmi?",
+      "closeConfirmText": "Yangi xabarlar yozib bo'lmaydi. Savol qaytsa — yangi murojaat yarating",
+      "cancel": "Bekor qilish",
+      "newMessages": "Yangi xabarlar",
+      "typing": "{name} yozmoqda…",
+      "supportAuthor": "Qo'llab-quvvatlash · {name}",
+      "closedNotice": "Murojaat yopilgan",
+      "readOnly": "Faqat ko'rish"
+    },
+    "attachments": {
+      "add": "Fayl biriktirish",
+      "download": "Yuklab olish",
+      "uploadError": "Faylni yuklab bo'lmadi. Yana urinib ko'ring",
+      "badType": "Bunday fayl turi qo'llab-quvvatlanmaydi",
+      "tooLarge": "Fayl {size} dan katta — siqing yoki boshqasini tanlang"
+    },
+    "errors": {
+      "ER400": "Murojaat topilmadi yoki mavjud emas",
+      "ER401": "Murojaat yopilgan — yangi xabarlar mumkin emas",
+      "ER402": "Kategoriya o'zgardi. Qaytadan tanlang",
+      "ER405": "Matn yoki fayl qo'shing",
+      "network": "Aloqa yo'q. Internetni tekshiring",
+      "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
+    }
+  },
+  "Dashboard": {
+    "inDevelopment": "Ishlab chiqilmoqda",
+    "comingSoon": "Bo'lim tez orada paydo bo'ladi — biz ustida ishlayapmiz"
+  },
   "Home": {
     "eyebrow": "Veda Vector",
     "title": "Veda Service",

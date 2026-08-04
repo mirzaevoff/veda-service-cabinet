@@ -1,0 +1,21 @@
+import type { UserProfile } from "./api";
+
+export const PERMISSIONS = {
+  ticketsList: "tickets.list",
+  ticketsAnswer: "tickets.answer",
+  ticketsManage: "tickets.manage",
+  ticketsCategoriesManage: "tickets.categories.manage",
+  usersList: "users.list",
+  usersManage: "users.manage",
+  rolesRead: "roles.read",
+  rolesManage: "roles.manage",
+} as const;
+
+export function can(
+  user: UserProfile | null | undefined,
+  permission: string
+): boolean {
+  if (!user) return false;
+  const permissions = user.role?.permissions ?? [];
+  return permissions.includes("*") || permissions.includes(permission);
+}

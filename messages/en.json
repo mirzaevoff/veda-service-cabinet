@@ -1,4 +1,94 @@
 {
+  "Nav": {
+    "dashboard": "Dashboard",
+    "tickets": "Tickets",
+    "admin": "Administration",
+    "users": "Users",
+    "roles": "Roles",
+    "categories": "Categories",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "menu": "Menu"
+  },
+  "Shell": {
+    "logout": "Sign out"
+  },
+  "Common": {
+    "loadError": "Couldn't load the data. Refresh the page",
+    "prevPage": "Previous",
+    "nextPage": "Next"
+  },
+  "Tickets": {
+    "list": {
+      "title": "Tickets",
+      "description": "Questions and requests to Veda Service support",
+      "tabMine": "Mine",
+      "tabAll": "All",
+      "anyStatus": "Any status",
+      "statusOpen": "Open",
+      "statusClosed": "Closed",
+      "anyCategory": "All categories",
+      "newTicket": "New ticket",
+      "newTicketToast": "New ticket: {subject}",
+      "emptyTitle": "No tickets yet",
+      "emptyHint": "Create the first one — we'll reply in the chat",
+      "pageOf": "{page} of {total}"
+    },
+    "create": {
+      "title": "New ticket",
+      "description": "Pick a topic — it helps us reply faster",
+      "pickCategory": "What do you need help with?",
+      "pickSubcategory": "{category} — narrow down the topic",
+      "skipSubcategory": "Skip",
+      "back": "Back",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "In short: what happened?",
+      "subjectRequired": "Write a subject",
+      "textLabel": "Description",
+      "textPlaceholder": "Describe in detail — the more we know, the faster we solve it",
+      "submit": "Create ticket",
+      "noCategories": "Categories are not set up yet. Try again later"
+    },
+    "chat": {
+      "back": "Back to tickets",
+      "placeholder": "Message…",
+      "send": "Send",
+      "retry": "Send again",
+      "reconnecting": "Reconnecting…",
+      "assignee": "Assignee: {name}",
+      "takeToWork": "Take over",
+      "reopen": "Reopen",
+      "closeTicket": "Close ticket",
+      "closeConfirmTitle": "Close the ticket?",
+      "closeConfirmText": "New messages will be unavailable. If the issue returns, create a new ticket",
+      "cancel": "Cancel",
+      "newMessages": "New messages",
+      "typing": "{name} is typing…",
+      "supportAuthor": "Support · {name}",
+      "closedNotice": "Ticket is closed",
+      "readOnly": "View only"
+    },
+    "attachments": {
+      "add": "Attach file",
+      "download": "Download",
+      "uploadError": "Couldn't upload the file. Please try again",
+      "badType": "This file type is not supported",
+      "tooLarge": "File is larger than {size} — compress it or pick another",
+      "remove": "Remove"
+    },
+    "errors": {
+      "ER400": "Ticket not found or unavailable",
+      "ER401": "Ticket is closed — no new messages",
+      "ER402": "The category has changed. Pick it again",
+      "ER405": "Add text or a file",
+      "network": "No connection. Check your internet",
+      "generic": "Something went wrong. Please try again"
+    }
+  },
+  "Dashboard": {
+    "inDevelopment": "Under development",
+    "comingSoon": "This section is coming soon — we're already working on it"
+  },
   "Home": {
     "eyebrow": "Veda Vector",
     "title": "Veda Service",
