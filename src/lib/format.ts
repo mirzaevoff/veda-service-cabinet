@@ -1,3 +1,14 @@
+import type { LocalizedString } from "./api";
+
+/** Выбор перевода локализованной строки API (фолбэк на ru) */
+export function pickLocalized(
+  value: LocalizedString | null | undefined,
+  locale: string
+): string {
+  if (!value) return "";
+  return value[locale as keyof LocalizedString] || value.ru || "";
+}
+
 /** «5 мин назад» / «вчера» — для списков; старше недели — дата */
 export function formatRelativeTime(iso: string, locale: string): string {
   const date = new Date(iso);

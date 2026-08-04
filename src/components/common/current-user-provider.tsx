@@ -33,6 +33,8 @@ export function CurrentUserProvider({
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ⚠️ useRouter() next-intl отдаёт новый объект на каждый рендер — в deps
+  // его класть нельзя (эффект зациклится); методы роутера стабильны
   const load = useCallback(async () => {
     try {
       setUser(await usersApi.me());
@@ -44,7 +46,8 @@ export function CurrentUserProvider({
     } finally {
       setLoading(false);
     }
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- load() асинхронный, setState происходит после await
@@ -62,7 +65,8 @@ export function CurrentUserProvider({
         router.replace("/login");
       },
     }),
-    [user, loading, load, router]
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- router нестабилен, методы стабильны
+    [user, loading, load]
   );
 
   return (

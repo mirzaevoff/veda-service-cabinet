@@ -18,6 +18,7 @@ import { ChatHeader } from "./chat-header";
 import { MessageBubble, type ChatMessage } from "./message-bubble";
 import { MessageComposer } from "./message-composer";
 import { useTicketRoom } from "@/hooks/use-ticket-socket";
+import { notifyUnreadChanged } from "@/hooks/use-unread-tickets";
 import { ApiError, type Ticket, type TicketMessage } from "@/lib/api";
 import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -85,6 +86,7 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
         setTotal(msgs.total);
         mergeMessages([...msgs.items].reverse(), "replace");
         setInitialLoaded(true);
+        ticketsApi.markRead(ticketId).then(notifyUnreadChanged).catch(() => {});
       } catch (e) {
         if (cancelled) return;
         if (e instanceof SessionExpiredError) router.replace("/login");
@@ -135,6 +137,9 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
       // Сокет-событие заменяет optimistic-дубль? Нет: дедуп по id, temp-сообщения
       // имеют свои id и заменяются в submit; здесь просто добавляем недостающее
       mergeMessages([message], "append");
+      if (message.author.id !== user?.id) {
+        ticketsApi.markRead(ticketId).then(notifyUnreadChanged).catch(() => {});
+      }
       setTypers((prev) => {
         if (!prev.has(message.author.id)) return prev;
         const next = new Map(prev);

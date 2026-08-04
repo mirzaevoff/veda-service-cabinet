@@ -28,7 +28,7 @@ import { useTicketListEvents } from "@/hooks/use-ticket-socket";
 import type { Page, Ticket, TicketCategory, TicketStatus } from "@/lib/api";
 import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
-import { formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime, pickLocalized } from "@/lib/format";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +85,8 @@ export function TicketsList() {
     } finally {
       setLoading(false);
     }
-  }, [page, status, categoryId, scope, router, setParams, tc]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
+  }, [page, status, categoryId, scope]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный (индикатор загрузки)
@@ -181,7 +182,7 @@ export function TicketsList() {
             value={categoryId || "any"}
             items={Object.fromEntries([
               ["any", t("anyCategory")],
-              ...activeCategories.map((c) => [c.id, c.name]),
+              ...activeCategories.map((c) => [c.id, pickLocalized(c.name, locale)]),
             ])}
             onValueChange={(v) =>
               setParams({ category: v === "any" ? null : (v as string), page: null })
@@ -194,7 +195,7 @@ export function TicketsList() {
               <SelectItem value="any">{t("anyCategory")}</SelectItem>
               {activeCategories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
-                  {c.name}
+                  {pickLocalized(c.name, locale)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -253,8 +254,8 @@ export function TicketsList() {
                     <TicketStatusBadge status={ticket.status} />
                   </div>
                   <span className="truncate text-sm text-muted-foreground">
-                    {ticket.category}
-                    {ticket.subcategory && ` · ${ticket.subcategory}`}
+                    {pickLocalized(ticket.category, locale)}
+                    {ticket.subcategory && ` · ${pickLocalized(ticket.subcategory, locale)}`}
                     {scope === "all" && user?.id !== ticket.author.id && (
                       <>
                         {" · "}
@@ -264,6 +265,11 @@ export function TicketsList() {
                     )}
                   </span>
                 </div>
+                {(ticket.unreadCount ?? 0) > 0 && (
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[0.7rem] font-semibold text-primary-foreground tabular-nums duration-300 animate-in zoom-in-75">
+                    {ticket.unreadCount}
+                  </span>
+                )}
                 <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                   {formatRelativeTime(ticket.lastMessageAt, locale)}
                 </span>

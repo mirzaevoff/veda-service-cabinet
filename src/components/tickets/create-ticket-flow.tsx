@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,17 @@ import type { TicketCategory } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { SessionExpiredError, ticketsApi } from "@/lib/api-authed";
 import { useRouter } from "@/i18n/navigation";
+import { pickLocalized } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Step = "category" | "subcategory" | "details";
 
 const byOrder = (a: TicketCategory, b: TicketCategory) =>
-  a.order - b.order || a.name.localeCompare(b.name);
+  a.order - b.order || a.name.ru.localeCompare(b.name.ru);
 
 export function CreateTicketFlow() {
   const t = useTranslations("Tickets.create");
+  const locale = useLocale();
   const te = useTranslations("Tickets.errors");
   const router = useRouter();
 
@@ -132,7 +134,7 @@ export function CreateTicketFlow() {
           style={{ animationDelay: `${Math.min(i * 40, 240)}ms` }}
         >
           <Card className="flex-row items-center gap-3 rounded-lg p-4 transition-colors hover:border-primary/40 hover:bg-accent-light/30">
-            <span className="flex-1 font-medium">{c.name}</span>
+            <span className="flex-1 font-medium">{pickLocalized(c.name, locale)}</span>
             <ChevronRight className="size-4 text-muted-foreground" />
           </Card>
         </button>
@@ -163,7 +165,7 @@ export function CreateTicketFlow() {
       {step === "subcategory" && category && (
         <>
           <p className="text-sm text-muted-foreground">
-            {t("pickSubcategory", { category: category.name })}
+            {t("pickSubcategory", { category: pickLocalized(category.name, locale) })}
           </p>
           {categoryCards(activeChildren, (c) => {
             setSubcategory(c);
@@ -195,8 +197,8 @@ export function CreateTicketFlow() {
       {step === "details" && category && (
         <>
           <p className="text-sm text-muted-foreground">
-            {category.name}
-            {subcategory && ` · ${subcategory.name}`}
+            {pickLocalized(category.name, locale)}
+            {subcategory && ` · ${pickLocalized(subcategory.name, locale)}`}
           </p>
 
           <div className="flex flex-col gap-1.5">

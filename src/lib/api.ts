@@ -75,7 +75,39 @@ export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
   refreshExpiresAt: string;
+  /** Для метки current в списке сессий */
+  sessionId?: string;
   user: UserProfile;
+}
+
+export interface SessionDevice {
+  name: string;
+  platform: "ios" | "android" | "web";
+  osVersion: string;
+  appVersion: string;
+}
+
+export interface AuthSession {
+  id: string;
+  device: SessionDevice | null;
+  current?: boolean;
+  createdAt: string;
+  lastActiveAt: string;
+  expiresAt: string;
+}
+
+export interface AppNotification {
+  id: string;
+  /** Markdown-текст (может быть null, если только картинка) */
+  text: string | null;
+  imageUrl: string | null;
+  button: { text: string; url: string } | null;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export interface NotificationsPage extends Page<AppNotification> {
+  unread: number;
 }
 
 export interface ApiInfo {
@@ -109,17 +141,25 @@ export interface FileAttachment {
   url: string;
 }
 
+/** Локализованная строка: ru — источник истины, en/uz фолбэк на ru */
+export interface LocalizedString {
+  ru: string;
+  en: string;
+  uz: string;
+}
+
 export interface Ticket {
   id: string;
   subject: string;
   author: TicketAuthor;
-  /** Имя категории (не id) */
-  category: string;
-  subcategory: string | null;
+  category: LocalizedString;
+  subcategory: LocalizedString | null;
   status: TicketStatus;
   assignee: TicketAuthor | null;
   lastMessageAt: string;
   createdAt: string;
+  /** Непрочитанные сообщения для текущего пользователя */
+  unreadCount?: number;
 }
 
 export interface TicketMessage {
@@ -131,9 +171,23 @@ export interface TicketMessage {
   createdAt: string;
 }
 
-export interface TicketCategory {
+export interface Role {
   id: string;
   name: string;
+  description?: string;
+  permissions: string[];
+  isSystem: boolean;
+}
+
+export interface PermissionDef {
+  key: string;
+  label: string;
+  group: string;
+}
+
+export interface TicketCategory {
+  id: string;
+  name: LocalizedString;
   isActive: boolean;
   order: number;
   /** Только у корневых */

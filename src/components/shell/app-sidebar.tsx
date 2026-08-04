@@ -6,6 +6,7 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { NAV_SECTIONS, isNavItemActive } from "./nav-items";
+import { useUnreadTickets } from "@/hooks/use-unread-tickets";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ export function AppSidebar() {
   const t = useTranslations("Nav");
   const pathname = usePathname();
   const { can, loading } = useCurrentUser();
+  const unread = useUnreadTickets();
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -87,6 +89,11 @@ export function AppSidebar() {
                   >
                     <item.icon className="size-4.5 shrink-0" />
                     {!collapsed && <span className="truncate">{t(item.key)}</span>}
+                    {item.key === "tickets" && unread > 0 && !collapsed && (
+                      <span className="ms-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.7rem] font-semibold text-primary-foreground tabular-nums">
+                        {unread}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

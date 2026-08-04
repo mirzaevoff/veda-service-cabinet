@@ -43,6 +43,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 4. **Пуш**: `git push origin main vX.Y.Z`
 5. **Продакшн**: `git push origin main:production` — это триггерит деплой
 
+## Страницы ошибок
+
+- Внутри приложения: `src/app/[locale]/not-found.tsx` (404, catch-all `[...rest]`), `error.tsx`, `global-error.tsx`
+- Когда Next лежит (nginx 502/504) — статические `public/errors/50x.html` и `4xx.html`. Nginx на сервере должен указывать на них:
+
+```nginx
+error_page 502 503 504 /errors/50x.html;
+error_page 400 405 408 413 414 /errors/4xx.html;
+location ^~ /errors/ {
+    root /path/to/cabinet.vedavector.com/public;  # DEPLOY_PATH + /public
+    internal;
+}
+```
+
 ## Деплой
 
 Как у veda-service-api: пуш в ветку `production` → GitHub Actions (`.github/workflows/deploy.yml`) прогоняет lint и по SSH делает на сервере `git reset --hard origin/production` + `docker compose up -d --build`. Секреты: `SSH_HOST`, `SSH_USER`, `SSH_KEY`, `SSH_PORT`, `DEPLOY_PATH`.

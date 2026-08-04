@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut } from "lucide-react";
+import { LogOut, UserRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import { Link } from "@/i18n/navigation";
 
 export function UserMenu() {
   const t = useTranslations("Shell");
@@ -44,6 +45,12 @@ export function UserMenu() {
           </Badge>
         </div>
         <DropdownMenuSeparator />
+        <Link href="/profile">
+          <DropdownMenuItem>
+            <UserRound className="size-4" />
+            {t("profile")}
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="size-4" />
           {t("logout")}

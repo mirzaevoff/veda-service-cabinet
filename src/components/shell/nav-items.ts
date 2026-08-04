@@ -1,6 +1,7 @@
 import {
   FolderTree,
   LayoutDashboard,
+  Megaphone,
   ShieldCheck,
   Ticket,
   Users,
@@ -50,6 +51,12 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/admin/categories",
         icon: FolderTree,
         permission: PERMISSIONS.ticketsCategoriesManage,
+      },
+      {
+        key: "notificationsSend",
+        href: "/admin/notifications",
+        icon: Megaphone,
+        permission: PERMISSIONS.notificationsSend,
       },
     ],
   },

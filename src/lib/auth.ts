@@ -7,6 +7,7 @@ import { api, type AuthTokens } from "./api";
 const ACCESS_COOKIE = "auth-token";
 const REFRESH_COOKIE = "auth-refresh";
 const ROLE_COOKIE = "auth-role";
+const SESSION_COOKIE = "auth-session-id";
 
 function setCookie(name: string, value: string, maxAgeSeconds: number) {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; samesite=lax`;
@@ -31,12 +32,20 @@ export function saveSession(tokens: AuthTokens) {
   setCookie(ACCESS_COOKIE, tokens.accessToken, refreshMaxAge);
   setCookie(REFRESH_COOKIE, tokens.refreshToken, refreshMaxAge);
   setCookie(ROLE_COOKIE, tokens.user.role.name, refreshMaxAge);
+  if (tokens.sessionId) {
+    setCookie(SESSION_COOKIE, tokens.sessionId, refreshMaxAge);
+  }
+}
+
+export function getSessionId() {
+  return getCookie(SESSION_COOKIE);
 }
 
 export function clearSession() {
   deleteCookie(ACCESS_COOKIE);
   deleteCookie(REFRESH_COOKIE);
   deleteCookie(ROLE_COOKIE);
+  deleteCookie(SESSION_COOKIE);
 }
 
 export function getAccessToken() {

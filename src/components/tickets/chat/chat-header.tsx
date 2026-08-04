@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, WifiOff } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -23,6 +23,7 @@ import type { Ticket } from "@/lib/api";
 import { ticketsApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link } from "@/i18n/navigation";
+import { pickLocalized } from "@/lib/format";
 
 export function ChatHeader({
   ticket,
@@ -32,6 +33,7 @@ export function ChatHeader({
   onUpdated: (ticket: Ticket) => void;
 }) {
   const t = useTranslations("Tickets.chat");
+  const locale = useLocale();
   const te = useTranslations("Tickets.errors");
   const { user, can } = useCurrentUser();
   const connected = useSocketConnected();
@@ -72,8 +74,8 @@ export function ChatHeader({
             )}
           </div>
           <span className="truncate text-xs text-muted-foreground">
-            {ticket.category}
-            {ticket.subcategory && ` · ${ticket.subcategory}`}
+            {pickLocalized(ticket.category, locale)}
+            {ticket.subcategory && ` · ${pickLocalized(ticket.subcategory, locale)}`}
             {isStaffViewer && !isAuthor && ` · ${ticket.author.name} ${ticket.author.phone}`}
             {ticket.assignee &&
               ` · ${t("assignee", { name: ticket.assignee.name })}`}
