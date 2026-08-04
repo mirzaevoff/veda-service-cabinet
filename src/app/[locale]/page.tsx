@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { LocaleSwitcher } from "@/components/common/locale-switcher";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { UserBar } from "@/components/common/user-bar";
 
@@ -15,6 +16,7 @@ export default async function HomePage() {
 
       <div className="absolute right-4 top-4 flex items-center gap-2">
         <UserBar />
+        <LocaleSwitcher />
         <ThemeToggle />
       </div>
 
