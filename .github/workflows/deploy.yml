@@ -4,6 +4,12 @@ on:
   push:
     branches: [production]
 
+# Деплои не должны бежать параллельно (гонка docker compose на сервере);
+# новый запуск ждёт завершения текущего
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   lint:
     name: Lint
