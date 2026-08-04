@@ -10,6 +10,8 @@ export const PERMISSIONS = {
   rolesRead: "roles.read",
   rolesManage: "roles.manage",
   notificationsSend: "notifications.send",
+  legalEntitiesList: "legalEntities.list",
+  legalEntitiesManage: "legalEntities.manage",
 } as const;
 
 export function can(

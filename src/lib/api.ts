@@ -206,6 +206,46 @@ export interface TicketCategory {
   children: TicketCategory[];
 }
 
+export interface LegalEntityDirector {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+}
+
+export interface LegalEntityUser {
+  id: string;
+  name: string;
+  lastName: string;
+  phone: string;
+}
+
+export interface LegalEntity {
+  id: string;
+  /** ИНН (9 цифр) или ПИНФЛ (14) */
+  taxId: string;
+  name: string;
+  rawName: string;
+  bankCode: string;
+  bankAccount: string;
+  address: string;
+  director: LegalEntityDirector | null;
+  registrationDate: string | null;
+  /** Только для staff в GET /legal-entities/:id */
+  users?: LegalEntityUser[];
+  createdAt: string;
+}
+
+export interface LegalEntityLookup {
+  name: string;
+  taxId: string;
+  rawName: string;
+  bankCode: string;
+  bankAccount: string;
+  address: string;
+  director: LegalEntityDirector | null;
+  registrationDate: string | null;
+}
+
 export const api = {
   info: () => request<ApiInfo>("/"),
 

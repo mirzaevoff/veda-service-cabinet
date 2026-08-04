@@ -2,6 +2,8 @@ import {
   ApiError,
   request,
   type AuthSession,
+  type LegalEntity,
+  type LegalEntityLookup,
   type NotificationsPage,
   type Page,
   type PermissionDef,
@@ -171,6 +173,59 @@ export const notificationsApi = {
     authedRequest<void>("/notifications/send", {
       method: "POST",
       body: JSON.stringify(body),
+    }),
+};
+
+export const legalEntitiesApi = {
+  list: (params: { page?: number; limit?: number; search?: string; sort?: string } = {}) =>
+    authedRequest<Page<LegalEntity>>(`/legal-entities${query({ ...params })}`),
+  my: () =>
+    authedRequest<Page<LegalEntity>>("/legal-entities/my").then(
+      (page) => page.items
+    ),
+  get: (id: string) => authedRequest<LegalEntity>(`/legal-entities/${id}`),
+  lookup: (taxId: string) =>
+    authedRequest<LegalEntityLookup>(`/legal-entities/lookup/${taxId}`),
+  create: (body: {
+    taxId: string;
+    name: string;
+    rawName?: string;
+    bankCode?: string;
+    bankAccount?: string;
+    address?: string;
+    director?: { firstName: string; lastName: string; middleName: string } | null;
+    registrationDate?: string | null;
+  }) =>
+    authedRequest<LegalEntity>("/legal-entities", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (
+    id: string,
+    body: Partial<{
+      name: string;
+      rawName: string;
+      bankCode: string;
+      bankAccount: string;
+      address: string;
+      director: { firstName: string; lastName: string; middleName: string } | null;
+      registrationDate: string | null;
+    }>
+  ) =>
+    authedRequest<LegalEntity>(`/legal-entities/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/legal-entities/${id}`, { method: "DELETE" }),
+  grantAccess: (id: string, userId: string) =>
+    authedRequest<LegalEntity>(`/legal-entities/${id}/users`, {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    }),
+  revokeAccess: (id: string, userId: string) =>
+    authedRequest<void>(`/legal-entities/${id}/users/${userId}`, {
+      method: "DELETE",
     }),
 };
 
