@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { UserBar } from "@/components/common/user-bar";
 
 export default async function HomePage() {
   const t = await getTranslations("Home");
@@ -12,7 +13,8 @@ export default async function HomePage() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_20rem_at_50%_50%,var(--accent-light),transparent_70%)] opacity-50"
       />
 
-      <div className="absolute right-4 top-4">
+      <div className="absolute right-4 top-4 flex items-center gap-2">
+        <UserBar />
         <ThemeToggle />
       </div>
 

@@ -141,6 +141,30 @@
   --sidebar-ring: #ff5c42;
 }
 
+/* Тряска при ошибке (гайд: ±12px, ~350 мс) */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-12px);
+  }
+  40% {
+    transform: translateX(12px);
+  }
+  60% {
+    transform: translateX(-8px);
+  }
+  80% {
+    transform: translateX(8px);
+  }
+}
+
+@utility animate-shake {
+  animation: shake 350ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -2,6 +2,35 @@
   "Home": {
     "eyebrow": "Veda Vector",
     "title": "Veda Service",
-    "tagline": "Veda Service project cabinet"
+    "tagline": "Veda Service project cabinet",
+    "logout": "Sign out"
+  },
+  "Auth": {
+    "phoneTitle": "Sign in to the cabinet",
+    "phoneHint": "Enter your phone number — we'll text you a code",
+    "phoneLabel": "Phone number",
+    "continue": "Continue",
+    "nameTitle": "What's your name?",
+    "nameHint": "{phone} isn't registered yet — we'll create an account",
+    "nameLabel": "Name",
+    "register": "Sign up",
+    "codeTitle": "Enter the code from SMS",
+    "codeHint": "We sent a 6-digit code to {phone}",
+    "resend": "Send again",
+    "resendIn": "Send again in {seconds} s",
+    "changePhone": "Change number",
+    "back": "Back",
+    "errors": {
+      "invalidPhone": "Check the number — format +998 XX XXX XX XX",
+      "nameRequired": "Tell us what to call you",
+      "ER200": "This number is already registered — try signing in",
+      "ER202": "Account is blocked. Contact support",
+      "ER203": "The code is wrong or expired. Check the digits from SMS",
+      "ER204": "Too many requests. Try again in {seconds} s",
+      "ER205": "Daily SMS limit reached. Try again tomorrow",
+      "ER206": "Couldn't send the SMS. Please try again",
+      "network": "No connection. Check your internet",
+      "generic": "Something went wrong. Please try again"
+    }
   }
 }

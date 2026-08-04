@@ -2,6 +2,35 @@
   "Home": {
     "eyebrow": "Veda Vector",
     "title": "Veda Service",
-    "tagline": "Veda Service loyihasi kabineti"
+    "tagline": "Veda Service loyihasi kabineti",
+    "logout": "Chiqish"
+  },
+  "Auth": {
+    "phoneTitle": "Kabinetga kirish",
+    "phoneHint": "Telefon raqamingizni kiriting — SMS orqali kod yuboramiz",
+    "phoneLabel": "Telefon raqami",
+    "continue": "Davom etish",
+    "nameTitle": "Ismingiz nima?",
+    "nameHint": "{phone} raqami hali ro'yxatdan o'tmagan — akkaunt yaratamiz",
+    "nameLabel": "Ism",
+    "register": "Ro'yxatdan o'tish",
+    "codeTitle": "SMS'dagi kodni kiriting",
+    "codeHint": "{phone} raqamiga 6 xonali kod yubordik",
+    "resend": "Qayta yuborish",
+    "resendIn": "{seconds} soniyadan so'ng qayta yuborish",
+    "changePhone": "Raqamni o'zgartirish",
+    "back": "Orqaga",
+    "errors": {
+      "invalidPhone": "Raqamni tekshiring — format +998 XX XXX XX XX",
+      "nameRequired": "Sizga qanday murojaat qilishimizni yozing",
+      "ER200": "Bu raqam allaqachon ro'yxatdan o'tgan — kirishga harakat qiling",
+      "ER202": "Akkaunt bloklangan. Qo'llab-quvvatlashga yozing",
+      "ER203": "Kod noto'g'ri yoki muddati o'tgan. SMS'dagi raqamlarni tekshiring",
+      "ER204": "Juda tez-tez. {seconds} soniyadan so'ng qayta urining",
+      "ER205": "Bugungi SMS limiti tugadi. Ertaga urinib ko'ring",
+      "ER206": "SMS yuborib bo'lmadi. Yana urinib ko'ring",
+      "network": "Aloqa yo'q. Internetni tekshiring",
+      "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
+    }
   }
 }

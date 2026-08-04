@@ -28,7 +28,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - `src/app/layout.tsx` — passthrough
 - `src/proxy.ts` — next-intl middleware (в Next 16 это замена `middleware.ts`)
 - `src/i18n/` — routing + request config
-- `src/components/ui/` — shadcn-компоненты, `src/components/common/` — общие
+- `src/components/ui/` — shadcn-компоненты, `src/components/common/` — общие, `src/components/auth/` — авторизация
+- `src/lib/api.ts` — клиент API (база: `NEXT_PUBLIC_API_URL`, дефолт https://api.vedavector.com; ошибки `{code, message, data?}`), `src/lib/auth.ts` — сессия (cookies `auth-token`/`auth-refresh`/`auth-role`, refresh с мьютексом)
+- Документация API: `../api.vedavector.com/md_docs/` (обновляется там же); локальный API для разработки: `PORT=4901 node dist/main` в проекте api (SMS_MODE=mock — код печатается в лог)
 
 ## Релизный флоу (заливка)
 
