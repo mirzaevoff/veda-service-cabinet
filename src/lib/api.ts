@@ -54,6 +54,13 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
+/** Локализованная строка: ru — источник истины, en/uz фолбэк на ru */
+export interface LocalizedString {
+  ru: string;
+  en: string;
+  uz: string;
+}
+
 export interface OtpSession {
   phone: string;
   /** Жизнь кода, сек */
@@ -70,7 +77,12 @@ export interface UserProfile {
   lastName: string;
   /** YYYY-MM-DD или null */
   birthDate: string | null;
-  role: { id: string; name: string; permissions: string[] };
+  role: {
+    id: string;
+    slug: string;
+    title: LocalizedString;
+    permissions: string[];
+  };
   status: "active" | "blocked";
   createdAt: string;
 }
@@ -145,13 +157,6 @@ export interface FileAttachment {
   url: string;
 }
 
-/** Локализованная строка: ru — источник истины, en/uz фолбэк на ru */
-export interface LocalizedString {
-  ru: string;
-  en: string;
-  uz: string;
-}
-
 export interface Ticket {
   id: string;
   subject: string;
@@ -177,7 +182,10 @@ export interface TicketMessage {
 
 export interface Role {
   id: string;
-  name: string;
+  /** Машинный идентификатор (lowercase) */
+  slug: string;
+  /** Отображаемое название */
+  title: LocalizedString;
   description?: string;
   permissions: string[];
   isSystem: boolean;

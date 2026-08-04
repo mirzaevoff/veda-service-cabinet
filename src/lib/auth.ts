@@ -31,7 +31,7 @@ export function saveSession(tokens: AuthTokens) {
   );
   setCookie(ACCESS_COOKIE, tokens.accessToken, refreshMaxAge);
   setCookie(REFRESH_COOKIE, tokens.refreshToken, refreshMaxAge);
-  setCookie(ROLE_COOKIE, tokens.user.role.name, refreshMaxAge);
+  setCookie(ROLE_COOKIE, tokens.user.role.slug, refreshMaxAge);
   if (tokens.sessionId) {
     setCookie(SESSION_COOKIE, tokens.sessionId, refreshMaxAge);
   }

@@ -20,6 +20,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ApiError, type PermissionDef, type Role } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
 
+const TITLE_LOCALES = ["ru", "uz", "en"] as const;
+
 export function RoleFormDialog({
   role,
   permissions,
@@ -36,9 +38,10 @@ export function RoleFormDialog({
   const isNew = role === "new";
   const editing = role !== null && role !== "new" ? role : null;
   const isAdminRole = editing?.permissions.includes("*") ?? false;
-  const nameLocked = editing?.isSystem ?? false;
+  const slugLocked = editing?.isSystem ?? false;
 
-  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [titles, setTitles] = useState({ ru: "", uz: "", en: "" });
   const [description, setDescription] = useState("");
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
@@ -46,7 +49,12 @@ export function RoleFormDialog({
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс формы при открытии
-    setName(editing?.name ?? "");
+    setSlug(editing?.slug ?? "");
+    setTitles(
+      editing?.title
+        ? { ...editing.title }
+        : { ru: "", uz: "", en: "" }
+    );
     setDescription(editing?.description ?? "");
     setChecked(new Set(editing?.permissions ?? []));
     setError(null);
@@ -61,23 +69,37 @@ export function RoleFormDialog({
   }, [permissions]);
 
   async function save() {
-    if (!name.trim()) {
-      setError(t("nameRequired"));
+    if (!slug.trim()) {
+      setError(t("slugRequired"));
+      return;
+    }
+    if (!titles.ru.trim()) {
+      setError(t("titleRequired"));
       return;
     }
     setBusy(true);
     setError(null);
-    const body = {
+    const title = {
+      ru: titles.ru.trim(),
+      uz: titles.uz.trim() || undefined,
+      en: titles.en.trim() || undefined,
+    };
+    const common = {
+      title,
       description: description.trim() || undefined,
-      permissions: [...checked],
     };
     try {
       if (isNew) {
-        await adminApi.roles.create({ name: name.trim(), ...body });
+        await adminApi.roles.create({
+          slug: slug.trim(),
+          ...common,
+          permissions: [...checked],
+        });
       } else if (editing) {
         await adminApi.roles.update(editing.id, {
-          ...(nameLocked ? {} : { name: name.trim() }),
-          ...(isAdminRole ? { description: body.description } : body),
+          ...(slugLocked ? {} : { slug: slug.trim() }),
+          ...common,
+          ...(isAdminRole ? {} : { permissions: [...checked] }),
         });
       }
       toast.success(t("saved"));
@@ -87,6 +109,8 @@ export function RoleFormDialog({
       if (e instanceof ApiError && e.code === "ER301") setError(t("errors.ER301"));
       else if (e instanceof ApiError && e.code === "ER302")
         setError(t("errors.ER302"));
+      else if (e instanceof ApiError && e.code === "ER101")
+        setError(t("slugFormat"));
       else setError(t("errors.generic"));
     } finally {
       setBusy(false);
@@ -105,19 +129,50 @@ export function RoleFormDialog({
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="role-name" className="text-sm font-medium text-muted-foreground">
-              {t("name")}
+            <Label htmlFor="role-slug" className="text-sm font-medium text-muted-foreground">
+              {t("slug")}
             </Label>
             <Input
-              id="role-name"
-              value={name}
-              disabled={nameLocked}
-              onChange={(e) => setName(e.target.value.toLowerCase())}
+              id="role-slug"
+              value={slug}
+              disabled={slugLocked}
+              onChange={(e) => {
+                setSlug(e.target.value.toLowerCase());
+                setError(null);
+              }}
               placeholder="support"
             />
             <span className="text-xs text-muted-foreground">
-              {nameLocked ? t("systemNameLocked") : t("nameHint")}
+              {slugLocked ? t("systemNameLocked") : t("slugHint")}
             </span>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-medium text-muted-foreground">
+              {t("titleSection")}
+            </span>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {TITLE_LOCALES.map((code) => (
+                <div key={code} className="flex flex-col gap-1">
+                  <Label
+                    htmlFor={`role-title-${code}`}
+                    className="text-xs text-muted-foreground uppercase"
+                  >
+                    {code}
+                  </Label>
+                  <Input
+                    id={`role-title-${code}`}
+                    value={titles[code]}
+                    maxLength={100}
+                    placeholder={code !== "ru" ? titles.ru : undefined}
+                    onChange={(e) => {
+                      setTitles((prev) => ({ ...prev, [code]: e.target.value }));
+                      setError(null);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">

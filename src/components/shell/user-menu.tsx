@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { LogOut, UserRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { fullName } from "@/lib/format";
+import { fullName, pickLocalized } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 
 export function UserMenu() {
   const t = useTranslations("Shell");
+  const locale = useLocale();
   const { user, signOut } = useCurrentUser();
 
   if (!user) return null;
@@ -42,7 +43,7 @@ export function UserMenu() {
           <span className="text-sm font-medium">{fullName(user)}</span>
           <span className="text-xs text-muted-foreground">{user.phone}</span>
           <Badge variant="secondary" className="mt-1 w-fit">
-            {user.role.name}
+            {pickLocalized(user.role.title, locale) || user.role.slug}
           </Badge>
         </div>
         <DropdownMenuSeparator />

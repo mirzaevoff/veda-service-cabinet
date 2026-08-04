@@ -43,7 +43,8 @@ function xhrUpload(
   file: File,
   token: string,
   onProgress?: (fraction: number) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  isPublic?: boolean
 ): Promise<FileAttachment> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -73,6 +74,7 @@ function xhrUpload(
 
     const form = new FormData();
     form.append("file", file);
+    if (isPublic) form.append("public", "true");
     xhr.send(form);
   });
 }
@@ -82,6 +84,8 @@ export async function uploadFile(
   opts: {
     onProgress?: (fraction: number) => void;
     signal?: AbortSignal;
+    /** Публичный файл (нужно право notifications.send) — абсолютный url для рассылок */
+    public?: boolean;
   } = {}
 ): Promise<FileAttachment> {
   const limit = uploadLimitFor(file);
@@ -100,11 +104,17 @@ export async function uploadFile(
   if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
 
   try {
-    return await xhrUpload(file, token, opts.onProgress, opts.signal);
+    return await xhrUpload(file, token, opts.onProgress, opts.signal, opts.public);
   } catch (e) {
     if (!(e instanceof ApiError) || e.status !== 401) throw e;
     const tokens = await refreshSession();
-    return xhrUpload(file, tokens.accessToken, opts.onProgress, opts.signal);
+    return xhrUpload(
+      file,
+      tokens.accessToken,
+      opts.onProgress,
+      opts.signal,
+      opts.public
+    );
   }
 }
 

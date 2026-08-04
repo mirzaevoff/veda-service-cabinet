@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Megaphone, Search, X } from "lucide-react";
+import { ImagePlus, Megaphone, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import type { UserProfile } from "@/lib/api";
 import { adminApi, notificationsApi } from "@/lib/api-authed";
 import { useDebouncedValue } from "@/hooks/use-debounce";
+import { uploadFile } from "@/lib/upload";
+import { useRef } from "react";
 
 export default function AdminNotificationsPage() {
   const t = useTranslations("AdminNotifications");
@@ -33,6 +35,8 @@ export default function AdminNotificationsPage() {
   const [buttonUrl, setButtonUrl] = useState("");
   const [pushTitle, setPushTitle] = useState("");
   const [sending, setSending] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const canSearchUsers = can("users.list");
 
@@ -177,12 +181,59 @@ export default function AdminNotificationsPage() {
           <Label htmlFor="n-img" className="text-sm font-medium text-muted-foreground">
             {t("imageUrl")}
           </Label>
-          <Input
-            id="n-img"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://…"
-          />
+          <div className="flex items-center gap-2">
+            <Input
+              id="n-img"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://…"
+              className="flex-1"
+            />
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                setUploadingImage(true);
+                try {
+                  // public=true — файл раздаётся без авторизации, url абсолютный
+                  const uploaded = await uploadFile(file, { public: true });
+                  setImageUrl(uploaded.url);
+                } catch {
+                  toast.error(t("imageUploadError"));
+                } finally {
+                  setUploadingImage(false);
+                }
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploadingImage}
+              onClick={() => imageInputRef.current?.click()}
+              className="gap-2"
+            >
+              {uploadingImage ? (
+                <Spinner className="size-4" />
+              ) : (
+                <ImagePlus className="size-4" />
+              )}
+              {t("uploadImage")}
+            </Button>
+          </div>
+          {imageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageUrl}
+              alt=""
+              className="mt-1 max-h-40 w-fit rounded-md object-cover"
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Pencil, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -17,10 +17,12 @@ import { adminApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useRouter } from "@/i18n/navigation";
 import { useDelayed } from "@/hooks/use-delayed";
+import { pickLocalized } from "@/lib/format";
 
 export function RolesList() {
   const t = useTranslations("AdminRoles");
   const tc = useTranslations("Common");
+  const locale = useLocale();
   const router = useRouter();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.rolesManage);
@@ -83,7 +85,10 @@ export function RolesList() {
               </div>
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{role.name}</span>
+                  <span className="font-medium">
+                    {pickLocalized(role.title, locale) || role.slug}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{role.slug}</span>
                   {role.isSystem && (
                     <Badge variant="secondary">{t("systemBadge")}</Badge>
                   )}

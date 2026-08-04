@@ -37,7 +37,7 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type Role, type UserProfile } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
-import { fullName } from "@/lib/format";
+import { fullName, pickLocalized } from "@/lib/format";
 
 export function UserDrawer({
   user,
@@ -119,7 +119,7 @@ export function UserDrawer({
 
         <div className="flex flex-col gap-5 px-4">
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{user.role.name}</Badge>
+            <Badge variant="secondary">{pickLocalized(user.role.title, locale) || user.role.slug}</Badge>
             <Badge
               variant="secondary"
               className={
@@ -156,7 +156,9 @@ export function UserDrawer({
                 <div className="flex items-center gap-2">
                   <Select
                     value={roleId}
-                    items={Object.fromEntries(roles.map((r) => [r.id, r.name]))}
+                    items={Object.fromEntries(
+                      roles.map((r) => [r.id, pickLocalized(r.title, locale) || r.slug])
+                    )}
                     onValueChange={(v) => setRoleId(v as string)}
                   >
                     <SelectTrigger className="flex-1">
@@ -165,7 +167,7 @@ export function UserDrawer({
                     <SelectContent>
                       {roles.map((r) => (
                         <SelectItem key={r.id} value={r.id}>
-                          {r.name}
+                          {pickLocalized(r.title, locale) || r.slug}
                         </SelectItem>
                       ))}
                     </SelectContent>

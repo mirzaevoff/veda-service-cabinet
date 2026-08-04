@@ -80,7 +80,13 @@
       "ER302delete": "System roles can't be deleted",
       "ER303": "{count, plural, one {The role is assigned to # user} other {The role is assigned to # users}} — reassign them first",
       "generic": "Something went wrong. Please try again"
-    }
+    },
+    "slug": "Identifier (slug)",
+    "slugHint": "Lowercase latin: support, manager",
+    "slugFormat": "Slug: 2–50 chars, lowercase letters, digits, dash",
+    "slugRequired": "Enter a role identifier",
+    "titleSection": "Title (ru / uz / en)",
+    "titleRequired": "Enter the Russian title"
   },
   "AdminCategories": {
     "title": "Categories",
@@ -248,7 +254,9 @@
     "pushTitlePlaceholder": "Veda Service",
     "send": "Send",
     "sent": "Broadcast sent",
-    "sendError": "Couldn't send. Check the fields"
+    "sendError": "Couldn't send. Check the fields",
+    "uploadImage": "Upload",
+    "imageUploadError": "Couldn't upload the image"
   },
   "Profile": {
     "title": "Profile",

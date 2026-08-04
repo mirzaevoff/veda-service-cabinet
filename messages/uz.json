@@ -80,7 +80,13 @@
       "ER302delete": "Tizim rolini o'chirib bo'lmaydi",
       "ER303": "{count, plural, one {Rol # foydalanuvchiga biriktirilgan} other {Rol # foydalanuvchiga biriktirilgan}} — avval ularni boshqa rolga o'tkazing",
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
-    }
+    },
+    "slug": "Identifikator (slug)",
+    "slugHint": "Lotin harflarida, kichik harflar bilan: support, manager",
+    "slugFormat": "Slug: 2–50 belgi, kichik harflar, raqamlar, defis",
+    "slugRequired": "Rol identifikatorini kiriting",
+    "titleSection": "Nomi (ru / uz / en)",
+    "titleRequired": "Ruscha nomini kiriting"
   },
   "AdminCategories": {
     "title": "Kategoriyalar",
@@ -247,7 +253,9 @@
     "pushTitlePlaceholder": "Veda Service",
     "send": "Yuborish",
     "sent": "Xabarnoma yuborildi",
-    "sendError": "Yuborib bo'lmadi. Maydonlarni tekshiring"
+    "sendError": "Yuborib bo'lmadi. Maydonlarni tekshiring",
+    "uploadImage": "Yuklash",
+    "imageUploadError": "Rasmni yuklab bo'lmadi"
   },
   "Profile": {
     "title": "Profil",

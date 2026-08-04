@@ -204,7 +204,8 @@ export const adminApi = {
       ),
     permissions: () => authedRequest<PermissionDef[]>("/roles/permissions"),
     create: (body: {
-      name: string;
+      slug: string;
+      title?: { ru: string; en?: string; uz?: string };
       description?: string;
       permissions?: string[];
     }) =>
@@ -214,7 +215,12 @@ export const adminApi = {
       }),
     update: (
       id: string,
-      body: { name?: string; description?: string; permissions?: string[] }
+      body: {
+        slug?: string;
+        title?: { ru: string; en?: string; uz?: string };
+        description?: string;
+        permissions?: string[];
+      }
     ) =>
       authedRequest<Role>(`/roles/${id}`, {
         method: "PATCH",

@@ -30,7 +30,7 @@ import { adminApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
-import { formatRelativeTime, fullName } from "@/lib/format";
+import { formatRelativeTime, fullName, pickLocalized } from "@/lib/format";
 import { useRouter } from "@/i18n/navigation";
 
 export function UsersTable() {
@@ -131,7 +131,7 @@ export function UsersTable() {
             value={roleId || "any"}
             items={Object.fromEntries([
               ["any", t("allRoles")],
-              ...roles.map((r) => [r.id, r.name]),
+              ...roles.map((r) => [r.id, pickLocalized(r.title, locale) || r.slug]),
             ])}
             onValueChange={(v) => setRoleId(v === "any" ? "" : (v as string))}
           >
@@ -142,7 +142,7 @@ export function UsersTable() {
               <SelectItem value="any">{t("allRoles")}</SelectItem>
               {roles.map((r) => (
                 <SelectItem key={r.id} value={r.id}>
-                  {r.name}
+                  {pickLocalized(r.title, locale) || r.slug}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -196,14 +196,9 @@ export function UsersTable() {
                     {u.phone}
                   </TableCell>
                   <TableCell>
-                    {/* Фолбэк: список /users может не отдавать role.name */}
-                    {(u.role.name ??
-                      roles.find((r) => r.id === u.role.id)?.name) && (
-                      <Badge variant="secondary">
-                        {u.role.name ??
-                          roles.find((r) => r.id === u.role.id)?.name}
-                      </Badge>
-                    )}
+                    <Badge variant="secondary">
+                      {pickLocalized(u.role.title, locale) || u.role.slug}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge
