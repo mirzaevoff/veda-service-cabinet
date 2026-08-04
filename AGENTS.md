@@ -37,9 +37,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Строго в таком порядке, по команде:
 
 1. **Ченжлог**: в `CHANGELOG.md` секцию `[Unreleased]` переименовать в `[X.Y.Z] - дата`
-2. **Бамп + коммит + тег**: `pnpm version minor|patch -m "chore(release): %s"` — обновит package.json, создаст коммит `chore(release): X.Y.Z` и тег `vX.Y.Z`
-3. **Пуш**: `git push origin main --follow-tags`
-4. **Продакшн**: `git push origin main:production` — это триггерит деплой
+2. **Бамп**: поднять `version` в `package.json` (SemVer)
+3. **Коммит + тег**: `git commit -m "chore(release): X.Y.Z"` (ченжлог + package.json) и `git tag vX.Y.Z`
+   (`pnpm version` не подходит — падает из-за изменённого ченжлога в дереве)
+4. **Пуш**: `git push origin main vX.Y.Z`
+5. **Продакшн**: `git push origin main:production` — это триггерит деплой
 
 ## Деплой
 
