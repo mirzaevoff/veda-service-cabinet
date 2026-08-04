@@ -292,7 +292,15 @@
     "lastNameLabel": "Familiya",
     "lastNameOptional": "Ixtiyoriy",
     "birthDateLabel": "Tug'ilgan sana",
-    "birthDatePlaceholder": "Sanani tanlang"
+    "birthDatePlaceholder": "Sanani tanlang",
+    "deleteSection": "Hisobni o'chirish",
+    "deleteHint": "Hisob butunlay o'chiriladi: seanslar, bildirishnomalar va tashkilotlarga kirish yo'qoladi. Murojaatlar tarixi anonim saqlanadi",
+    "deleteAccount": "Hisobni o'chirish",
+    "deleteConfirmTitle": "Hisob o'chirilsinmi?",
+    "deleteConfirmText": "Bu amalni ortga qaytarib bo'lmaydi. Tasdiqlash uchun raqamingizga SMS-kod yuboramiz",
+    "deleteConfirmAction": "Kod yuborish",
+    "deleteCodeTitle": "O'chirishni tasdiqlang",
+    "deleteCodeWarning": "Kod kiritilgach hisob darhol o'chiriladi va uni tiklab bo'lmaydi"
   },
   "ErrorPages": {
     "notFoundTitle": "Bunday sahifa yo'q",

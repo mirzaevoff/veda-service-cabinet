@@ -293,7 +293,15 @@
     "lastNameLabel": "Last name",
     "lastNameOptional": "Optional",
     "birthDateLabel": "Date of birth",
-    "birthDatePlaceholder": "Pick a date"
+    "birthDatePlaceholder": "Pick a date",
+    "deleteSection": "Delete account",
+    "deleteHint": "Your account will be permanently deleted: sessions, notifications and organization access will be removed. Support history is kept anonymously",
+    "deleteAccount": "Delete account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmText": "This action cannot be undone. We will send an SMS code to your number to confirm",
+    "deleteConfirmAction": "Send code",
+    "deleteCodeTitle": "Confirm deletion",
+    "deleteCodeWarning": "Once you enter the code, your account is deleted immediately and cannot be restored"
   },
   "ErrorPages": {
     "notFoundTitle": "This page doesn't exist",

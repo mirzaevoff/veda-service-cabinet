@@ -292,7 +292,15 @@
     "lastNameLabel": "Фамилия",
     "lastNameOptional": "Необязательно",
     "birthDateLabel": "Дата рождения",
-    "birthDatePlaceholder": "Выберите дату"
+    "birthDatePlaceholder": "Выберите дату",
+    "deleteSection": "Удаление аккаунта",
+    "deleteHint": "Аккаунт будет удалён безвозвратно: сессии, уведомления и доступы к организациям пропадут. История обращений сохранится анонимно",
+    "deleteAccount": "Удалить аккаунт",
+    "deleteConfirmTitle": "Удалить аккаунт?",
+    "deleteConfirmText": "Это действие необратимо. Мы отправим SMS-код на ваш номер для подтверждения",
+    "deleteConfirmAction": "Отправить код",
+    "deleteCodeTitle": "Подтвердите удаление",
+    "deleteCodeWarning": "После ввода кода аккаунт будет удалён сразу и без возможности восстановления"
   },
   "ErrorPages": {
     "notFoundTitle": "Такой страницы нет",

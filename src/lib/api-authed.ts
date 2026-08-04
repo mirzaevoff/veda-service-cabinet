@@ -155,6 +155,16 @@ export const profileApi = {
     authedRequest<void>(`/auth/sessions/${id}`, { method: "DELETE" }),
   logoutAll: () =>
     authedRequest<void>("/auth/logout-all", { method: "POST" }),
+  deleteAccount: () =>
+    authedRequest<{ phone: string; expiresIn: number; resendIn: number }>(
+      "/auth/delete-account",
+      { method: "POST" }
+    ),
+  deleteAccountVerify: (code: string) =>
+    authedRequest<void>("/auth/delete-account/verify", {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    }),
 };
 
 export const notificationsApi = {

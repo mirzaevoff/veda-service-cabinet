@@ -80,6 +80,12 @@ export function ProfileView() {
   const [sessions, setSessions] = useState<AuthSession[] | null>(null);
   const [confirmLogoutAll, setConfirmLogoutAll] = useState(false);
 
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [deleteCode, setDeleteCode] = useState("");
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- синхронизация формы с профилем
     setName(user?.name ?? "");
@@ -173,6 +179,37 @@ export function ProfileView() {
         toast.success(t("sessionTerminated"));
       })
       .catch(() => toast.error(t("genericError")));
+  }
+
+  async function requestDeletion() {
+    setConfirmDelete(false);
+    setDeleteCode("");
+    setDeleteError(null);
+    setDeleteBusy(true);
+    try {
+      await profileApi.deleteAccount();
+      setDeleteDialog(true);
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER204")
+        toast.error(t("cooldown", { seconds: e.retryAfter ?? 60 }));
+      else toast.error(t("genericError"));
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
+
+  async function submitDeleteCode(value: string) {
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await profileApi.deleteAccountVerify(value);
+      clearSession();
+      router.replace("/login");
+    } catch {
+      setDeleteCode("");
+      setDeleteError(t("badCode"));
+      setDeleteBusy(false);
+    }
   }
 
   async function logoutEverywhere() {
@@ -311,6 +348,25 @@ export function ProfileView() {
         )}
       </section>
 
+      {/* Удаление аккаунта */}
+      <section className="flex flex-col gap-3 rounded-lg border border-destructive/30 p-5 duration-450 animate-in fade-in slide-in-from-bottom-4 [animation-delay:240ms] [animation-fill-mode:backwards]">
+        <h3 className="font-semibold text-destructive">{t("deleteSection")}</h3>
+        <p className="text-sm text-muted-foreground">{t("deleteHint")}</p>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={deleteBusy}
+          onClick={() => setConfirmDelete(true)}
+          className="self-start border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+        >
+          {deleteBusy && !deleteDialog ? (
+            <Spinner className="size-4" />
+          ) : (
+            t("deleteAccount")
+          )}
+        </Button>
+      </section>
+
       {/* Диалог смены номера */}
       <Dialog
         open={phoneDialog}
@@ -392,6 +448,82 @@ export function ProfileView() {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Подтверждение удаления аккаунта */}
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("deleteConfirmText")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => void requestDeletion()}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {t("deleteConfirmAction")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Код подтверждения удаления */}
+      <Dialog
+        open={deleteDialog}
+        onOpenChange={(open) => {
+          setDeleteDialog(open);
+          if (!open) {
+            setDeleteCode("");
+            setDeleteError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("deleteCodeTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("codeHint", { phone: user.phone })}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <InputOTP
+              maxLength={6}
+              autoFocus
+              value={deleteCode}
+              disabled={deleteBusy}
+              onChange={(value) => {
+                setDeleteCode(value);
+                setDeleteError(null);
+                if (value.length === 6) void submitDeleteCode(value);
+              }}
+            >
+              <InputOTPGroup className="gap-2">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <InputOTPSlot
+                    key={i}
+                    index={i}
+                    className={cn(
+                      "h-[58px] w-[46px] rounded-md border-0 bg-secondary text-lg font-semibold first:rounded-l-md last:rounded-r-md",
+                      "data-[active=true]:bg-card data-[active=true]:ring-[1.5px] data-[active=true]:ring-primary",
+                      deleteError &&
+                        "bg-accent-light ring-[1.5px] ring-destructive text-destructive"
+                    )}
+                  />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            {deleteError && (
+              <p className="text-xs text-destructive">{deleteError}</p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {t("deleteCodeWarning")}
+            </p>
+          </div>
         </DialogContent>
       </Dialog>
 
