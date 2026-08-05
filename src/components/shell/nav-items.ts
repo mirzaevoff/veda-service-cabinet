@@ -1,6 +1,7 @@
 import {
   Building2,
   FolderTree,
+  Gauge,
   LayoutDashboard,
   ListChecks,
   Megaphone,
@@ -57,6 +58,12 @@ export const NAV_SECTIONS: NavSection[] = [
         key: "categories",
         href: "/admin/categories",
         icon: FolderTree,
+        permission: PERMISSIONS.ticketsCategoriesManage,
+      },
+      {
+        key: "severities",
+        href: "/admin/severities",
+        icon: Gauge,
         permission: PERMISSIONS.ticketsCategoriesManage,
       },
       {

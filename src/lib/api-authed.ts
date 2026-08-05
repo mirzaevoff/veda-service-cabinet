@@ -22,6 +22,7 @@ import {
   type Ticket,
   type TicketCategory,
   type TicketMessage,
+  type TicketSeverity,
   type TicketStatus,
   type UserProfile,
 } from "./api";
@@ -87,6 +88,14 @@ export interface TicketListParams {
   categoryId?: string;
   legalEntityId?: string;
   all?: boolean;
+  /** Staff: фильтр по важности */
+  severityId?: string;
+  /** Staff: только просроченные (красные) */
+  breached?: boolean;
+  /** Staff: только невзятые */
+  unclaimed?: boolean;
+  /** Например deadline:asc — красные сверху, exempt в конце */
+  sort?: string;
 }
 
 export const ticketsApi = {
@@ -118,6 +127,20 @@ export const ticketsApi = {
     authedRequest<Ticket>(`/tickets/${id}/rating`, {
       method: "POST",
       body: JSON.stringify(body),
+    }),
+
+  /** Взять тикет в работу (суппорт входит в чат) */
+  claim: (id: string) =>
+    authedRequest<Ticket>(`/tickets/${id}/claim`, { method: "POST" }),
+
+  /** Выйти из тикета (передача смене) */
+  unclaim: (id: string) =>
+    authedRequest<Ticket>(`/tickets/${id}/claim`, { method: "DELETE" }),
+
+  setSeverity: (id: string, severityId: string) =>
+    authedRequest<Ticket>(`/tickets/${id}/severity`, {
+      method: "PATCH",
+      body: JSON.stringify({ severityId }),
     }),
 
   messages: (id: string, params: { page?: number; limit?: number } = {}) =>
@@ -311,6 +334,7 @@ export const checklistsApi = {
       name: string;
       description?: string;
       items: ChecklistItemInput[];
+      photoFreshnessMinutes?: number | null;
     }) =>
       authedRequest<ChecklistTemplate>("/checklist-templates", {
         method: "POST",
@@ -322,6 +346,7 @@ export const checklistsApi = {
         name: string;
         description: string;
         items: ChecklistItemInput[];
+        photoFreshnessMinutes: number | null;
       }>
     ) =>
       authedRequest<ChecklistTemplate>(`/checklist-templates/${id}`, {
@@ -349,6 +374,7 @@ export const checklistsApi = {
       daysOfWeek: number[];
       times: string[];
       windowMinutes: number;
+      allowLateCompletion?: boolean;
       assigneeUsers?: string[];
       assigneePositions?: string[];
       enabled?: boolean;
@@ -363,6 +389,7 @@ export const checklistsApi = {
         daysOfWeek: number[];
         times: string[];
         windowMinutes: number;
+        allowLateCompletion: boolean;
         assigneeUsers: string[];
         assigneePositions: string[];
         enabled: boolean;
@@ -525,6 +552,7 @@ export const adminApi = {
         name?: { ru: string; en?: string; uz?: string };
         order?: number;
         isActive?: boolean;
+        severityId?: string | null;
       }
     ) =>
       authedRequest<TicketCategory>(`/ticket-categories/${id}`, {
@@ -534,4 +562,35 @@ export const adminApi = {
     remove: (id: string) =>
       authedRequest<void>(`/ticket-categories/${id}`, { method: "DELETE" }),
   },
+};
+
+export const severitiesApi = {
+  list: () => authedRequest<TicketSeverity[]>("/ticket-severities"),
+  create: (body: {
+    name: { ru: string; en?: string; uz?: string };
+    color: string;
+    slaMinutes: number;
+    order?: number;
+    isDefault?: boolean;
+  }) =>
+    authedRequest<TicketSeverity>("/ticket-severities", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (
+    id: string,
+    body: Partial<{
+      name: { ru: string; en?: string; uz?: string };
+      color: string;
+      slaMinutes: number;
+      order: number;
+      isDefault: boolean;
+    }>
+  ) =>
+    authedRequest<TicketSeverity>(`/ticket-severities/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/ticket-severities/${id}`, { method: "DELETE" }),
 };

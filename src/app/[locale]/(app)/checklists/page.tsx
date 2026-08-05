@@ -34,8 +34,11 @@ export default function ChecklistsPage() {
   const [positions, setPositions] = useState<Position[]>([]);
 
   useEffect(() => {
-    legalEntitiesApi
-      .my()
+    // ТП (checklists.manage) управляет любыми ЮЛ — показываем весь справочник
+    const source = isStaffManager
+      ? legalEntitiesApi.list({ limit: 100, sort: "name:asc" }).then((p) => p.items)
+      : legalEntitiesApi.my();
+    source
       .then((items) =>
         Promise.all(
           items.map((entity) =>
@@ -45,7 +48,7 @@ export default function ChecklistsPage() {
       )
       .then(setEntities)
       .catch(() => setEntities([]));
-  }, []);
+  }, [isStaffManager]);
 
   const current = useMemo(
     () => entities?.find((entity) => entity.id === scope) ?? null,

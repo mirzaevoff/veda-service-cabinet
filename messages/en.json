@@ -12,7 +12,8 @@
     "notificationsSend": "Broadcast",
     "main": "Main",
     "legalEntities": "Legal entities",
-    "checklists": "Checklists"
+    "checklists": "Checklists",
+    "severities": "Severities"
   },
   "Shell": {
     "logout": "Sign out",
@@ -119,14 +120,17 @@
     "formHintLocalized": "Name in three languages; empty fields fall back to Russian",
     "nameLabel_ru": "Name (ru)",
     "nameLabel_uz": "Name (uz)",
-    "nameLabel_en": "Name (en)"
+    "nameLabel_en": "Name (en)",
+    "severityReset": "reset"
   },
   "Common": {
     "loadError": "Couldn't load the data. Refresh the page",
     "prevPage": "Previous",
     "nextPage": "Next",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "Tickets": {
     "list": {
@@ -143,7 +147,11 @@
       "newTicketToast": "New ticket: {subject}",
       "emptyTitle": "No tickets yet",
       "emptyHint": "Create the first one — we'll reply in the chat",
-      "pageOf": "{page} of {total}"
+      "pageOf": "{page} of {total}",
+      "anySeverity": "Any severity",
+      "filterBreached": "Breached",
+      "filterUnclaimed": "Unclaimed",
+      "unclaimedMark": "Unclaimed"
     },
     "create": {
       "title": "New ticket",
@@ -187,7 +195,18 @@
       "ratedLabel": "Customer rating",
       "reviewPlaceholder": "Comment (optional)",
       "rateSubmit": "Submit rating",
-      "rateSaved": "Thank you for your feedback!"
+      "rateSaved": "Thank you for your feedback!",
+      "claimed": "Ticket claimed",
+      "left": "You left the ticket",
+      "leave": "Leave",
+      "claimToWrite": "Claim the ticket to write",
+      "changeSeverity": "Change severity",
+      "severityChanged": "Severity updated",
+      "minShort": "min",
+      "noParticipants": "Nobody has claimed it",
+      "systemClaimed": "{name} joined the chat",
+      "systemLeft": "{name} left the chat",
+      "systemSeverityChanged": "{name} changed the severity"
     },
     "attachments": {
       "add": "Attach file",
@@ -203,7 +222,14 @@
       "ER402": "The category has changed. Pick it again",
       "ER405": "Add text or a file",
       "network": "No connection. Check your internet",
-      "generic": "Something went wrong. Please try again"
+      "generic": "Something went wrong. Please try again",
+      "ER408": "Claim the ticket first",
+      "ER409": "You are already a participant",
+      "ER412": "The ticket is closed — cannot claim"
+    },
+    "sla": {
+      "breached": "SLA breached",
+      "deadline": "SLA: {minutes} min"
     }
   },
   "Dashboard": {
@@ -502,7 +528,8 @@
       "in_progress": "In progress",
       "completed": "Completed",
       "missed": "Missed",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "completedLate": "Completed late"
     },
     "itemTypes": {
       "checkbox": "Checkbox",
@@ -541,7 +568,11 @@
       "saved": "Checklist saved",
       "genericError": "Something went wrong. Please try again",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "photoFreshness": "Photo freshness, minutes",
+      "photoFreshnessOff": "No check",
+      "photoFreshnessHint": "Anti-fraud: photos must be taken within the last N minutes (per EXIF) — older photos are rejected",
+      "freshnessInvalid": "Photo freshness: an integer from 1 to 1440 minutes"
     },
     "scheduleForm": {
       "createTitle": "New schedule",
@@ -562,7 +593,9 @@
       "saved": "Schedule saved",
       "genericError": "Something went wrong. Please try again",
       "cancel": "Cancel",
-      "save": "Save"
+      "save": "Save",
+      "allowLateLabel": "Allow completion after the deadline",
+      "allowLateHint": "An overdue checklist stays fillable; the result is marked “late”. Turn off for strict mode"
     },
     "positions": {
       "title": "Positions",
@@ -587,7 +620,8 @@
       "byTemplate": "By checklist",
       "byUser": "By employee",
       "label": "Name",
-      "empty": "No scheduled tasks in this period"
+      "empty": "No scheduled tasks in this period",
+      "completedLate": "Late"
     },
     "errors": {
       "generic": "Something went wrong. Please try again",
@@ -596,7 +630,31 @@
       "ER907": "The task is already completed or missed",
       "ER908": "The completion window has expired",
       "ER910": "Fill in the required items — they are highlighted",
-      "ER911": "Add photos to the highlighted items"
+      "ER911": "Add photos to the highlighted items",
+      "ER913": "The photo is too old — take a new one (no older than {minutes} min)"
+    },
+    "lateNotice": "The window has expired — you can still complete the checklist; it will be marked “completed late”",
+    "freshnessNotice": "Photos must be taken no more than {minutes} min ago"
+  },
+  "AdminSeverities": {
+    "title": "Severities",
+    "description": "Ticket severity dictionary and SLA limits",
+    "create": "New severity",
+    "editTitle": "Edit severity",
+    "formHint": "The SLA limit applies to claiming and the first reply; edits affect only new tickets",
+    "color": "Color",
+    "slaLabel": "SLA, minutes",
+    "makeDefault": "Default severity",
+    "default": "default",
+    "slaMinutes": "{minutes} min",
+    "slaHours": "{hours} h",
+    "validation": "Fill in the name (ru) and SLA in minutes",
+    "saved": "Severity saved",
+    "deleted": "Severity deleted",
+    "empty": "The dictionary is empty",
+    "errors": {
+      "ER411": "The severity is used by tickets/categories or is the default — cannot delete",
+      "generic": "Something went wrong. Please try again"
     }
   }
 }

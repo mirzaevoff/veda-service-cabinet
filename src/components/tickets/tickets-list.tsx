@@ -25,17 +25,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { TicketStatusBadge } from "./ticket-status-badge";
+import { SeverityBadge, SlaIndicator } from "./severity-badge";
 import { useTicketListEvents } from "@/hooks/use-ticket-socket";
 import type {
   LegalEntity,
   Page,
   Ticket,
   TicketCategory,
+  TicketSeverity,
   TicketStatus,
 } from "@/lib/api";
 import {
   SessionExpiredError,
   legalEntitiesApi,
+  severitiesApi,
   ticketsApi,
 } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -65,9 +68,12 @@ export function TicketsList() {
   const status = (searchParams.get("status") ?? "") as TicketStatus | "";
   const categoryId = searchParams.get("category") ?? "";
   const entityId = searchParams.get("entity") ?? "";
+  const severityId = searchParams.get("severity") ?? "";
+  const breached = searchParams.get("breached") === "1";
+  const unclaimed = searchParams.get("unclaimed") === "1";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
-  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${page}`;
+  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${page}`;
   const [data, setData] = useState<Page<Ticket> | null>(
     () => getCached<Page<Ticket>>(cacheKey) ?? null
   );
@@ -101,6 +107,11 @@ export function TicketsList() {
         categoryId: categoryId || undefined,
         legalEntityId: entityId || undefined,
         all: scope === "all" || undefined,
+        severityId: (scope === "all" && severityId) || undefined,
+        breached: (scope === "all" && breached) || undefined,
+        unclaimed: (scope === "all" && unclaimed) || undefined,
+        // Очередь суппорта: красные сверху, ближе дедлайн — выше
+        sort: scope === "all" ? "deadline:asc" : undefined,
       });
       // Страница опустела (фильтр/удаление) — откат на первую
       if (result.items.length === 0 && result.page > 1) {
@@ -116,7 +127,7 @@ export function TicketsList() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, status, categoryId, entityId, scope]);
+  }, [page, status, categoryId, entityId, scope, severityId, breached, unclaimed]);
 
   useEffect(() => {
     const cached = getCached<Page<Ticket>>(cacheKey);
@@ -148,6 +159,20 @@ export function TicketsList() {
       })
       .catch(() => {});
   }, [canListEntities]);
+
+  const [severities, setSeverities] = useState<TicketSeverity[]>(
+    () => getCached<TicketSeverity[]>("ticket-severities") ?? []
+  );
+  useEffect(() => {
+    if (!isStaff) return;
+    severitiesApi
+      .list()
+      .then((items) => {
+        setSeverities(items);
+        setCached("ticket-severities", items);
+      })
+      .catch(() => {});
+  }, [isStaff]);
 
   useTicketListEvents({
     onUpdated: (ticket) => {
@@ -282,6 +307,64 @@ export function TicketsList() {
           </Select>
         )}
 
+        {isStaff && scope === "all" && severities.length > 0 && (
+          <Select
+            value={severityId || "any"}
+            items={Object.fromEntries([
+              ["any", t("anySeverity")],
+              ...severities.map((s) => [s.id, pickLocalized(s.name, locale)]),
+            ])}
+            onValueChange={(v) =>
+              setParams({ severity: v === "any" ? null : (v as string), page: null })
+            }
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">{t("anySeverity")}</SelectItem>
+              {severities.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {pickLocalized(s.name, locale)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
+        {isStaff && scope === "all" && (
+          <>
+            <button
+              type="button"
+              onClick={() =>
+                setParams({ breached: breached ? null : "1", page: null })
+              }
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                breached
+                  ? "border-destructive bg-destructive/10 text-destructive"
+                  : "border-border text-muted-foreground hover:border-destructive/40"
+              )}
+            >
+              {t("filterBreached")}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setParams({ unclaimed: unclaimed ? null : "1", page: null })
+              }
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                unclaimed
+                  ? "border-primary bg-accent-light text-primary"
+                  : "border-border text-muted-foreground hover:border-primary/40"
+              )}
+            >
+              {t("filterUnclaimed")}
+            </button>
+          </>
+        )}
+
         <div className="ms-auto">
           <Link href="/tickets/new">
             <Button className="gap-2">
@@ -324,15 +407,28 @@ export function TicketsList() {
               <Card
                 className={cn(
                   "flex-row items-center gap-4 rounded-lg border-border p-4 transition-colors hover:border-primary/40",
-                  ticket.status === "closed" && "opacity-70"
+                  ticket.status === "closed" && "opacity-70",
+                  ticket.slaBreached &&
+                    ticket.status === "open" &&
+                    "border-destructive/50 bg-destructive/5"
                 )}
               >
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="truncate font-medium">
                       {ticket.subject}
                     </span>
                     <TicketStatusBadge status={ticket.status} />
+                    {ticket.severity && <SeverityBadge severity={ticket.severity} />}
+                    <SlaIndicator ticket={ticket} />
+                    {isStaff &&
+                      scope === "all" &&
+                      ticket.status === "open" &&
+                      (ticket.participants?.length ?? 0) === 0 && (
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          {t("unclaimedMark")}
+                        </span>
+                      )}
                   </div>
                   <span className="truncate text-sm text-muted-foreground">
                     {pickLocalized(ticket.category, locale)}

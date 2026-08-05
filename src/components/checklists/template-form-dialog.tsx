@@ -65,6 +65,8 @@ export function TemplateFormDialog({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [items, setItems] = useState<ItemDraft[]>([]);
+  /** Пустая строка — проверка свежести выключена */
+  const [photoFreshness, setPhotoFreshness] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,6 +75,9 @@ export function TemplateFormDialog({
       // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс формы при открытии
       setName(template?.name ?? "");
       setDescription(template?.description ?? "");
+      setPhotoFreshness(
+        template?.photoFreshnessMinutes ? String(template.photoFreshnessMinutes) : ""
+      );
       setItems(
         template
           ? template.items.map((item) => ({ ...item }))
@@ -106,6 +111,14 @@ export function TemplateFormDialog({
       setError(t("validation"));
       return;
     }
+    const freshness = photoFreshness.trim() ? Number(photoFreshness) : null;
+    if (
+      freshness !== null &&
+      (!Number.isInteger(freshness) || freshness < 1 || freshness > 1440)
+    ) {
+      setError(t("freshnessInvalid"));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -114,6 +127,7 @@ export function TemplateFormDialog({
           name: name.trim(),
           description: description.trim(),
           items: clean,
+          photoFreshnessMinutes: freshness,
         });
       } else {
         await checklistsApi.templates.create({
@@ -121,6 +135,7 @@ export function TemplateFormDialog({
           name: name.trim(),
           description: description.trim() || undefined,
           items: clean,
+          photoFreshnessMinutes: freshness,
         });
       }
       toast.success(t("saved"));
@@ -166,6 +181,29 @@ export function TemplateFormDialog({
               placeholder={t("descriptionPlaceholder")}
               onChange={(e) => setDescription(e.target.value)}
             />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="ct-freshness" className="text-sm font-medium text-muted-foreground">
+              {t("photoFreshness")}
+            </Label>
+            <div className="flex items-center gap-2">
+              <Camera className="size-4 shrink-0 text-muted-foreground" />
+              <Input
+                id="ct-freshness"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={1440}
+                value={photoFreshness}
+                placeholder={t("photoFreshnessOff")}
+                onChange={(e) => setPhotoFreshness(e.target.value)}
+                className="w-40 tabular-nums"
+              />
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {t("photoFreshnessHint")}
+            </span>
           </div>
 
           <div className="flex flex-col gap-2">

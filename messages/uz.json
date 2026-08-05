@@ -12,7 +12,8 @@
     "notificationsSend": "Xabarnoma",
     "main": "Asosiy",
     "legalEntities": "Yuridik shaxslar",
-    "checklists": "Cheklistlar"
+    "checklists": "Cheklistlar",
+    "severities": "Muhimliklar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -119,14 +120,17 @@
     "formHintLocalized": "Nomi uch tilda; bo'sh maydonlar ruscha variantni oladi",
     "nameLabel_ru": "Nomi (rus)",
     "nameLabel_uz": "Nomi (o'zb)",
-    "nameLabel_en": "Nomi (ing)"
+    "nameLabel_en": "Nomi (ing)",
+    "severityReset": "bekor qilish"
   },
   "Common": {
     "loadError": "Ma'lumotlarni yuklab bo'lmadi. Sahifani yangilang",
     "prevPage": "Orqaga",
     "nextPage": "Oldinga",
     "delete": "O'chirish",
-    "edit": "O'zgartirish"
+    "edit": "O'zgartirish",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash"
   },
   "Tickets": {
     "list": {
@@ -143,7 +147,11 @@
       "newTicketToast": "Yangi murojaat: {subject}",
       "emptyTitle": "Hozircha murojaatlar yo'q",
       "emptyHint": "Birinchisini yarating — chatda javob beramiz",
-      "pageOf": "{page} / {total}"
+      "pageOf": "{page} / {total}",
+      "anySeverity": "Istalgan muhimlik",
+      "filterBreached": "Muddati buzilgan",
+      "filterUnclaimed": "Olinmagan",
+      "unclaimedMark": "Olinmagan"
     },
     "create": {
       "title": "Yangi murojaat",
@@ -187,7 +195,18 @@
       "ratedLabel": "Mijoz bahosi",
       "reviewPlaceholder": "Izoh (ixtiyoriy)",
       "rateSubmit": "Bahoni yuborish",
-      "rateSaved": "Bahoyingiz uchun rahmat!"
+      "rateSaved": "Bahoyingiz uchun rahmat!",
+      "claimed": "Tiket ishga olindi",
+      "left": "Siz tiketdan chiqdingiz",
+      "leave": "Chiqish",
+      "claimToWrite": "Yozish uchun tiketni ishga oling",
+      "changeSeverity": "Muhimlikni o'zgartirish",
+      "severityChanged": "Muhimlik yangilandi",
+      "minShort": "daq",
+      "noParticipants": "Hech kim ishga olmagan",
+      "systemClaimed": "{name} chatga kirdi",
+      "systemLeft": "{name} chatdan chiqdi",
+      "systemSeverityChanged": "{name} muhimlikni o'zgartirdi"
     },
     "attachments": {
       "add": "Fayl biriktirish",
@@ -202,7 +221,14 @@
       "ER402": "Kategoriya o'zgardi. Qaytadan tanlang",
       "ER405": "Matn yoki fayl qo'shing",
       "network": "Aloqa yo'q. Internetni tekshiring",
-      "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
+      "generic": "Nimadir xato ketdi. Yana urinib ko'ring",
+      "ER408": "Avval tiketni ishga oling",
+      "ER409": "Siz allaqachon ishtirokchisiz",
+      "ER412": "Tiket yopilgan — ishga olib bo'lmaydi"
+    },
+    "sla": {
+      "breached": "SLA buzilgan",
+      "deadline": "SLA: {minutes} daqiqa"
     }
   },
   "Dashboard": {
@@ -501,7 +527,8 @@
       "in_progress": "Jarayonda",
       "completed": "Bajarilgan",
       "missed": "Muddati o'tgan",
-      "cancelled": "Bekor qilingan"
+      "cancelled": "Bekor qilingan",
+      "completedLate": "Kechikib bajarilgan"
     },
     "itemTypes": {
       "checkbox": "Belgi",
@@ -540,7 +567,11 @@
       "saved": "Cheklist saqlandi",
       "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
       "cancel": "Bekor qilish",
-      "save": "Saqlash"
+      "save": "Saqlash",
+      "photoFreshness": "Foto yangiligi, daqiqa",
+      "photoFreshnessOff": "Tekshiruvsiz",
+      "photoFreshnessHint": "Anti-frod: foto so'nggi N daqiqada olingan bo'lishi kerak (EXIF bo'yicha) — eski fotolar rad etiladi",
+      "freshnessInvalid": "Foto yangiligi: 1 dan 1440 gacha butun son"
     },
     "scheduleForm": {
       "createTitle": "Yangi jadval",
@@ -561,7 +592,9 @@
       "saved": "Jadval saqlandi",
       "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
       "cancel": "Bekor qilish",
-      "save": "Saqlash"
+      "save": "Saqlash",
+      "allowLateLabel": "Muddatdan keyin o'tishga ruxsat",
+      "allowLateHint": "Muddati o'tgan cheklist to'ldiriladigan bo'lib qoladi, natija «kechikkan» deb belgilanadi. Qat'iy rejim uchun o'chiring"
     },
     "positions": {
       "title": "Lavozimlar",
@@ -586,7 +619,8 @@
       "byTemplate": "Cheklistlar bo'yicha",
       "byUser": "Xodimlar bo'yicha",
       "label": "Nomi",
-      "empty": "Bu davrda jadval bo'yicha vazifalar bo'lmagan"
+      "empty": "Bu davrda jadval bo'yicha vazifalar bo'lmagan",
+      "completedLate": "Kechikkan"
     },
     "errors": {
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring",
@@ -595,7 +629,31 @@
       "ER907": "Vazifa allaqachon yakunlangan yoki muddati o'tgan",
       "ER908": "Bajarish oynasi tugadi",
       "ER910": "Majburiy bandlarni to'ldiring — ular ajratilgan",
-      "ER911": "Ajratilgan bandlarga foto qo'shing"
+      "ER911": "Ajratilgan bandlarga foto qo'shing",
+      "ER913": "Foto juda eski — yangisini oling ({minutes} daqiqadan eski emas)"
+    },
+    "lateNotice": "Muddat tugadi — cheklistni hali yakunlash mumkin, u «kechikib bajarilgan» deb belgilanadi",
+    "freshnessNotice": "Fotolar {minutes} daqiqadan eski bo'lmasligi kerak"
+  },
+  "AdminSeverities": {
+    "title": "Muhimliklar",
+    "description": "Tiket muhimliklari lug'ati va SLA limitlari",
+    "create": "Yangi muhimlik",
+    "editTitle": "Muhimlikni o'zgartirish",
+    "formHint": "SLA limiti ishga olish va birinchi javobga amal qiladi; tahrir faqat yangi tiketlarga ta'sir qiladi",
+    "color": "Rang",
+    "slaLabel": "SLA, daqiqa",
+    "makeDefault": "Standart muhimlik",
+    "default": "standart",
+    "slaMinutes": "{minutes} daqiqa",
+    "slaHours": "{hours} soat",
+    "validation": "Nomini (ru) va SLA daqiqalarini to'ldiring",
+    "saved": "Muhimlik saqlandi",
+    "deleted": "Muhimlik o'chirildi",
+    "empty": "Lug'at bo'sh",
+    "errors": {
+      "ER411": "Muhimlik tiketlar/kategoriyalarda ishlatilmoqda yoki standart — o'chirib bo'lmaydi",
+      "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
     }
   }
 }

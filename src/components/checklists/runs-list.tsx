@@ -73,7 +73,7 @@ function RunCard({ run, index }: { run: ChecklistRun; index: number }) {
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="flex flex-wrap items-center gap-2">
             <span className="truncate font-medium">{run.templateName}</span>
-            <RunStatusBadge status={run.status} />
+            <RunStatusBadge status={run.status} late={run.completedLate} />
             {run.origin === "manual" && (
               <span className="text-xs text-muted-foreground">
                 {t("manualRun")}

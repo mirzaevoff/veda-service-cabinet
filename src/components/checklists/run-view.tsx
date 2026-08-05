@@ -93,12 +93,15 @@ export function RunView({ runId }: { runId: string }) {
   }, [runId, router]);
 
   const isExecutor = !!user && !!run && run.userId === user.id;
+  const allowLate = run?.allowLateCompletion ?? true;
+  // missed при allowLateCompletion остаётся заполняемым («доделать не вовремя»)
   const editable =
     isExecutor &&
     !!run &&
-    (run.status === "pending" || run.status === "in_progress") &&
-    !expired &&
-    (remaining === null || remaining > 0);
+    (run.status === "pending" ||
+      run.status === "in_progress" ||
+      (run.status === "missed" && allowLate)) &&
+    (allowLate || (!expired && (remaining === null || remaining > 0)));
 
   const flush = useCallback(async () => {
     const dirty = [...dirtyRef.current];
@@ -120,7 +123,32 @@ export function RunView({ runId }: { runId: string }) {
         prev ? { ...prev, status: updated.status, startedAt: updated.startedAt } : prev
       );
     } catch (e) {
-      if (e instanceof ApiError && e.code === "ER908") {
+      if (e instanceof ApiError && e.code === "ER913") {
+        // Несвежие фото: сервер ничего не сохранил — ресинк ответов с сервера
+        const data = (e.data ?? {}) as { items?: string[]; maxAgeMinutes?: number };
+        toast.error(
+          t("errors.ER913", { minutes: data.maxAgeMinutes ?? 0 })
+        );
+        setViolations(new Set(data.items ?? []));
+        try {
+          const fresh = await checklistsApi.runs.get(runId);
+          const map = new Map<string, AnswerDraft>();
+          for (const a of fresh.answers) {
+            map.set(a.item, { value: a.value, photos: a.photos, comment: a.comment });
+          }
+          answersRef.current = map;
+          setAnswers(map);
+          setRun(fresh);
+        } catch {
+          // не смогли ресинкнуть — оставляем как есть
+        }
+        const first = (data.items ?? [])[0];
+        if (first) {
+          document
+            .getElementById(`run-item-${first}`)
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } else if (e instanceof ApiError && e.code === "ER908") {
         setExpired(true);
         toast.error(t("errors.ER908"));
       } else if (e instanceof ApiError && e.code === "ER907") {
@@ -261,7 +289,7 @@ export function RunView({ runId }: { runId: string }) {
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate font-semibold">{run.templateName}</h2>
-            <RunStatusBadge status={run.status} />
+            <RunStatusBadge status={run.status} late={run.completedLate} />
             {run.origin === "manual" && (
               <span className="text-xs text-muted-foreground">{t("manualRun")}</span>
             )}
@@ -291,9 +319,22 @@ export function RunView({ runId }: { runId: string }) {
         </div>
       </div>
 
-      {(expired || run.status === "missed") && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-          {t("expiredNotice")}
+      {(expired || run.status === "missed") &&
+        run.status !== "completed" &&
+        (allowLate && isExecutor ? (
+          <div className="rounded-lg border border-warning/40 bg-warning-light/40 px-4 py-3 text-sm text-warning">
+            {t("lateNotice")}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            {t("expiredNotice")}
+          </div>
+        ))}
+
+      {run.photoFreshnessMinutes !== null && editable && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Camera className="size-3.5" />
+          {t("freshnessNotice", { minutes: run.photoFreshnessMinutes })}
         </div>
       )}
 

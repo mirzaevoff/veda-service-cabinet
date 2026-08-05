@@ -23,10 +23,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { PageHeader } from "@/components/shell/page-header";
+import { SeverityBadge } from "@/components/tickets/severity-badge";
 import { CategoryFormDialog } from "./category-form-dialog";
 import { CategoryDeleteDialog } from "./category-delete-dialog";
-import type { TicketCategory } from "@/lib/api";
-import { adminApi, ticketsApi, SessionExpiredError } from "@/lib/api-authed";
+import type { TicketCategory, TicketSeverity } from "@/lib/api";
+import {
+  adminApi,
+  severitiesApi,
+  ticketsApi,
+  SessionExpiredError,
+} from "@/lib/api-authed";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { pickLocalized } from "@/lib/format";
@@ -51,7 +57,21 @@ export function CategoryTree() {
   const [editState, setEditState] = useState<CategoryEditState | null>(null);
   const [deleting, setDeleting] = useState<TicketCategory | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [severities, setSeverities] = useState<TicketSeverity[]>([]);
   const showSkeleton = useDelayed(!tree);
+
+  useEffect(() => {
+    severitiesApi.list().then(setSeverities).catch(() => {});
+  }, []);
+
+  async function setSeverity(category: TicketCategory, severityId: string | null) {
+    try {
+      await adminApi.categories.update(category.id, { severityId });
+      void load();
+    } catch {
+      toast.error(t("errors.generic"));
+    }
+  }
 
   const load = useCallback(async () => {
     try {
@@ -64,7 +84,6 @@ export function CategoryTree() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState после await
     void load();
   }, [load]);
 
@@ -154,12 +173,16 @@ export function CategoryTree() {
         )}
         <span
           className={cn(
-            "min-w-0 flex-1 truncate",
+            "flex min-w-0 flex-1 items-center gap-2 truncate",
             parent ? "text-sm" : "font-medium",
             !category.isActive && "text-muted-foreground"
           )}
         >
-          {pickLocalized(category.name, locale)}
+          <span className="truncate">{pickLocalized(category.name, locale)}</span>
+          {(() => {
+            const severity = severities.find((s) => s.id === category.severityId);
+            return severity ? <SeverityBadge severity={severity} /> : null;
+          })()}
         </span>
         {!parent && children.length > 0 && (
           <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground tabular-nums">
@@ -215,6 +238,28 @@ export function CategoryTree() {
                   {t("createSubcategory")}
                 </DropdownMenuItem>
               )}
+              {severities.map((severity) => (
+                <DropdownMenuItem
+                  key={severity.id}
+                  onClick={() =>
+                    setSeverity(
+                      category,
+                      category.severityId === severity.id ? null : severity.id
+                    )
+                  }
+                >
+                  <span
+                    className="size-2.5 rounded-full"
+                    style={{ backgroundColor: severity.color }}
+                  />
+                  {pickLocalized(severity.name, locale)}
+                  {category.severityId === severity.id && (
+                    <span className="ms-auto text-xs text-muted-foreground">
+                      {t("severityReset")}
+                    </span>
+                  )}
+                </DropdownMenuItem>
+              ))}
               <DropdownMenuItem
                 variant="destructive"
                 onClick={() => setDeleting(category)}

@@ -234,6 +234,7 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
         text: body.text ?? "",
         type: "user",
         systemEvent: null,
+        fromSupport: !!ticket && user.id !== ticket.author.id,
         attachments: [],
         createdAt: new Date().toISOString(),
         pending: true,
@@ -254,6 +255,9 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
           setTicket((prev) => (prev ? { ...prev, status: "closed" } : prev));
           toast.error(te("ER401"));
+        } else if (e instanceof ApiError && e.code === "ER408") {
+          setMessages((prev) => prev.filter((m) => m.id !== tempId));
+          toast.error(te("ER408"));
         } else {
           setMessages((prev) =>
             prev.map((m) =>
@@ -264,6 +268,7 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
         return false;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ticket нужен только для fromSupport в temp-сообщении
     [ticketId, user, te]
   );
 
@@ -300,8 +305,18 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
   }
 
   const isAuthor = user?.id === ticket.author.id;
+  const isParticipant = !!ticket.participants?.some(
+    (p) => p.user.id === user?.id
+  );
+  // Суппорт пишет только во взятые тикеты (ER408); автор — всегда в открытые
   const canWrite =
-    ticket.status === "open" && (isAuthor || can(PERMISSIONS.ticketsAnswer));
+    ticket.status === "open" &&
+    (isAuthor || (can(PERMISSIONS.ticketsAnswer) && isParticipant));
+  const needsClaim =
+    ticket.status === "open" &&
+    !isAuthor &&
+    can(PERMISSIONS.ticketsAnswer) &&
+    !isParticipant;
   const activeTypers = [...typers.values()].map((v) => v.name);
 
   // Группировка: дата-разделители и имя автора у первого сообщения группы
@@ -322,10 +337,17 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
       prevAuthor = "";
     }
     if (message.type === "system") {
+      const name = message.author.name;
       const label =
         message.systemEvent === "ticket_reopened"
-          ? t("systemReopened", { name: message.author.name })
-          : t("systemClosed", { name: message.author.name });
+          ? t("systemReopened", { name })
+          : message.systemEvent === "ticket_claimed"
+            ? t("systemClaimed", { name })
+            : message.systemEvent === "ticket_left"
+              ? t("systemLeft", { name })
+              : message.systemEvent === "ticket_severity_changed"
+                ? t("systemSeverityChanged", { name })
+                : t("systemClosed", { name });
       rows.push(
         <div
           key={message.id}
@@ -340,11 +362,8 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
       continue;
     }
     const own = message.author.id === user?.id;
-    const isStaffMessage = !own && message.author.id !== ticket.author.id;
-    const authorLabel =
-      isStaffMessage && isAuthor
-        ? t("supportAuthor", { name: message.author.name })
-        : message.author.name;
+    // Сервер сам анонимизирует поддержку для клиента (author.name = «Поддержка»)
+    const authorLabel = message.author.name;
     rows.push(
       <MessageBubble
         key={message.id}
@@ -398,6 +417,23 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
 
         {canWrite ? (
           <MessageComposer ticketId={ticketId} onSend={send} />
+        ) : needsClaim ? (
+          <div className="flex items-center justify-center gap-3 border-t border-border bg-secondary/50 px-4 py-3">
+            <span className="text-sm text-muted-foreground">
+              {t("claimToWrite")}
+            </span>
+            <Button
+              size="sm"
+              onClick={() =>
+                ticketsApi
+                  .claim(ticketId)
+                  .then(setTicket)
+                  .catch(() => toast.error(te("generic")))
+              }
+            >
+              {t("takeToWork")}
+            </Button>
+          </div>
         ) : (
           <div className="flex flex-col items-center gap-4 border-t border-border bg-secondary/50 px-4 py-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

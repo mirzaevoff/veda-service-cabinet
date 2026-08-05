@@ -65,6 +65,7 @@ export function ScheduleFormDialog({
   const [days, setDays] = useState<Set<number>>(new Set());
   const [times, setTimes] = useState<string[]>(["09:00"]);
   const [windowMinutes, setWindowMinutes] = useState("60");
+  const [allowLate, setAllowLate] = useState(true);
   const [assigneePositions, setAssigneePositions] = useState<Set<string>>(new Set());
   const [assigneeUsers, setAssigneeUsers] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
@@ -77,6 +78,7 @@ export function ScheduleFormDialog({
       setDays(new Set(schedule?.daysOfWeek ?? [1, 2, 3, 4, 5]));
       setTimes(schedule?.times ?? ["09:00"]);
       setWindowMinutes(String(schedule?.windowMinutes ?? 60));
+      setAllowLate(schedule?.allowLateCompletion ?? true);
       setAssigneePositions(new Set(schedule?.assigneePositions ?? []));
       setAssigneeUsers(new Set(schedule?.assigneeUsers ?? []));
       setError(null);
@@ -114,6 +116,7 @@ export function ScheduleFormDialog({
       daysOfWeek: [...days].sort(),
       times: cleanTimes,
       windowMinutes: win,
+      allowLateCompletion: allowLate,
       ...(entityId
         ? {
             assigneePositions: [...assigneePositions],
@@ -256,6 +259,20 @@ export function ScheduleFormDialog({
               className="w-28 tabular-nums"
             />
           </div>
+
+          <label className="flex cursor-pointer items-start gap-2.5">
+            <Checkbox
+              checked={allowLate}
+              onCheckedChange={(v) => setAllowLate(v === true)}
+              className="mt-0.5"
+            />
+            <span className="flex flex-col">
+              <span className="text-sm">{t("allowLateLabel")}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("allowLateHint")}
+              </span>
+            </span>
+          </label>
 
           {entityId && (
             <>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, WifiOff } from "lucide-react";
+import { ArrowLeft, ChevronDown, LogOut, UsersRound, WifiOff } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -16,14 +16,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { TicketStatusBadge } from "../ticket-status-badge";
+import { SeverityBadge, SlaIndicator } from "../severity-badge";
 import { useSocketConnected } from "@/hooks/use-ticket-socket";
-import type { Ticket } from "@/lib/api";
-import { ticketsApi } from "@/lib/api-authed";
+import type { Ticket, TicketSeverity } from "@/lib/api";
+import { ApiError } from "@/lib/api";
+import { severitiesApi, ticketsApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link } from "@/i18n/navigation";
-import { pickLocalized } from "@/lib/format";
+import { fullName, pickLocalized } from "@/lib/format";
+import { getCached, setCached } from "@/lib/list-cache";
 
 export function ChatHeader({
   ticket,
@@ -42,17 +51,80 @@ export function ChatHeader({
   const isAuthor = user?.id === ticket.author.id;
   const isManager = can(PERMISSIONS.ticketsManage);
   const isStaffViewer = can(PERMISSIONS.ticketsList);
+  const canAnswer = can(PERMISSIONS.ticketsAnswer);
+  const isParticipant = !!ticket.participants?.some(
+    (p) => p.user.id === user?.id
+  );
 
-  async function update(patch: { status?: "open" | "closed"; assigneeId?: string }) {
+  const [severities, setSeverities] = useState<TicketSeverity[]>(
+    () => getCached<TicketSeverity[]>("ticket-severities") ?? []
+  );
+  useEffect(() => {
+    if (!canAnswer) return;
+    severitiesApi
+      .list()
+      .then((items) => {
+        setSeverities(items);
+        setCached("ticket-severities", items);
+      })
+      .catch(() => {});
+  }, [canAnswer]);
+
+  async function update(patch: { status?: "open" | "closed" }) {
     setBusy(true);
     try {
       onUpdated(await ticketsApi.update(ticket.id, patch));
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER408") toast.error(te("ER408"));
+      else toast.error(te("generic"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function claim() {
+    setBusy(true);
+    try {
+      onUpdated(await ticketsApi.claim(ticket.id));
+      toast.success(t("claimed"));
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER412") toast.error(te("ER412"));
+      else if (e instanceof ApiError && e.code === "ER409")
+        toast.error(te("ER409"));
+      else toast.error(te("generic"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function unclaim() {
+    setBusy(true);
+    try {
+      onUpdated(await ticketsApi.unclaim(ticket.id));
+      toast.success(t("left"));
     } catch {
       toast.error(te("generic"));
     } finally {
       setBusy(false);
     }
   }
+
+  async function changeSeverity(severityId: string) {
+    if (severityId === ticket.severity?.id) return;
+    setBusy(true);
+    try {
+      onUpdated(await ticketsApi.setSeverity(ticket.id, severityId));
+      toast.success(t("severityChanged"));
+    } catch {
+      toast.error(te("generic"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const participantNames = (ticket.participants ?? [])
+    .map((p) => fullName(p.user))
+    .join(", ");
 
   return (
     <div className="flex flex-col gap-2 border-b border-border bg-background px-3 py-3 sm:px-4">
@@ -63,9 +135,45 @@ export function ChatHeader({
           </Button>
         </Link>
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate font-semibold">{ticket.subject}</h2>
             <TicketStatusBadge status={ticket.status} />
+            {ticket.severity &&
+              (canAnswer && severities.length > 0 ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <button
+                        type="button"
+                        disabled={busy}
+                        className="flex items-center gap-0.5"
+                        aria-label={t("changeSeverity")}
+                      >
+                        <SeverityBadge severity={ticket.severity} />
+                        <ChevronDown className="size-3 text-muted-foreground" />
+                      </button>
+                    }
+                  />
+                  <DropdownMenuContent align="start">
+                    {severities.map((severity) => (
+                      <DropdownMenuItem
+                        key={severity.id}
+                        onClick={() => changeSeverity(severity.id)}
+                      >
+                        <span style={{ color: severity.color }}>
+                          {pickLocalized(severity.name, locale)}
+                        </span>
+                        <span className="ms-auto ps-3 text-xs text-muted-foreground">
+                          {severity.slaMinutes} {t("minShort")}
+                        </span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <SeverityBadge severity={ticket.severity} />
+              ))}
+            <SlaIndicator ticket={ticket} />
             {!connected && (
               <span className="flex items-center gap-1 text-xs text-warning">
                 <WifiOff className="size-3.5" />
@@ -83,23 +191,34 @@ export function ChatHeader({
                   : ticket.legalEntity.name
               }`}
             {isStaffViewer && !isAuthor && ` · ${ticket.author.name} ${ticket.author.phone}`}
-            {ticket.assignee &&
-              ` · ${t("assignee", { name: ticket.assignee.name })}`}
           </span>
+          {isStaffViewer && (
+            <span className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+              <UsersRound className="size-3" />
+              {participantNames || t("noParticipants")}
+            </span>
+          )}
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {isManager && ticket.status === "open" && !ticket.assignee && (
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={busy}
-              onClick={() => update({ assigneeId: user!.id })}
-            >
+          {canAnswer && !isAuthor && ticket.status === "open" && !isParticipant && (
+            <Button variant="outline" size="sm" disabled={busy} onClick={claim}>
               {t("takeToWork")}
             </Button>
           )}
-          {isManager && ticket.status === "closed" && (
+          {canAnswer && isParticipant && ticket.status === "open" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={busy}
+              onClick={unclaim}
+              className="gap-1.5 text-muted-foreground"
+            >
+              <LogOut className="size-4" />
+              {t("leave")}
+            </Button>
+          )}
+          {(isManager || isParticipant) && ticket.status === "closed" && (
             <Button
               variant="outline"
               size="sm"
@@ -109,7 +228,7 @@ export function ChatHeader({
               {t("reopen")}
             </Button>
           )}
-          {(isAuthor || isManager) && ticket.status === "open" && (
+          {(isAuthor || isParticipant || isManager) && ticket.status === "open" && (
             <AlertDialog>
               <AlertDialogTrigger
                 render={

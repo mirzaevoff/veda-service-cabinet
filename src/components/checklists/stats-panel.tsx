@@ -40,6 +40,7 @@ function BucketTable({
               <TableHead>{t("label")}</TableHead>
               <TableHead className="text-right">{t("generated")}</TableHead>
               <TableHead className="text-right">{t("completed")}</TableHead>
+              <TableHead className="text-right">{t("completedLate")}</TableHead>
               <TableHead className="text-right">{t("missed")}</TableHead>
               <TableHead className="text-right">{t("onTime")}</TableHead>
             </TableRow>
@@ -55,6 +56,9 @@ function BucketTable({
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
                   {bucket.completed}
+                </TableCell>
+                <TableCell className="text-right text-warning tabular-nums">
+                  {bucket.completedLate}
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
                   {bucket.missed}
@@ -124,11 +128,12 @@ export function StatsPanel({ entityId }: { entityId: string }) {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
             {(
               [
                 ["generated", totals!.generated, ""],
                 ["completed", totals!.completed, "text-success"],
+                ["completedLate", totals!.completedLate, "text-warning"],
                 ["missed", totals!.missed, "text-destructive"],
                 ["onTime", `${totals!.onTimePct}%`, pctClass(totals!.onTimePct)],
               ] as const

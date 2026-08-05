@@ -166,6 +166,22 @@ export interface TicketLegalEntity {
   taxId: string;
 }
 
+/** Важность тикета (справочник, staff-only) */
+export interface TicketSeverity {
+  id: string;
+  name: LocalizedString;
+  /** #RRGGBB для бейджа */
+  color: string;
+  slaMinutes: number;
+  order: number;
+  isDefault: boolean;
+}
+
+export interface TicketParticipant {
+  user: TicketAuthor;
+  joinedAt: string;
+}
+
 export interface Ticket {
   id: string;
   subject: string;
@@ -174,6 +190,7 @@ export interface Ticket {
   subcategory: LocalizedString | null;
   legalEntity: TicketLegalEntity | null;
   status: TicketStatus;
+  /** Для клиента всегда null (анонимность поддержки) */
   assignee: TicketAuthor | null;
   /** Оценка автора после закрытия (1-5), null — не оценён */
   rating: number | null;
@@ -182,6 +199,19 @@ export interface Ticket {
   createdAt: string;
   /** Непрочитанные сообщения для текущего пользователя */
   unreadCount?: number;
+  // --- Staff-only (отсутствуют в клиентской проекции) ---
+  severity?: Pick<TicketSeverity, "id" | "name" | "color" | "slaMinutes"> | null;
+  /** Дедлайн взятия И первого ответа; null — вне SLA (легаси/переоткрытые) */
+  slaDeadline?: string | null;
+  /** Красная метка — не снимается */
+  slaBreached?: boolean;
+  slaClaimBreachedAt?: string | null;
+  slaResponseBreachedAt?: string | null;
+  /** Первое взятие в работу */
+  claimedAt?: string | null;
+  firstSupportReplyAt?: string | null;
+  /** Кто сейчас в чате (staff) */
+  participants?: TicketParticipant[];
 }
 
 export type TicketMessageType = "user" | "system";
@@ -189,12 +219,22 @@ export type TicketMessageType = "user" | "system";
 export interface TicketMessage {
   id: string;
   ticketId: string;
+  /** Для клиента у сообщений поддержки — {id: "support", name: "Поддержка"} */
   author: TicketAuthor;
   text: string;
   /** system — сгенерировано сервером (смена статуса) */
   type: TicketMessageType;
-  /** Для type=system: ticket_closed | ticket_reopened; author — кто, createdAt — когда */
+  /**
+   * Для type=system: ticket_closed | ticket_reopened | ticket_claimed |
+   * ticket_left | ticket_severity_changed; author — кто, createdAt — когда
+   */
   systemEvent: string | null;
+  /** Сообщение от поддержки (для клиента author анонимен) */
+  fromSupport: boolean;
+  /** Staff-only: невидимо клиенту (аудит claim/leave/severity) */
+  staffOnly?: boolean;
+  /** Staff-only: payload события (например, {from, to} у смены важности) */
+  meta?: Record<string, unknown> | null;
   attachments: FileAttachment[];
   createdAt: string;
 }
@@ -221,6 +261,8 @@ export interface TicketCategory {
   name: LocalizedString;
   isActive: boolean;
   order: number;
+  /** Важность по умолчанию для тикетов категории (staff-only в дереве) */
+  severityId?: string | null;
   /** Только у корневых */
   children: TicketCategory[];
 }
@@ -349,6 +391,8 @@ export interface ChecklistTemplate {
   description: string;
   items: ChecklistItem[];
   version: number;
+  /** Анти-фрод: фото должно быть снято за последние N минут; null — выкл */
+  photoFreshnessMinutes: number | null;
   archived: boolean;
   createdAt: string;
 }
@@ -363,6 +407,8 @@ export interface ChecklistSchedule {
   /** Местное время Ташкента, HH:mm */
   times: string[];
   windowMinutes: number;
+  /** Можно проходить после срока (default true) — результат пометится «не вовремя» */
+  allowLateCompletion: boolean;
   assigneeUsers: string[];
   assigneePositions: string[];
   /** UTC-момент следующего слота */
@@ -400,6 +446,12 @@ export interface ChecklistRun {
   scheduledAt: string;
   /** null — ручной запуск, без дедлайна */
   expiresAt: string | null;
+  /** Свежесть фото в минутах; null — без проверки */
+  photoFreshnessMinutes: number | null;
+  /** Можно завершать после срока (унаследовано от расписания) */
+  allowLateCompletion: boolean;
+  /** Завершён после истечения окна («не вовремя») */
+  completedLate: boolean;
   startedAt: string | null;
   completedAt: string | null;
   /** Снапшот пунктов на момент создания задания */
@@ -411,7 +463,10 @@ export interface ChecklistStatsBucket {
   id: string;
   label: string;
   generated: number;
+  /** Вовремя */
   completed: number;
+  /** После срока */
+  completedLate: number;
   missed: number;
   onTimePct: number;
 }
@@ -420,6 +475,7 @@ export interface ChecklistStats {
   totals: {
     generated: number;
     completed: number;
+    completedLate: number;
     missed: number;
     onTimePct: number;
   };
