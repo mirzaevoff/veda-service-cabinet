@@ -67,12 +67,15 @@ function fromEntity(entity: LegalEntity): FormState {
 export function EntityFormDialog({
   open,
   entity,
+  initialTaxId,
   onClose,
   onSaved,
 }: {
   open: boolean;
   /** null — создание */
   entity: LegalEntity | null;
+  /** Предзаполнить ИНН при создании (например, из запроса доступа) */
+  initialTaxId?: string;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -87,10 +90,14 @@ export function EntityFormDialog({
   useEffect(() => {
     if (open) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс формы при открытии
-      setForm(entity ? fromEntity(entity) : EMPTY);
+      setForm(
+        entity
+          ? fromEntity(entity)
+          : { ...EMPTY, taxId: initialTaxId ?? "" }
+      );
       setError(null);
     }
-  }, [open, entity]);
+  }, [open, entity, initialTaxId]);
 
   const taxIdValid = /^(\d{9}|\d{14})$/.test(form.taxId);
 

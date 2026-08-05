@@ -1,7 +1,11 @@
 import {
   ApiError,
   request,
+  type AccessRequest,
+  type AccessRequestStatus,
   type AuthSession,
+  type EntityInvite,
+  type EntityMemberRole,
   type LegalEntity,
   type LegalEntityLookup,
   type NotificationsPage,
@@ -238,14 +242,63 @@ export const legalEntitiesApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/legal-entities/${id}`, { method: "DELETE" }),
-  grantAccess: (id: string, userId: string) =>
+  grantAccess: (id: string, userId: string, role?: EntityMemberRole) =>
     authedRequest<LegalEntity>(`/legal-entities/${id}/users`, {
       method: "POST",
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ userId, role }),
+    }),
+  updateMemberRole: (id: string, userId: string, role: EntityMemberRole) =>
+    authedRequest<LegalEntity>(`/legal-entities/${id}/users/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
     }),
   revokeAccess: (id: string, userId: string) =>
     authedRequest<void>(`/legal-entities/${id}/users/${userId}`, {
       method: "DELETE",
+    }),
+  invites: (id: string) =>
+    authedRequest<EntityInvite[]>(`/legal-entities/${id}/invites`),
+  invite: (id: string, body: { phone: string; role?: EntityMemberRole }) =>
+    authedRequest<{ result: "added" | "invited" }>(
+      `/legal-entities/${id}/invites`,
+      { method: "POST", body: JSON.stringify(body) }
+    ),
+  revokeInvite: (id: string, inviteId: string) =>
+    authedRequest<void>(`/legal-entities/${id}/invites/${inviteId}`, {
+      method: "DELETE",
+    }),
+};
+
+export const accessRequestsApi = {
+  create: (body: { taxId: string; comment?: string }) =>
+    authedRequest<AccessRequest>("/access-requests", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  my: (params: { page?: number; limit?: number; status?: AccessRequestStatus } = {}) =>
+    authedRequest<Page<AccessRequest>>(
+      `/access-requests/my${query({ ...params })}`
+    ),
+  cancel: (id: string) =>
+    authedRequest<void>(`/access-requests/${id}`, { method: "DELETE" }),
+  /** Входящие: owner — свои ЮЛ, ТП — все (+unassigned для неизвестных ИНН) */
+  incoming: (
+    params: {
+      page?: number;
+      limit?: number;
+      status?: AccessRequestStatus;
+      unassigned?: boolean;
+    } = {}
+  ) => authedRequest<Page<AccessRequest>>(`/access-requests${query({ ...params })}`),
+  approve: (id: string, role?: EntityMemberRole) =>
+    authedRequest<AccessRequest>(`/access-requests/${id}/approve`, {
+      method: "POST",
+      body: JSON.stringify(role ? { role } : {}),
+    }),
+  reject: (id: string, reason?: string) =>
+    authedRequest<AccessRequest>(`/access-requests/${id}/reject`, {
+      method: "POST",
+      body: JSON.stringify(reason ? { reason } : {}),
     }),
 };
 

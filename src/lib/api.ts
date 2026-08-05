@@ -231,11 +231,51 @@ export interface LegalEntityDirector {
   middleName: string;
 }
 
-export interface LegalEntityUser {
+/** Роль членства внутри ЮЛ: owner управляет доступами, member — просто доступ */
+export type EntityMemberRole = "owner" | "member";
+
+export interface LegalEntityMember {
   id: string;
   name: string;
   lastName: string;
   phone: string;
+  role: EntityMemberRole;
+}
+
+export interface EntityInvite {
+  id: string;
+  phone: string;
+  role: EntityMemberRole;
+  createdAt: string;
+}
+
+export type AccessRequestStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "cancelled";
+
+export interface AccessRequestUser {
+  id: string;
+  name: string;
+  lastName: string;
+  phone: string;
+}
+
+export interface AccessRequest {
+  id: string;
+  taxId: string;
+  /** id ЮЛ, если оно уже есть в системе */
+  entityId: string | null;
+  /** Пустая строка — ЮЛ ещё не заведено (запрос ушёл ТП) */
+  entityName: string;
+  comment: string;
+  status: AccessRequestStatus;
+  rejectReason: string;
+  createdAt: string;
+  decidedAt: string | null;
+  /** Автор запроса — только во входящем списке (у owner'ов/ТП) */
+  user?: AccessRequestUser;
 }
 
 export interface LegalEntity {
@@ -251,8 +291,8 @@ export interface LegalEntity {
   address: string;
   director: LegalEntityDirector | null;
   registrationDate: string | null;
-  /** Только для staff в GET /legal-entities/:id */
-  users?: LegalEntityUser[];
+  /** Только для staff и owner'ов в GET /legal-entities/:id */
+  members?: LegalEntityMember[];
   createdAt: string;
 }
 

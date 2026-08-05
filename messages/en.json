@@ -376,6 +376,75 @@
       "generic": "Something went wrong. Please try again"
     },
     "establishment": "Establishment",
-    "establishmentPlaceholder": "E.g. Grandma's Restaurant"
+    "establishmentPlaceholder": "E.g. Grandma's Restaurant",
+    "access": {
+      "heroTitle": "Request access to your organization",
+      "heroHint": "Enter your organization's TIN — a manager or support will approve the request and it will appear in your cabinet",
+      "moreTitle": "Access request",
+      "moreHint": "Need another organization? Send a request by TIN",
+      "taxIdLabel": "TIN / PINFL",
+      "taxIdHint": "9 digits (TIN) or 14 (PINFL)",
+      "taxIdFormat": "Check the number — 9 digits (TIN) or 14 (PINFL)",
+      "commentLabel": "Comment",
+      "commentPlaceholder": "E.g.: I manage the branch",
+      "request": "Request access",
+      "requested": "Request for TIN {taxId} sent",
+      "requestedNamed": "You requested access to {name}",
+      "requestedAt": "Sent {time}",
+      "unknownEntity": "TIN {taxId}",
+      "cancel": "Cancel request",
+      "cancelled": "Request cancelled",
+      "rejectedReason": "Reason: {reason}",
+      "status": {
+        "pending": "Pending",
+        "approved": "Access granted",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled by you"
+      },
+      "incomingTitle": "Incoming requests",
+      "incomingEmpty": "No new requests",
+      "unassignedOnly": "Unassigned",
+      "approve": "Approve",
+      "approveAsMember": "As member",
+      "approveAsOwner": "As owner",
+      "approved": "Access granted",
+      "reject": "Reject",
+      "rejected": "Request rejected",
+      "rejectTitle": "Reject the request?",
+      "rejectReasonPlaceholder": "Reason (visible to the user)",
+      "errors": {
+        "ER801": "There is already a pending request for this TIN",
+        "ER802": "Too many active requests — wait for a decision",
+        "ER803": "Request already decided",
+        "ER804": "No organization with this TIN yet — create it and the request will be approved",
+        "ER805": "You already have access to this organization",
+        "generic": "Something went wrong. Please try again"
+      }
+    },
+    "members": {
+      "title": "Members",
+      "manage": "Members",
+      "empty": "Nobody yet",
+      "owner": "Owner",
+      "member": "Member",
+      "makeOwner": "Make owner",
+      "makeMember": "Make member",
+      "changeRole": "Change role",
+      "roleChanged": "Role updated",
+      "remove": "Remove access",
+      "removed": "Access revoked",
+      "invite": "Invite",
+      "invalidPhone": "Check the number — format +998 XX XXX XX XX",
+      "inviteAdded": "Access granted — the user has been notified",
+      "inviteSent": "Invite created: access will be granted automatically after sign-up",
+      "pendingInvites": "Awaiting sign-up",
+      "inviteHint": "Access will be granted automatically after sign-up",
+      "revokeInvite": "Revoke invite",
+      "errors": {
+        "ER805": "The user is already a member of this organization",
+        "ER806": "An invite for this number already exists",
+        "generic": "Something went wrong. Please try again"
+      }
+    }
   }
 }

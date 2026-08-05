@@ -375,6 +375,75 @@
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
     },
     "establishment": "Muassasa",
-    "establishmentPlaceholder": "Masalan, «Buvinikida» restorani"
+    "establishmentPlaceholder": "Masalan, «Buvinikida» restorani",
+    "access": {
+      "heroTitle": "Tashkilotingizga kirish so'rang",
+      "heroHint": "Tashkilotingiz STIRini kiriting — boshqaruvchi yoki qo'llab-quvvatlash so'rovni tasdiqlaydi va u kabinetda paydo bo'ladi",
+      "moreTitle": "Kirish so'rovi",
+      "moreHint": "Yana bir tashkilot kerakmi? STIR bo'yicha so'rov yuboring",
+      "taxIdLabel": "STIR / PINFL",
+      "taxIdHint": "9 raqam (STIR) yoki 14 (PINFL)",
+      "taxIdFormat": "Raqamni tekshiring — 9 raqam (STIR) yoki 14 (PINFL)",
+      "commentLabel": "Izoh",
+      "commentPlaceholder": "Masalan: men filial boshqaruvchisiman",
+      "request": "Kirish so'rash",
+      "requested": "STIR {taxId} bo'yicha so'rov yuborildi",
+      "requestedNamed": "Siz {name}ga kirish so'radingiz",
+      "requestedAt": "{time} yuborilgan",
+      "unknownEntity": "STIR {taxId}",
+      "cancel": "So'rovni bekor qilish",
+      "cancelled": "So'rov bekor qilindi",
+      "rejectedReason": "Sabab: {reason}",
+      "status": {
+        "pending": "Ko'rib chiqilmoqda",
+        "approved": "Kirish berildi",
+        "rejected": "Rad etildi",
+        "cancelled": "Siz bekor qildingiz"
+      },
+      "incomingTitle": "Kiruvchi so'rovlar",
+      "incomingEmpty": "Yangi so'rovlar yo'q",
+      "unassignedOnly": "Tashkilotsiz",
+      "approve": "Tasdiqlash",
+      "approveAsMember": "Ishtirokchi sifatida",
+      "approveAsOwner": "Boshqaruvchi sifatida",
+      "approved": "Kirish berildi",
+      "reject": "Rad etish",
+      "rejected": "So'rov rad etildi",
+      "rejectTitle": "So'rov rad etilsinmi?",
+      "rejectReasonPlaceholder": "Sabab (foydalanuvchi ko'radi)",
+      "errors": {
+        "ER801": "Bu STIR bo'yicha ko'rib chiqilayotgan so'rov allaqachon bor",
+        "ER802": "Faol so'rovlar juda ko'p — qaror kutib turing",
+        "ER803": "So'rov allaqachon hal qilingan",
+        "ER804": "Bunday STIRli tashkilot hali yo'q — uni yarating, so'rov tasdiqlanadi",
+        "ER805": "Sizda bu tashkilotga kirish allaqachon bor",
+        "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+      }
+    },
+    "members": {
+      "title": "Ishtirokchilar",
+      "manage": "Ishtirokchilar",
+      "empty": "Hozircha hech kim yo'q",
+      "owner": "Boshqaruvchi",
+      "member": "Ishtirokchi",
+      "makeOwner": "Boshqaruvchi qilish",
+      "makeMember": "Ishtirokchi qilish",
+      "changeRole": "Rolni o'zgartirish",
+      "roleChanged": "Rol yangilandi",
+      "remove": "Kirishni olib tashlash",
+      "removed": "Kirish bekor qilindi",
+      "invite": "Taklif qilish",
+      "invalidPhone": "Raqamni tekshiring — format +998 XX XXX XX XX",
+      "inviteAdded": "Kirish berildi — foydalanuvchi xabardor qilindi",
+      "inviteSent": "Taklif yaratildi: ro'yxatdan o'tgach kirish avtomatik beriladi",
+      "pendingInvites": "Ro'yxatdan o'tish kutilmoqda",
+      "inviteHint": "Ro'yxatdan o'tgach kirish avtomatik beriladi",
+      "revokeInvite": "Taklifni bekor qilish",
+      "errors": {
+        "ER805": "Foydalanuvchi allaqachon bu tashkilot ishtirokchisi",
+        "ER806": "Bu raqamga taklif allaqachon mavjud",
+        "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+      }
+    }
   }
 }
