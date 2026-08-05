@@ -2,6 +2,7 @@ import {
   Building2,
   FolderTree,
   LayoutDashboard,
+  ListChecks,
   Megaphone,
   ShieldCheck,
   Ticket,
@@ -33,6 +34,7 @@ export const NAV_SECTIONS: NavSection[] = [
     key: "main",
     items: [
       { key: "legalEntities", href: "/legal-entities", icon: Building2 },
+      { key: "checklists", href: "/checklists", icon: ListChecks },
       { key: "tickets", href: "/tickets", icon: Ticket },
     ],
   },

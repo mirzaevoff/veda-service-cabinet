@@ -240,6 +240,8 @@ export interface LegalEntityMember {
   lastName: string;
   phone: string;
   role: EntityMemberRole;
+  /** id должностей участника (модуль чеклистов) */
+  positions: string[];
 }
 
 export interface EntityInvite {
@@ -305,6 +307,124 @@ export interface LegalEntityLookup {
   address: string;
   director: LegalEntityDirector | null;
   registrationDate: string | null;
+}
+
+// --- Чеклисты (API 0.17) ---------------------------------------------------
+
+export interface Position {
+  id: string;
+  title: string;
+  archived: boolean;
+  createdAt: string;
+}
+
+export type ChecklistItemType = "checkbox" | "text" | "number" | "scale" | "photo";
+
+export interface ChecklistItem {
+  id: string;
+  type: ChecklistItemType;
+  title: string;
+  /** Нельзя завершить без ответа */
+  required: boolean;
+  /** Нужно ≥1 фото */
+  requirePhoto: boolean;
+}
+
+/** Пункт при создании/правке: у существующих передавать id, чтобы история осталась связана */
+export interface ChecklistItemInput {
+  id?: string;
+  type: ChecklistItemType;
+  title: string;
+  required?: boolean;
+  requirePhoto?: boolean;
+}
+
+export type ChecklistKind = "entity" | "personal";
+
+export interface ChecklistTemplate {
+  id: string;
+  kind: ChecklistKind;
+  entityId: string | null;
+  name: string;
+  description: string;
+  items: ChecklistItem[];
+  version: number;
+  archived: boolean;
+  createdAt: string;
+}
+
+export interface ChecklistSchedule {
+  id: string;
+  templateId: string;
+  entityId: string | null;
+  enabled: boolean;
+  /** 0=Вс … 6=Сб */
+  daysOfWeek: number[];
+  /** Местное время Ташкента, HH:mm */
+  times: string[];
+  windowMinutes: number;
+  assigneeUsers: string[];
+  assigneePositions: string[];
+  /** UTC-момент следующего слота */
+  nextRunAt: string;
+  createdAt: string;
+}
+
+export type ChecklistRunStatus =
+  | "pending"
+  | "in_progress"
+  | "completed"
+  | "missed"
+  | "cancelled";
+
+export type ChecklistRunOrigin = "scheduled" | "manual";
+
+export interface ChecklistAnswer {
+  /** id пункта из items */
+  item: string;
+  value: boolean | string | number | null;
+  /** file id — показ через /api/files/{id} */
+  photos: string[];
+  comment: string;
+}
+
+export interface ChecklistRun {
+  id: string;
+  entityId: string | null;
+  templateId: string;
+  templateVersion: number;
+  templateName: string;
+  userId: string;
+  origin: ChecklistRunOrigin;
+  status: ChecklistRunStatus;
+  scheduledAt: string;
+  /** null — ручной запуск, без дедлайна */
+  expiresAt: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  /** Снапшот пунктов на момент создания задания */
+  items: ChecklistItem[];
+  answers: ChecklistAnswer[];
+}
+
+export interface ChecklistStatsBucket {
+  id: string;
+  label: string;
+  generated: number;
+  completed: number;
+  missed: number;
+  onTimePct: number;
+}
+
+export interface ChecklistStats {
+  totals: {
+    generated: number;
+    completed: number;
+    missed: number;
+    onTimePct: number;
+  };
+  byTemplate: ChecklistStatsBucket[];
+  byUser: ChecklistStatsBucket[];
 }
 
 export const api = {

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, MailPlus, X } from "lucide-react";
+import { BriefcaseBusiness, ChevronDown, MailPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,10 @@ import type {
   EntityInvite,
   EntityMemberRole,
   LegalEntityMember,
+  Position,
 } from "@/lib/api";
 import { ApiError } from "@/lib/api";
-import { legalEntitiesApi } from "@/lib/api-authed";
+import { checklistsApi, legalEntitiesApi } from "@/lib/api-authed";
 import { fullName } from "@/lib/format";
 
 function RoleBadge({ role }: { role: EntityMemberRole }) {
@@ -58,6 +59,7 @@ export function MembersManager({
   const { user } = useCurrentUser();
 
   const [invites, setInvites] = useState<EntityInvite[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [digits, setDigits] = useState("");
   const [inviteRole, setInviteRole] = useState<EntityMemberRole>("member");
   const [busy, setBusy] = useState(false);
@@ -68,9 +70,28 @@ export function MembersManager({
       .invites(entityId)
       .then(setInvites)
       .catch(() => setInvites([]));
+    checklistsApi.positions
+      .list(entityId)
+      .then((list) => setPositions(list.filter((p) => !p.archived)))
+      .catch(() => setPositions([]));
   }, [entityId]);
 
   useEffect(reloadInvites, [reloadInvites]);
+
+  async function togglePosition(member: LegalEntityMember, positionId: string) {
+    const next = member.positions.includes(positionId)
+      ? member.positions.filter((id) => id !== positionId)
+      : [...member.positions, positionId];
+    setBusy(true);
+    try {
+      await checklistsApi.positions.setMemberPositions(entityId, member.id, next);
+      onChanged();
+    } catch {
+      toast.error(t("errors.generic"));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function invite() {
     if (digits.length !== 9) {
@@ -164,8 +185,53 @@ export function MembersManager({
                 </span>
                 <span className="text-xs text-muted-foreground tabular-nums">
                   {member.phone}
+                  {member.positions.length > 0 && (
+                    <>
+                      {" · "}
+                      {member.positions
+                        .map((id) => positions.find((p) => p.id === id)?.title)
+                        .filter(Boolean)
+                        .join(", ")}
+                    </>
+                  )}
                 </span>
               </div>
+              {positions.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        disabled={busy}
+                        aria-label={t("positionsLabel")}
+                        className="text-muted-foreground"
+                      >
+                        <BriefcaseBusiness className="size-4" />
+                      </Button>
+                    }
+                  />
+                  <DropdownMenuContent align="end">
+                    {positions.map((position) => (
+                      <DropdownMenuItem
+                        key={position.id}
+                        closeOnClick={false}
+                        onClick={() => togglePosition(member, position.id)}
+                      >
+                        <span
+                          className={
+                            member.positions.includes(position.id)
+                              ? "font-medium text-primary"
+                              : undefined
+                          }
+                        >
+                          {position.title}
+                        </span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               {member.id !== user?.id && (
                 <div className="flex shrink-0 items-center gap-1">
                   <DropdownMenu>

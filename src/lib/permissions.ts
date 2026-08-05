@@ -12,6 +12,7 @@ export const PERMISSIONS = {
   notificationsSend: "notifications.send",
   legalEntitiesList: "legalEntities.list",
   legalEntitiesManage: "legalEntities.manage",
+  checklistsManage: "checklists.manage",
 } as const;
 
 export function can(

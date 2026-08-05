@@ -4,10 +4,17 @@ import {
   type AccessRequest,
   type AccessRequestStatus,
   type AuthSession,
+  type ChecklistItemInput,
+  type ChecklistRun,
+  type ChecklistRunStatus,
+  type ChecklistSchedule,
+  type ChecklistStats,
+  type ChecklistTemplate,
   type EntityInvite,
   type EntityMemberRole,
   type LegalEntity,
   type LegalEntityLookup,
+  type Position,
   type NotificationsPage,
   type Page,
   type PermissionDef,
@@ -267,6 +274,151 @@ export const legalEntitiesApi = {
     authedRequest<void>(`/legal-entities/${id}/invites/${inviteId}`, {
       method: "DELETE",
     }),
+};
+
+export const checklistsApi = {
+  positions: {
+    list: (entityId: string) =>
+      authedRequest<Position[]>(`/legal-entities/${entityId}/positions`),
+    create: (entityId: string, title: string) =>
+      authedRequest<Position>(`/legal-entities/${entityId}/positions`, {
+        method: "POST",
+        body: JSON.stringify({ title }),
+      }),
+    update: (id: string, title: string) =>
+      authedRequest<Position>(`/positions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ title }),
+      }),
+    archive: (id: string) =>
+      authedRequest<void>(`/positions/${id}`, { method: "DELETE" }),
+    setMemberPositions: (entityId: string, userId: string, positions: string[]) =>
+      authedRequest<void>(
+        `/legal-entities/${entityId}/members/${userId}/positions`,
+        { method: "PUT", body: JSON.stringify({ positions }) }
+      ),
+  },
+
+  templates: {
+    list: (params: { entity?: string; page?: number; limit?: number } = {}) =>
+      authedRequest<Page<ChecklistTemplate>>(
+        `/checklist-templates${query({ ...params })}`
+      ),
+    get: (id: string) =>
+      authedRequest<ChecklistTemplate>(`/checklist-templates/${id}`),
+    create: (body: {
+      entityId?: string;
+      name: string;
+      description?: string;
+      items: ChecklistItemInput[];
+    }) =>
+      authedRequest<ChecklistTemplate>("/checklist-templates", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    update: (
+      id: string,
+      body: Partial<{
+        name: string;
+        description: string;
+        items: ChecklistItemInput[];
+      }>
+    ) =>
+      authedRequest<ChecklistTemplate>(`/checklist-templates/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    archive: (id: string) =>
+      authedRequest<void>(`/checklist-templates/${id}`, { method: "DELETE" }),
+  },
+
+  schedules: {
+    list: (
+      params: {
+        entity?: string;
+        template?: string;
+        page?: number;
+        limit?: number;
+      } = {}
+    ) =>
+      authedRequest<Page<ChecklistSchedule>>(
+        `/checklist-schedules${query({ ...params })}`
+      ),
+    create: (body: {
+      templateId: string;
+      daysOfWeek: number[];
+      times: string[];
+      windowMinutes: number;
+      assigneeUsers?: string[];
+      assigneePositions?: string[];
+      enabled?: boolean;
+    }) =>
+      authedRequest<ChecklistSchedule>("/checklist-schedules", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    update: (
+      id: string,
+      body: Partial<{
+        daysOfWeek: number[];
+        times: string[];
+        windowMinutes: number;
+        assigneeUsers: string[];
+        assigneePositions: string[];
+        enabled: boolean;
+      }>
+    ) =>
+      authedRequest<ChecklistSchedule>(`/checklist-schedules/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    remove: (id: string) =>
+      authedRequest<void>(`/checklist-schedules/${id}`, { method: "DELETE" }),
+  },
+
+  runs: {
+    list: (
+      params: {
+        entity?: string;
+        user?: string;
+        template?: string;
+        status?: ChecklistRunStatus;
+        from?: string;
+        to?: string;
+        page?: number;
+        limit?: number;
+        sort?: string;
+      } = {}
+    ) => authedRequest<Page<ChecklistRun>>(`/checklist-runs${query({ ...params })}`),
+    get: (id: string) => authedRequest<ChecklistRun>(`/checklist-runs/${id}`),
+    createManual: (templateId: string) =>
+      authedRequest<ChecklistRun>("/checklist-runs", {
+        method: "POST",
+        body: JSON.stringify({ templateId }),
+      }),
+    saveAnswers: (
+      id: string,
+      answers: {
+        item: string;
+        value?: boolean | string | number;
+        photos?: string[];
+        comment?: string;
+      }[]
+    ) =>
+      authedRequest<ChecklistRun>(`/checklist-runs/${id}/answers`, {
+        method: "PATCH",
+        body: JSON.stringify({ answers }),
+      }),
+    complete: (id: string) =>
+      authedRequest<ChecklistRun>(`/checklist-runs/${id}/complete`, {
+        method: "POST",
+      }),
+  },
+
+  stats: (entityId: string, params: { from?: string; to?: string } = {}) =>
+    authedRequest<ChecklistStats>(
+      `/legal-entities/${entityId}/checklist-stats${query({ ...params })}`
+    ),
 };
 
 export const accessRequestsApi = {
