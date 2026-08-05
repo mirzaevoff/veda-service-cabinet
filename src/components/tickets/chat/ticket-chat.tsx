@@ -17,6 +17,7 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ChatHeader } from "./chat-header";
 import { MessageBubble, type ChatMessage } from "./message-bubble";
 import { MessageComposer } from "./message-composer";
+import { TicketRating } from "./ticket-rating";
 import { useTicketRoom } from "@/hooks/use-ticket-socket";
 import { notifyUnreadChanged } from "@/hooks/use-unread-tickets";
 import { ApiError, type Ticket, type TicketMessage } from "@/lib/api";
@@ -231,6 +232,8 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
         ticketId,
         author: { id: user.id, name: user.name, phone: user.phone },
         text: body.text ?? "",
+        type: "user",
+        systemEvent: null,
         attachments: [],
         createdAt: new Date().toISOString(),
         pending: true,
@@ -318,6 +321,24 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
       prevDay = day;
       prevAuthor = "";
     }
+    if (message.type === "system") {
+      const label =
+        message.systemEvent === "ticket_reopened"
+          ? t("systemReopened", { name: message.author.name })
+          : t("systemClosed", { name: message.author.name });
+      rows.push(
+        <div
+          key={message.id}
+          className="my-1 flex items-center justify-center duration-300 animate-in fade-in"
+        >
+          <span className="rounded-full bg-secondary px-3 py-1 text-xs text-muted-foreground">
+            {label}
+          </span>
+        </div>
+      );
+      prevAuthor = "";
+      continue;
+    }
     const own = message.author.id === user?.id;
     const isStaffMessage = !own && message.author.id !== ticket.author.id;
     const authorLabel =
@@ -378,9 +399,18 @@ export function TicketChat({ ticketId }: { ticketId: string }) {
         {canWrite ? (
           <MessageComposer ticketId={ticketId} onSend={send} />
         ) : (
-          <div className="flex items-center justify-center gap-2 border-t border-border bg-secondary/50 px-4 py-4 text-sm text-muted-foreground">
-            <Lock className="size-4" />
-            {ticket.status === "closed" ? t("closedNotice") : t("readOnly")}
+          <div className="flex flex-col items-center gap-4 border-t border-border bg-secondary/50 px-4 py-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="size-4" />
+              {ticket.status === "closed" ? t("closedNotice") : t("readOnly")}
+            </div>
+            {ticket.status === "closed" && (
+              <TicketRating
+                ticket={ticket}
+                isAuthor={isAuthor}
+                onUpdated={setTicket}
+              />
+            )}
           </div>
         )}
       </div>

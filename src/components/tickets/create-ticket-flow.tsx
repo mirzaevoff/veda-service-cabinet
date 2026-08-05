@@ -246,7 +246,10 @@ export function CreateTicketFlow() {
                 value={entityId || "none"}
                 items={Object.fromEntries([
                   ["none", t("entityNone")],
-                  ...entities.map((e) => [e.id, e.name]),
+                  ...entities.map((e) => [
+                    e.id,
+                    e.establishment ? `${e.establishment} · ${e.name}` : e.name,
+                  ]),
                 ])}
                 onValueChange={(v) => setEntityId(v === "none" ? "" : (v as string))}
               >
@@ -257,7 +260,7 @@ export function CreateTicketFlow() {
                   <SelectItem value="none">{t("entityNone")}</SelectItem>
                   {entities.map((e) => (
                     <SelectItem key={e.id} value={e.id}>
-                      {e.name}
+                      {e.establishment ? `${e.establishment} · ${e.name}` : e.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

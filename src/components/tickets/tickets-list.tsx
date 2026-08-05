@@ -254,7 +254,10 @@ export function TicketsList() {
             value={entityId || "any"}
             items={Object.fromEntries([
               ["any", t("anyEntity")],
-              ...entities.map((e) => [e.id, e.name]),
+              ...entities.map((e) => [
+                e.id,
+                e.establishment ? `${e.establishment} · ${e.name}` : e.name,
+              ]),
             ])}
             onValueChange={(v) =>
               setParams({ entity: v === "any" ? null : (v as string), page: null })
@@ -267,7 +270,7 @@ export function TicketsList() {
               <SelectItem value="any">{t("anyEntity")}</SelectItem>
               {entities.map((e) => (
                 <SelectItem key={e.id} value={e.id}>
-                  {e.name}
+                  {e.establishment ? `${e.establishment} · ${e.name}` : e.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -333,7 +336,8 @@ export function TicketsList() {
                       <>
                         {" · "}
                         <Building2 className="inline size-3.5 -translate-y-px" />{" "}
-                        {ticket.legalEntity.name}
+                        {ticket.legalEntity.establishment ||
+                          ticket.legalEntity.name}
                       </>
                     )}
                     {scope === "all" && user?.id !== ticket.author.id && (

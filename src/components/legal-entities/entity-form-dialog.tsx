@@ -24,6 +24,7 @@ interface FormState {
   taxId: string;
   name: string;
   rawName: string;
+  establishment: string;
   bankCode: string;
   bankAccount: string;
   address: string;
@@ -37,6 +38,7 @@ const EMPTY: FormState = {
   taxId: "",
   name: "",
   rawName: "",
+  establishment: "",
   bankCode: "",
   bankAccount: "",
   address: "",
@@ -51,6 +53,7 @@ function fromEntity(entity: LegalEntity): FormState {
     taxId: entity.taxId,
     name: entity.name,
     rawName: entity.rawName,
+    establishment: entity.establishment,
     bankCode: entity.bankCode,
     bankAccount: entity.bankAccount,
     address: entity.address,
@@ -152,6 +155,7 @@ export function EntityFormDialog({
     const common = {
       name: form.name.trim(),
       rawName: form.rawName.trim() || undefined,
+      establishment: form.establishment.trim(),
       bankCode: form.bankCode.trim() || undefined,
       bankAccount: form.bankAccount.trim() || undefined,
       address: form.address.trim() || undefined,
@@ -178,7 +182,7 @@ export function EntityFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[85vh] overflow-x-hidden overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{isNew ? t("create") : t("edit")}</DialogTitle>
           <DialogDescription>
@@ -242,7 +246,20 @@ export function EntityFormDialog({
             )}
           </div>
 
-          <div className="grid grid-cols-[8rem_1fr] gap-3">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="le-establishment" className="text-sm font-medium text-muted-foreground">
+              {t("establishment")}
+            </Label>
+            <Input
+              id="le-establishment"
+              value={form.establishment}
+              maxLength={200}
+              placeholder={t("establishmentPlaceholder")}
+              onChange={(e) => set("establishment", e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-[8rem_minmax(0,1fr)] gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="le-mfo" className="text-sm font-medium text-muted-foreground">
                 {t("bankCode")}
@@ -293,18 +310,21 @@ export function EntityFormDialog({
                 placeholder={t("directorLastName")}
                 value={form.directorLastName}
                 onChange={(e) => set("directorLastName", e.target.value)}
+                className="min-w-0"
               />
               <Input
                 aria-label={t("directorFirstName")}
                 placeholder={t("directorFirstName")}
                 value={form.directorFirstName}
                 onChange={(e) => set("directorFirstName", e.target.value)}
+                className="min-w-0"
               />
               <Input
                 aria-label={t("directorMiddleName")}
                 placeholder={t("directorMiddleName")}
                 value={form.directorMiddleName}
                 onChange={(e) => set("directorMiddleName", e.target.value)}
+                className="min-w-0"
               />
             </div>
           </div>

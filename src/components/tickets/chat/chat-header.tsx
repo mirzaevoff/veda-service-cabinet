@@ -76,7 +76,12 @@ export function ChatHeader({
           <span className="truncate text-xs text-muted-foreground">
             {pickLocalized(ticket.category, locale)}
             {ticket.subcategory && ` · ${pickLocalized(ticket.subcategory, locale)}`}
-            {ticket.legalEntity && ` · ${ticket.legalEntity.name}`}
+            {ticket.legalEntity &&
+              ` · ${
+                ticket.legalEntity.establishment
+                  ? `${ticket.legalEntity.establishment} · ${ticket.legalEntity.name}`
+                  : ticket.legalEntity.name
+              }`}
             {isStaffViewer && !isAuthor && ` · ${ticket.author.name} ${ticket.author.phone}`}
             {ticket.assignee &&
               ` · ${t("assignee", { name: ticket.assignee.name })}`}

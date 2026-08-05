@@ -138,8 +138,13 @@ export function EntitiesTable() {
                   onClick={() => setSelectedId(entity.id)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="max-w-80 truncate font-medium">
-                    {entity.name}
+                  <TableCell className="max-w-80">
+                    <div className="truncate font-medium">{entity.name}</div>
+                    {entity.establishment && (
+                      <div className="truncate text-xs text-muted-foreground">
+                        {entity.establishment}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground tabular-nums">
                     {entity.taxId}

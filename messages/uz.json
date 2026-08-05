@@ -178,7 +178,15 @@
       "typing": "{name} yozmoqda…",
       "supportAuthor": "Qo'llab-quvvatlash · {name}",
       "closedNotice": "Murojaat yopilgan",
-      "readOnly": "Faqat ko'rish"
+      "readOnly": "Faqat ko'rish",
+      "systemClosed": "Murojaat yopildi — {name}",
+      "systemReopened": "Murojaat qayta ochildi — {name}",
+      "ratePrompt": "Qo'llab-quvvatlash ishini baholang",
+      "yourRating": "Sizning bahoyingiz",
+      "ratedLabel": "Mijoz bahosi",
+      "reviewPlaceholder": "Izoh (ixtiyoriy)",
+      "rateSubmit": "Bahoni yuborish",
+      "rateSaved": "Bahoyingiz uchun rahmat!"
     },
     "attachments": {
       "add": "Fayl biriktirish",
@@ -365,6 +373,8 @@
       "ER703": "Bunday raqamli tashkilot reyestrda topilmadi",
       "validation": "Maydonlarni tekshiring — nimadir noto'g'ri to'ldirilgan",
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
-    }
+    },
+    "establishment": "Muassasa",
+    "establishmentPlaceholder": "Masalan, «Buvinikida» restorani"
   }
 }

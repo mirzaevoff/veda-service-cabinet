@@ -103,6 +103,12 @@ export const ticketsApi = {
       body: JSON.stringify(body),
     }),
 
+  rate: (id: string, body: { rating: number; review?: string }) =>
+    authedRequest<Ticket>(`/tickets/${id}/rating`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
   messages: (id: string, params: { page?: number; limit?: number } = {}) =>
     authedRequest<Page<TicketMessage>>(
       `/tickets/${id}/messages${query({ ...params })}`
@@ -202,6 +208,7 @@ export const legalEntitiesApi = {
     taxId: string;
     name: string;
     rawName?: string;
+    establishment?: string;
     bankCode?: string;
     bankAccount?: string;
     address?: string;
@@ -217,6 +224,7 @@ export const legalEntitiesApi = {
     body: Partial<{
       name: string;
       rawName: string;
+      establishment: string;
       bankCode: string;
       bankAccount: string;
       address: string;

@@ -178,7 +178,15 @@
       "typing": "{name} is typing…",
       "supportAuthor": "Support · {name}",
       "closedNotice": "Ticket is closed",
-      "readOnly": "View only"
+      "readOnly": "View only",
+      "systemClosed": "Ticket closed — {name}",
+      "systemReopened": "Ticket reopened — {name}",
+      "ratePrompt": "Rate our support",
+      "yourRating": "Your rating",
+      "ratedLabel": "Customer rating",
+      "reviewPlaceholder": "Comment (optional)",
+      "rateSubmit": "Submit rating",
+      "rateSaved": "Thank you for your feedback!"
     },
     "attachments": {
       "add": "Attach file",
@@ -366,6 +374,8 @@
       "ER703": "No organization with this number found in the registry",
       "validation": "Check the fields — something is filled in incorrectly",
       "generic": "Something went wrong. Please try again"
-    }
+    },
+    "establishment": "Establishment",
+    "establishmentPlaceholder": "E.g. Grandma's Restaurant"
   }
 }

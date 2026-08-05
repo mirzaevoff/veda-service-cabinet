@@ -161,6 +161,8 @@ export interface FileAttachment {
 export interface TicketLegalEntity {
   id: string;
   name: string;
+  /** Название заведения («Ресторан „У Бабушки"»), пустая строка если не задано */
+  establishment: string;
   taxId: string;
 }
 
@@ -173,17 +175,26 @@ export interface Ticket {
   legalEntity: TicketLegalEntity | null;
   status: TicketStatus;
   assignee: TicketAuthor | null;
+  /** Оценка автора после закрытия (1-5), null — не оценён */
+  rating: number | null;
+  review: string;
   lastMessageAt: string;
   createdAt: string;
   /** Непрочитанные сообщения для текущего пользователя */
   unreadCount?: number;
 }
 
+export type TicketMessageType = "user" | "system";
+
 export interface TicketMessage {
   id: string;
   ticketId: string;
   author: TicketAuthor;
   text: string;
+  /** system — сгенерировано сервером (смена статуса) */
+  type: TicketMessageType;
+  /** Для type=system: ticket_closed | ticket_reopened; author — кто, createdAt — когда */
+  systemEvent: string | null;
   attachments: FileAttachment[];
   createdAt: string;
 }
@@ -233,6 +244,8 @@ export interface LegalEntity {
   taxId: string;
   name: string;
   rawName: string;
+  /** Название заведения («Ресторан „У Бабушки"»), пустая строка если не задано */
+  establishment: string;
   bankCode: string;
   bankAccount: string;
   address: string;
