@@ -33,7 +33,7 @@ function formatSla(minutes: number, t: (key: string, values?: Record<string, str
   return t("slaMinutes", { minutes });
 }
 
-export function SeveritiesManager() {
+export function SeveritiesManager({ embedded = false }: { embedded?: boolean }) {
   const t = useTranslations("AdminSeverities");
   const tc = useTranslations("Common");
   const locale = useLocale();
@@ -130,14 +130,22 @@ export function SeveritiesManager() {
     }
   }
 
+  const createButton = (
+    <Button onClick={openCreate} className="gap-2">
+      <Plus className="size-4" />
+      {t("create")}
+    </Button>
+  );
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader title={t("title")} description={t("description")}>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="size-4" />
-          {t("create")}
-        </Button>
-      </PageHeader>
+    <div className={embedded ? undefined : "mx-auto max-w-3xl"}>
+      {embedded ? (
+        <div className="mb-4 flex justify-end">{createButton}</div>
+      ) : (
+        <PageHeader title={t("title")} description={t("description")}>
+          {createButton}
+        </PageHeader>
+      )}
 
       {!items ? (
         <div className="flex flex-col gap-2">

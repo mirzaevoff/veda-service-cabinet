@@ -1,14 +1,13 @@
 "use client";
 
-import { SeveritiesManager } from "@/components/admin/severities/severities-manager";
-import { NoAccess } from "@/components/admin/no-access";
-import { useCurrentUser } from "@/components/common/current-user-provider";
-import { PERMISSIONS } from "@/lib/permissions";
+import { useEffect } from "react";
+import { useRouter } from "@/i18n/navigation";
 
-export default function AdminSeveritiesPage() {
-  const { can } = useCurrentUser();
-
-  if (!can(PERMISSIONS.ticketsCategoriesManage)) return <NoAccess />;
-
-  return <SeveritiesManager />;
+/** Раздел переехал — держим старый URL как редирект */
+export default function LegacyRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/admin/directories?tab=severities");
+  }, [router]);
+  return null;
 }

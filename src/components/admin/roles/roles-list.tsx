@@ -19,7 +19,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useDelayed } from "@/hooks/use-delayed";
 import { pickLocalized } from "@/lib/format";
 
-export function RolesList() {
+export function RolesList({ embedded = false }: { embedded?: boolean }) {
   const t = useTranslations("AdminRoles");
   const tc = useTranslations("Common");
   const locale = useLocale();
@@ -54,16 +54,22 @@ export function RolesList() {
     return t("permissionsCount", { count: role.permissions.length });
   }
 
+  const createButton = canManage && (
+    <Button onClick={() => setEditing("new")} className="gap-2">
+      <Plus className="size-4" />
+      {t("createRole")}
+    </Button>
+  );
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader title={t("title")} description={t("description")}>
-        {canManage && (
-          <Button onClick={() => setEditing("new")} className="gap-2">
-            <Plus className="size-4" />
-            {t("createRole")}
-          </Button>
-        )}
-      </PageHeader>
+    <div className={embedded ? undefined : "mx-auto max-w-3xl"}>
+      {embedded ? (
+        createButton && <div className="mb-4 flex justify-end">{createButton}</div>
+      ) : (
+        <PageHeader title={t("title")} description={t("description")}>
+          {createButton}
+        </PageHeader>
+      )}
 
       {!roles ? (
         <div className="flex flex-col gap-2">

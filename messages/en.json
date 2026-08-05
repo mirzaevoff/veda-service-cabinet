@@ -13,7 +13,10 @@
     "main": "Main",
     "legalEntities": "Legal entities",
     "checklists": "Checklists",
-    "severities": "Severities"
+    "severities": "Severities",
+    "directories": "Directories",
+    "panel": "Control panel",
+    "help": "Help"
   },
   "Shell": {
     "logout": "Sign out",
@@ -54,7 +57,7 @@
     }
   },
   "AdminRoles": {
-    "title": "Roles",
+    "title": "Roles & Access",
     "description": "Roles and permissions. Changes apply instantly, no re-login needed",
     "createRole": "Create role",
     "editRole": "Edit role",
@@ -121,7 +124,11 @@
     "nameLabel_ru": "Name (ru)",
     "nameLabel_uz": "Name (uz)",
     "nameLabel_en": "Name (en)",
-    "severityReset": "reset"
+    "severityReset": "reset",
+    "configure": "Configure",
+    "severityLabel": "Request type",
+    "severityNone": "No type (inherited)",
+    "severityHint": "Default type for tickets in this category; a subcategory overrides its category"
   },
   "Common": {
     "loadError": "Couldn't load the data. Refresh the page",
@@ -148,7 +155,7 @@
       "emptyTitle": "No tickets yet",
       "emptyHint": "Create the first one — we'll reply in the chat",
       "pageOf": "{page} of {total}",
-      "anySeverity": "Any severity",
+      "anySeverity": "Any type",
       "filterBreached": "Breached",
       "filterUnclaimed": "Unclaimed",
       "unclaimedMark": "Unclaimed"
@@ -200,13 +207,13 @@
       "left": "You left the ticket",
       "leave": "Leave",
       "claimToWrite": "Claim the ticket to write",
-      "changeSeverity": "Change severity",
-      "severityChanged": "Severity updated",
+      "changeSeverity": "Change request type",
+      "severityChanged": "Request type updated",
       "minShort": "min",
       "noParticipants": "Nobody has claimed it",
       "systemClaimed": "{name} joined the chat",
       "systemLeft": "{name} left the chat",
-      "systemSeverityChanged": "{name} changed the severity"
+      "systemSeverityChanged": "{name} changed the request type"
     },
     "attachments": {
       "add": "Attach file",
@@ -637,24 +644,40 @@
     "freshnessNotice": "Photos must be taken no more than {minutes} min ago"
   },
   "AdminSeverities": {
-    "title": "Severities",
-    "description": "Ticket severity dictionary and SLA limits",
-    "create": "New severity",
-    "editTitle": "Edit severity",
+    "title": "Request types",
+    "description": "Request types and their SLA limits",
+    "create": "New type",
+    "editTitle": "Edit type",
     "formHint": "The SLA limit applies to claiming and the first reply; edits affect only new tickets",
     "color": "Color",
     "slaLabel": "SLA, minutes",
-    "makeDefault": "Default severity",
+    "makeDefault": "Default type",
     "default": "default",
     "slaMinutes": "{minutes} min",
     "slaHours": "{hours} h",
     "validation": "Fill in the name (ru) and SLA in minutes",
-    "saved": "Severity saved",
-    "deleted": "Severity deleted",
+    "saved": "Type saved",
+    "deleted": "Type deleted",
     "empty": "The dictionary is empty",
     "errors": {
-      "ER411": "The severity is used by tickets/categories or is the default — cannot delete",
+      "ER411": "The type is used by tickets/categories or is the default — cannot delete",
       "generic": "Something went wrong. Please try again"
+    }
+  },
+  "AdminDirectories": {
+    "title": "Directories",
+    "description": "System dictionaries management",
+    "tabs": {
+      "roles": "Roles & Access",
+      "categories": "Categories",
+      "severities": "Request types"
+    }
+  },
+  "AdminPanel": {
+    "title": "Control panel",
+    "description": "Operational admin tools",
+    "tabs": {
+      "broadcast": "Broadcast"
     }
   }
 }

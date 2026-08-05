@@ -13,7 +13,10 @@
     "main": "Asosiy",
     "legalEntities": "Yuridik shaxslar",
     "checklists": "Cheklistlar",
-    "severities": "Muhimliklar"
+    "severities": "Muhimliklar",
+    "directories": "Ma'lumotnomalar",
+    "panel": "Boshqaruv paneli",
+    "help": "Yordam"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -54,7 +57,7 @@
     }
   },
   "AdminRoles": {
-    "title": "Rollar",
+    "title": "Rollar va ruxsatlar",
     "description": "Rollar va kirish huquqlari. O'zgarishlar darhol kuchga kiradi",
     "createRole": "Rol yaratish",
     "editRole": "Rolni o'zgartirish",
@@ -121,7 +124,11 @@
     "nameLabel_ru": "Nomi (rus)",
     "nameLabel_uz": "Nomi (o'zb)",
     "nameLabel_en": "Nomi (ing)",
-    "severityReset": "bekor qilish"
+    "severityReset": "bekor qilish",
+    "configure": "Sozlash",
+    "severityLabel": "Murojaat turi",
+    "severityNone": "Tursiz (meros olinadi)",
+    "severityHint": "Bu kategoriya murojaatlari uchun standart tur; subkategoriya kategoriyadan ustun"
   },
   "Common": {
     "loadError": "Ma'lumotlarni yuklab bo'lmadi. Sahifani yangilang",
@@ -148,7 +155,7 @@
       "emptyTitle": "Hozircha murojaatlar yo'q",
       "emptyHint": "Birinchisini yarating — chatda javob beramiz",
       "pageOf": "{page} / {total}",
-      "anySeverity": "Istalgan muhimlik",
+      "anySeverity": "Istalgan tur",
       "filterBreached": "Muddati buzilgan",
       "filterUnclaimed": "Olinmagan",
       "unclaimedMark": "Olinmagan"
@@ -200,13 +207,13 @@
       "left": "Siz tiketdan chiqdingiz",
       "leave": "Chiqish",
       "claimToWrite": "Yozish uchun tiketni ishga oling",
-      "changeSeverity": "Muhimlikni o'zgartirish",
-      "severityChanged": "Muhimlik yangilandi",
+      "changeSeverity": "Murojaat turini o'zgartirish",
+      "severityChanged": "Murojaat turi yangilandi",
       "minShort": "daq",
       "noParticipants": "Hech kim ishga olmagan",
       "systemClaimed": "{name} chatga kirdi",
       "systemLeft": "{name} chatdan chiqdi",
-      "systemSeverityChanged": "{name} muhimlikni o'zgartirdi"
+      "systemSeverityChanged": "{name} murojaat turini o'zgartirdi"
     },
     "attachments": {
       "add": "Fayl biriktirish",
@@ -636,24 +643,40 @@
     "freshnessNotice": "Fotolar {minutes} daqiqadan eski bo'lmasligi kerak"
   },
   "AdminSeverities": {
-    "title": "Muhimliklar",
-    "description": "Tiket muhimliklari lug'ati va SLA limitlari",
-    "create": "Yangi muhimlik",
-    "editTitle": "Muhimlikni o'zgartirish",
+    "title": "Murojaat turlari",
+    "description": "Murojaat turlari va ularning SLA limitlari",
+    "create": "Yangi tur",
+    "editTitle": "Turni o'zgartirish",
     "formHint": "SLA limiti ishga olish va birinchi javobga amal qiladi; tahrir faqat yangi tiketlarga ta'sir qiladi",
     "color": "Rang",
     "slaLabel": "SLA, daqiqa",
-    "makeDefault": "Standart muhimlik",
+    "makeDefault": "Standart tur",
     "default": "standart",
     "slaMinutes": "{minutes} daqiqa",
     "slaHours": "{hours} soat",
     "validation": "Nomini (ru) va SLA daqiqalarini to'ldiring",
-    "saved": "Muhimlik saqlandi",
-    "deleted": "Muhimlik o'chirildi",
-    "empty": "Lug'at bo'sh",
+    "saved": "Tur saqlandi",
+    "deleted": "Tur o'chirildi",
+    "empty": "Ma'lumotnoma bo'sh",
     "errors": {
-      "ER411": "Muhimlik tiketlar/kategoriyalarda ishlatilmoqda yoki standart — o'chirib bo'lmaydi",
+      "ER411": "Tur murojaatlar/kategoriyalarda ishlatilmoqda yoki standart — o'chirib bo'lmaydi",
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    }
+  },
+  "AdminDirectories": {
+    "title": "Ma'lumotnomalar",
+    "description": "Tizim ma'lumotnomalarini boshqarish",
+    "tabs": {
+      "roles": "Rollar va ruxsatlar",
+      "categories": "Kategoriyalar",
+      "severities": "Murojaat turlari"
+    }
+  },
+  "AdminPanel": {
+    "title": "Boshqaruv paneli",
+    "description": "Administratorning operatsion vositalari",
+    "tabs": {
+      "broadcast": "Xabarnoma"
     }
   }
 }

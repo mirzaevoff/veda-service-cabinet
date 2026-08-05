@@ -8,8 +8,8 @@ import {
   ChevronRight,
   FolderTree,
   MoreHorizontal,
-  Pencil,
   Plus,
+  Settings2,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -47,7 +47,7 @@ export interface CategoryEditState {
   parent?: TicketCategory;
 }
 
-export function CategoryTree() {
+export function CategoryTree({ embedded = false }: { embedded?: boolean }) {
   const t = useTranslations("AdminCategories");
   const locale = useLocale();
   const tc = useTranslations("Common");
@@ -64,15 +64,6 @@ export function CategoryTree() {
     severitiesApi.list().then(setSeverities).catch(() => {});
   }, []);
 
-  async function setSeverity(category: TicketCategory, severityId: string | null) {
-    try {
-      await adminApi.categories.update(category.id, { severityId });
-      void load();
-    } catch {
-      toast.error(t("errors.generic"));
-    }
-  }
-
   const load = useCallback(async () => {
     try {
       setTree((await ticketsApi.categories()).slice().sort(byOrder));
@@ -84,6 +75,7 @@ export function CategoryTree() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- setState после await
     void load();
   }, [load]);
 
@@ -222,12 +214,6 @@ export function CategoryTree() {
               }
             />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => setEditState({ mode: "rename", category })}
-              >
-                <Pencil className="size-4" />
-                {t("rename")}
-              </DropdownMenuItem>
               {!parent && (
                 <DropdownMenuItem
                   onClick={() =>
@@ -238,28 +224,12 @@ export function CategoryTree() {
                   {t("createSubcategory")}
                 </DropdownMenuItem>
               )}
-              {severities.map((severity) => (
-                <DropdownMenuItem
-                  key={severity.id}
-                  onClick={() =>
-                    setSeverity(
-                      category,
-                      category.severityId === severity.id ? null : severity.id
-                    )
-                  }
-                >
-                  <span
-                    className="size-2.5 rounded-full"
-                    style={{ backgroundColor: severity.color }}
-                  />
-                  {pickLocalized(severity.name, locale)}
-                  {category.severityId === severity.id && (
-                    <span className="ms-auto text-xs text-muted-foreground">
-                      {t("severityReset")}
-                    </span>
-                  )}
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuItem
+                onClick={() => setEditState({ mode: "rename", category })}
+              >
+                <Settings2 className="size-4" />
+                {t("configure")}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 variant="destructive"
                 onClick={() => setDeleting(category)}
@@ -274,17 +244,25 @@ export function CategoryTree() {
     );
   }
 
+  const createButton = (
+    <Button
+      onClick={() => setEditState({ mode: "create-root" })}
+      className="gap-2"
+    >
+      <Plus className="size-4" />
+      {t("createCategory")}
+    </Button>
+  );
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <PageHeader title={t("title")} description={t("description")}>
-        <Button
-          onClick={() => setEditState({ mode: "create-root" })}
-          className="gap-2"
-        >
-          <Plus className="size-4" />
-          {t("createCategory")}
-        </Button>
-      </PageHeader>
+    <div className={embedded ? undefined : "mx-auto max-w-3xl"}>
+      {embedded ? (
+        <div className="mb-4 flex justify-end">{createButton}</div>
+      ) : (
+        <PageHeader title={t("title")} description={t("description")}>
+          {createButton}
+        </PageHeader>
+      )}
 
       {!tree ? (
         <div className="flex flex-col gap-2">
@@ -318,6 +296,7 @@ export function CategoryTree() {
 
       <CategoryFormDialog
         state={editState}
+        severities={severities}
         onClose={() => setEditState(null)}
         onSaved={() => {
           setEditState(null);

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { NAV_SECTIONS, isNavItemActive } from "./nav-items";
+import { NAV_SECTIONS, isNavItemActive, isNavItemVisible } from "./nav-items";
 import { useUnreadTickets } from "@/hooks/use-unread-tickets";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -58,8 +58,8 @@ export function AppSidebar() {
 
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
         {NAV_SECTIONS.map((section, i) => {
-          const items = section.items.filter(
-            (item) => !item.permission || can(item.permission)
+          const items = section.items.filter((item) =>
+            isNavItemVisible(item, can)
           );
           if (!items.length || (section.key && loading)) return null;
           return (

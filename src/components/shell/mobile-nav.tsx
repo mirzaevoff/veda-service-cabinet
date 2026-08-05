@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { NAV_SECTIONS, isNavItemActive } from "./nav-items";
+import { NAV_SECTIONS, isNavItemActive, isNavItemVisible } from "./nav-items";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -44,8 +44,8 @@ export function MobileNav() {
         </SheetHeader>
         <nav className="flex flex-col gap-0.5 overflow-y-auto p-3">
           {NAV_SECTIONS.map((section, i) => {
-            const items = section.items.filter(
-              (item) => !item.permission || can(item.permission)
+            const items = section.items.filter((item) =>
+              isNavItemVisible(item, can)
             );
             if (!items.length) return null;
             return (

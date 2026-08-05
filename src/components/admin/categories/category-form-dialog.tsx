@@ -14,24 +14,39 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import type { TicketSeverity } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
+import { pickLocalized } from "@/lib/format";
+import { useLocale } from "next-intl";
 import type { CategoryEditState } from "./category-tree";
 
 const LOCALES = ["ru", "uz", "en"] as const;
 
 export function CategoryFormDialog({
   state,
+  severities,
   onClose,
   onSaved,
 }: {
   state: CategoryEditState | null;
+  severities: TicketSeverity[];
   onClose: () => void;
   onSaved: () => void;
 }) {
   const t = useTranslations("AdminCategories");
+  const locale = useLocale();
   const [names, setNames] = useState({ ru: "", uz: "", en: "" });
+  /** "" — без типа (наследует родителя/дефолт) */
+  const [severityId, setSeverityId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +57,10 @@ export function CategoryFormDialog({
         ? { ...state.category.name }
         : { ru: "", uz: "", en: "" }
     );
+     
+    setSeverityId(
+      state?.mode === "rename" ? (state.category?.severityId ?? "") : ""
+    );
     setError(null);
   }, [state]);
 
@@ -49,7 +68,7 @@ export function CategoryFormDialog({
 
   const title =
     state.mode === "rename"
-      ? t("rename")
+      ? t("configure")
       : state.mode === "create-child"
         ? t("createSubcategoryIn", { parent: state.parent?.name.ru ?? "" })
         : t("createCategory");
@@ -68,7 +87,10 @@ export function CategoryFormDialog({
     };
     try {
       if (state!.mode === "rename" && state!.category) {
-        await adminApi.categories.update(state!.category.id, { name });
+        await adminApi.categories.update(state!.category.id, {
+          name,
+          severityId: severityId || null,
+        });
       } else {
         await adminApi.categories.create({
           name,
@@ -121,6 +143,42 @@ export function CategoryFormDialog({
               />
             </div>
           ))}
+          {state.mode === "rename" && severities.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("severityLabel")}
+              </Label>
+              <Select
+                value={severityId || "none"}
+                items={Object.fromEntries([
+                  ["none", t("severityNone")],
+                  ...severities.map((s) => [s.id, pickLocalized(s.name, locale)]),
+                ])}
+                onValueChange={(v) => setSeverityId(v === "none" ? "" : (v as string))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("severityNone")}</SelectItem>
+                  {severities.map((severity) => (
+                    <SelectItem key={severity.id} value={severity.id}>
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="size-2.5 rounded-full"
+                          style={{ backgroundColor: severity.color }}
+                        />
+                        {pickLocalized(severity.name, locale)}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-xs text-muted-foreground">
+                {t("severityHint")}
+              </span>
+            </div>
+          )}
           {error && <p className="text-xs text-destructive">{error}</p>}
         </form>
 

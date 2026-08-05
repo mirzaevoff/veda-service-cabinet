@@ -1,11 +1,9 @@
 import {
   Building2,
-  FolderTree,
-  Gauge,
   LayoutDashboard,
+  LibraryBig,
   ListChecks,
-  Megaphone,
-  ShieldCheck,
+  SlidersHorizontal,
   Ticket,
   Users,
   type LucideIcon,
@@ -19,6 +17,8 @@ export interface NavItem {
   icon: LucideIcon;
   /** Пункт виден только при этом праве */
   permission?: string;
+  /** Пункт виден при ЛЮБОМ из этих прав */
+  anyPermission?: string[];
 }
 
 export interface NavSection {
@@ -36,45 +36,48 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { key: "legalEntities", href: "/legal-entities", icon: Building2 },
       { key: "checklists", href: "/checklists", icon: ListChecks },
-      { key: "tickets", href: "/tickets", icon: Ticket },
     ],
   },
   {
     key: "admin",
     items: [
       {
+        key: "directories",
+        href: "/admin/directories",
+        icon: LibraryBig,
+        anyPermission: [
+          PERMISSIONS.rolesRead,
+          PERMISSIONS.ticketsCategoriesManage,
+        ],
+      },
+      {
+        key: "panel",
+        href: "/admin/panel",
+        icon: SlidersHorizontal,
+        permission: PERMISSIONS.notificationsSend,
+      },
+      {
         key: "users",
         href: "/admin/users",
         icon: Users,
         permission: PERMISSIONS.usersList,
       },
-      {
-        key: "roles",
-        href: "/admin/roles",
-        icon: ShieldCheck,
-        permission: PERMISSIONS.rolesRead,
-      },
-      {
-        key: "categories",
-        href: "/admin/categories",
-        icon: FolderTree,
-        permission: PERMISSIONS.ticketsCategoriesManage,
-      },
-      {
-        key: "severities",
-        href: "/admin/severities",
-        icon: Gauge,
-        permission: PERMISSIONS.ticketsCategoriesManage,
-      },
-      {
-        key: "notificationsSend",
-        href: "/admin/notifications",
-        icon: Megaphone,
-        permission: PERMISSIONS.notificationsSend,
-      },
     ],
   },
+  {
+    key: "help",
+    items: [{ key: "tickets", href: "/tickets", icon: Ticket }],
+  },
 ];
+
+export function isNavItemVisible(
+  item: NavItem,
+  can: (permission: string) => boolean
+): boolean {
+  if (item.permission && !can(item.permission)) return false;
+  if (item.anyPermission && !item.anyPermission.some(can)) return false;
+  return true;
+}
 
 export function isNavItemActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
