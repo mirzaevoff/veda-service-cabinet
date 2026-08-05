@@ -56,7 +56,12 @@ export function TicketsList() {
 
   const isStaff = can(PERMISSIONS.ticketsList);
 
-  const scope = searchParams.get("scope") === "all" && isStaff ? "all" : "mine";
+  // Staff по умолчанию видит все обращения, ?scope=mine — только свои
+  const scope = isStaff
+    ? searchParams.get("scope") === "mine"
+      ? "mine"
+      : "all"
+    : "mine";
   const status = (searchParams.get("status") ?? "") as TicketStatus | "";
   const categoryId = searchParams.get("category") ?? "";
   const entityId = searchParams.get("entity") ?? "";
@@ -194,11 +199,11 @@ export function TicketsList() {
         {isStaff && (
           <Tabs
             value={scope}
-            onValueChange={(v) => setParams({ scope: v === "all" ? "all" : null, page: null })}
+            onValueChange={(v) => setParams({ scope: v === "mine" ? "mine" : null, page: null })}
           >
             <TabsList>
-              <TabsTrigger value="mine">{t("tabMine")}</TabsTrigger>
               <TabsTrigger value="all">{t("tabAll")}</TabsTrigger>
+              <TabsTrigger value="mine">{t("tabMine")}</TabsTrigger>
             </TabsList>
           </Tabs>
         )}
