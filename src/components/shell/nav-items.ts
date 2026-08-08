@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   LibraryBig,
   ListChecks,
+  Package,
   SlidersHorizontal,
   Ticket,
   Users,
@@ -35,6 +36,12 @@ export const NAV_SECTIONS: NavSection[] = [
     key: "main",
     items: [
       { key: "legalEntities", href: "/legal-entities", icon: Building2 },
+      {
+        key: "products",
+        href: "/products",
+        icon: Package,
+        permission: PERMISSIONS.productsList,
+      },
       { key: "checklists", href: "/checklists", icon: ListChecks },
     ],
   },
@@ -54,7 +61,10 @@ export const NAV_SECTIONS: NavSection[] = [
         key: "panel",
         href: "/admin/panel",
         icon: SlidersHorizontal,
-        permission: PERMISSIONS.notificationsSend,
+        anyPermission: [
+          PERMISSIONS.notificationsSend,
+          PERMISSIONS.settingsManage,
+        ],
       },
       {
         key: "users",

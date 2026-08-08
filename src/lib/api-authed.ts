@@ -18,6 +18,11 @@ import {
   type NotificationsPage,
   type Page,
   type PermissionDef,
+  type Product,
+  type ProductCurrency,
+  type ProductType,
+  type ProductsPage,
+  type Setting,
   type Role,
   type Ticket,
   type TicketCategory,
@@ -562,6 +567,57 @@ export const adminApi = {
     remove: (id: string) =>
       authedRequest<void>(`/ticket-categories/${id}`, { method: "DELETE" }),
   },
+};
+
+export const settingsApi = {
+  list: () => authedRequest<Setting[]>("/settings"),
+  update: (key: string, value: number | string | boolean) =>
+    authedRequest<Setting>(`/settings/${key}`, {
+      method: "PATCH",
+      body: JSON.stringify({ value }),
+    }),
+};
+
+export interface ProductListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: string;
+  type?: ProductType;
+  currency?: ProductCurrency;
+  isActive?: boolean;
+  /** Границы цены — в сумах (сравнение с priceUzs) */
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export interface ProductInput {
+  name: string;
+  type?: ProductType;
+  price: number;
+  currency: ProductCurrency;
+  description?: string;
+  spic?: string;
+  packageCode?: string;
+  isActive?: boolean;
+}
+
+export const productsApi = {
+  list: (params: ProductListParams = {}) =>
+    authedRequest<ProductsPage>(`/products${query({ ...params })}`),
+  get: (id: string) => authedRequest<Product>(`/products/${id}`),
+  create: (body: ProductInput) =>
+    authedRequest<Product>("/products", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: Partial<ProductInput>) =>
+    authedRequest<Product>(`/products/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/products/${id}`, { method: "DELETE" }),
 };
 
 export const severitiesApi = {

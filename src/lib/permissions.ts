@@ -13,6 +13,9 @@ export const PERMISSIONS = {
   legalEntitiesList: "legalEntities.list",
   legalEntitiesManage: "legalEntities.manage",
   checklistsManage: "checklists.manage",
+  settingsManage: "settings.manage",
+  productsList: "products.list",
+  productsManage: "products.manage",
 } as const;
 
 export function can(

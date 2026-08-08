@@ -483,6 +483,48 @@ export interface ChecklistStats {
   byUser: ChecklistStatsBucket[];
 }
 
+// --- Глобальные настройки и каталог (API 0.20) ------------------------------
+
+export type SettingType = "number" | "string" | "boolean";
+
+export interface Setting {
+  key: string;
+  value: number | string | boolean;
+  type: SettingType;
+  /** Подпись из реестра на сервере (не локализуется) */
+  label: string;
+  group: string;
+  default: number | string | boolean;
+  description?: string;
+  min?: number;
+  max?: number;
+  updatedAt: string;
+}
+
+export type ProductType = "iikoSaaS" | "iikoCloud" | "other";
+export type ProductCurrency = "USD" | "UZS";
+
+export interface Product {
+  id: string;
+  name: string;
+  type: ProductType;
+  price: number;
+  currency: ProductCurrency;
+  /** Сумовой эквивалент: USD пересчитан по глобальному курсу */
+  priceUzs: number;
+  description: string;
+  /** ИКПУ */
+  spic: string;
+  packageCode: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+/** Страница каталога: плюс курс, по которому посчитаны суммы */
+export interface ProductsPage extends Page<Product> {
+  usdRate: number;
+}
+
 export const api = {
   info: () => request<ApiInfo>("/"),
 

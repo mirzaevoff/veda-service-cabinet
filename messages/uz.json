@@ -16,7 +16,8 @@
     "severities": "Muhimliklar",
     "directories": "Ma'lumotnomalar",
     "panel": "Boshqaruv paneli",
-    "help": "Yordam"
+    "help": "Yordam",
+    "products": "Mahsulot va xizmatlar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -676,7 +677,69 @@
     "title": "Boshqaruv paneli",
     "description": "Administratorning operatsion vositalari",
     "tabs": {
-      "broadcast": "Xabarnoma"
+      "broadcast": "Xabarnoma",
+      "settings": "Global sozlamalar"
+    }
+  },
+  "AdminSettings": {
+    "saved": "Sozlama saqlandi",
+    "save": "Saqlash",
+    "reset": "Joriy qiymatga qaytarish",
+    "range": "Ruxsat etilgan: {min} dan {max} gacha",
+    "outOfRange": "Qiymat diapazondan tashqarida: {min} dan {max} gacha",
+    "notANumber": "Raqam kiriting",
+    "invalidValue": "Noto'g'ri qiymat",
+    "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
+    "empty": "Hozircha sozlamalar yo'q"
+  },
+  "Products": {
+    "title": "Mahsulot va xizmatlar",
+    "description": "Litsenziya va xizmatlar katalogi narxlari bilan",
+    "searchPlaceholder": "Nomi, tavsifi, IKPU",
+    "anyType": "Istalgan tur",
+    "total": "Jami: {count}",
+    "rate": "kurs {rate} so'm/$",
+    "create": "Pozitsiya qo'shish",
+    "empty": "Katalog bo'sh",
+    "emptySearch": "Hech narsa topilmadi",
+    "inactive": "Yashirilgan",
+    "deleted": "Pozitsiya o'chirildi",
+    "deleteConfirmTitle": "«{name}» o'chirilsinmi?",
+    "deleteConfirmText": "Pozitsiya katalogdan yo'qoladi. Vaqtincha yashirish uchun faollik belgisini olib tashlang",
+    "columnName": "Nomi",
+    "columnType": "Xizmat turi",
+    "columnPrice": "Narxi",
+    "columnSpic": "IKPU / qadoq",
+    "types": {
+      "iikoSaaS": "iiko SaaS",
+      "iikoCloud": "iikoCloud",
+      "other": "Boshqa"
+    },
+    "form": {
+      "createTitle": "Yangi pozitsiya",
+      "editTitle": "Pozitsiyani o'zgartirish",
+      "hint": "Dollardagi narxlar global kurs bo'yicha so'mga hisoblanadi",
+      "name": "Nomi",
+      "namePlaceholder": "iiko Professional",
+      "type": "Xizmat turi",
+      "price": "Narxi",
+      "currency": {
+        "USD": "Dollar $",
+        "UZS": "so'm"
+      },
+      "uzsPreview": "≈ {amount} so'm, kurs {rate}",
+      "description": "Tavsif",
+      "spic": "IKPU",
+      "packageCode": "Qadoq kodi",
+      "isActive": "Faol (katalogda ko'rinadi)",
+      "validation": "Nomi va to'g'ri narxni to'ldiring",
+      "spicInvalid": "IKPU — 5 dan 20 gacha raqam",
+      "packageCodeInvalid": "Qadoq kodi — 1 dan 20 gacha raqam",
+      "duplicate": "Bunday nomli pozitsiya allaqachon mavjud",
+      "saved": "Pozitsiya saqlandi",
+      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash"
     }
   }
 }

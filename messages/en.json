@@ -16,7 +16,8 @@
     "severities": "Severities",
     "directories": "Directories",
     "panel": "Control panel",
-    "help": "Help"
+    "help": "Help",
+    "products": "Products & services"
   },
   "Shell": {
     "logout": "Sign out",
@@ -677,7 +678,69 @@
     "title": "Control panel",
     "description": "Operational admin tools",
     "tabs": {
-      "broadcast": "Broadcast"
+      "broadcast": "Broadcast",
+      "settings": "Global settings"
+    }
+  },
+  "AdminSettings": {
+    "saved": "Setting saved",
+    "save": "Save",
+    "reset": "Revert to the current value",
+    "range": "Allowed: from {min} to {max}",
+    "outOfRange": "Value is out of range: from {min} to {max}",
+    "notANumber": "Enter a number",
+    "invalidValue": "Invalid value",
+    "genericError": "Something went wrong. Please try again",
+    "empty": "No settings yet"
+  },
+  "Products": {
+    "title": "Products & services",
+    "description": "Catalog of licenses and services with prices",
+    "searchPlaceholder": "Name, description, IKPU",
+    "anyType": "Any type",
+    "total": "Total: {count}",
+    "rate": "rate {rate} soum/$",
+    "create": "Add item",
+    "empty": "The catalog is empty",
+    "emptySearch": "Nothing found",
+    "inactive": "Hidden",
+    "deleted": "Item deleted",
+    "deleteConfirmTitle": "Delete “{name}”?",
+    "deleteConfirmText": "The item disappears from the catalog. To hide it temporarily, clear the active flag",
+    "columnName": "Name",
+    "columnType": "Service type",
+    "columnPrice": "Price",
+    "columnSpic": "IKPU / package",
+    "types": {
+      "iikoSaaS": "iiko SaaS",
+      "iikoCloud": "iikoCloud",
+      "other": "Other"
+    },
+    "form": {
+      "createTitle": "New item",
+      "editTitle": "Edit item",
+      "hint": "USD prices are converted to soums by the global rate",
+      "name": "Name",
+      "namePlaceholder": "iiko Professional",
+      "type": "Service type",
+      "price": "Price",
+      "currency": {
+        "USD": "Dollar $",
+        "UZS": "soum"
+      },
+      "uzsPreview": "≈ {amount} soum at the rate of {rate}",
+      "description": "Description",
+      "spic": "IKPU",
+      "packageCode": "Package code",
+      "isActive": "Active (visible in the catalog)",
+      "validation": "Fill in the name and a valid price",
+      "spicInvalid": "IKPU — 5 to 20 digits",
+      "packageCodeInvalid": "Package code — 1 to 20 digits",
+      "duplicate": "An item with this name already exists",
+      "saved": "Item saved",
+      "genericError": "Something went wrong. Please try again",
+      "cancel": "Cancel",
+      "save": "Save"
     }
   }
 }
