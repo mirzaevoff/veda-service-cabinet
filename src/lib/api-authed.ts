@@ -89,6 +89,8 @@ function query(params: Record<string, string | number | boolean | undefined>) {
 export interface TicketListParams {
   page?: number;
   limit?: number;
+  /** Смарт-поиск: тема обращения и автор (имя/телефон) */
+  search?: string;
   status?: TicketStatus;
   categoryId?: string;
   legalEntityId?: string;
@@ -328,7 +330,14 @@ export const checklistsApi = {
   },
 
   templates: {
-    list: (params: { entity?: string; page?: number; limit?: number } = {}) =>
+    list: (
+      params: {
+        entity?: string;
+        page?: number;
+        limit?: number;
+        sort?: string;
+      } = {}
+    ) =>
       authedRequest<Page<ChecklistTemplate>>(
         `/checklist-templates${query({ ...params })}`
       ),
@@ -369,6 +378,7 @@ export const checklistsApi = {
         template?: string;
         page?: number;
         limit?: number;
+        sort?: string;
       } = {}
     ) =>
       authedRequest<Page<ChecklistSchedule>>(
@@ -492,6 +502,8 @@ export interface AdminUsersListParams {
   search?: string;
   status?: "active" | "blocked";
   roleId?: string;
+  /** createdAt | name | lastName | phone | status */
+  sort?: string;
 }
 
 export const adminApi = {

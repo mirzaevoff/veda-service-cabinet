@@ -41,9 +41,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import {
+  ActiveFilterChips,
+  FiltersDialog,
+  type ActiveFilter,
+} from "@/components/common/filters-dialog";
+import {
+  SortableTableHead,
+  type SortValue,
+} from "@/components/common/sortable-table-head";
 import { ProductFormDialog } from "./product-form-dialog";
-import type { Product, ProductType, ProductsPage } from "@/lib/api";
+import type {
+  Product,
+  ProductCurrency,
+  ProductType,
+  ProductsPage,
+} from "@/lib/api";
 import { productsApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
@@ -73,6 +88,13 @@ export function ProductsTable() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);
   const [type, setType] = useState<ProductType | "any">("any");
+  const [currency, setCurrency] = useState<ProductCurrency | "any">("any");
+  const [activeOnly, setActiveOnly] = useState<"any" | "true" | "false">("any");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const debouncedMin = useDebouncedValue(minPrice, 500);
+  const debouncedMax = useDebouncedValue(maxPrice, 500);
+  const [sort, setSort] = useState<SortValue>("name:asc");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ProductsPage | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +106,7 @@ export function ProductsTable() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
     setPage(1);
-  }, [debouncedSearch, type]);
+  }, [debouncedSearch, type, currency, activeOnly, debouncedMin, debouncedMax, sort]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -93,7 +115,11 @@ export function ProductsTable() {
         page,
         search: debouncedSearch || undefined,
         type: type === "any" ? undefined : type,
-        sort: "name:asc",
+        currency: currency === "any" ? undefined : currency,
+        isActive: activeOnly === "any" ? undefined : activeOnly === "true",
+        minPrice: debouncedMin ? Number(debouncedMin) : undefined,
+        maxPrice: debouncedMax ? Number(debouncedMax) : undefined,
+        sort: sort || undefined,
       });
       if (result.items.length === 0 && result.page > 1) {
         setPage(1);
@@ -107,7 +133,7 @@ export function ProductsTable() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, debouncedSearch, type]);
+  }, [page, debouncedSearch, type, currency, activeOnly, debouncedMin, debouncedMax, sort]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный
@@ -128,6 +154,39 @@ export function ProductsTable() {
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
 
+  const activeFilters: ActiveFilter[] = [];
+  if (type !== "any") {
+    activeFilters.push({
+      key: "type",
+      label: `${t("columnType")}: ${tt(type)}`,
+      onRemove: () => setType("any"),
+    });
+  }
+  if (currency !== "any") {
+    activeFilters.push({
+      key: "currency",
+      label: `${t("filterCurrency")}: ${t(`form.currency.${currency}`)}`,
+      onRemove: () => setCurrency("any"),
+    });
+  }
+  if (activeOnly !== "any") {
+    activeFilters.push({
+      key: "active",
+      label: activeOnly === "true" ? t("onlyActive") : t("onlyInactive"),
+      onRemove: () => setActiveOnly("any"),
+    });
+  }
+  if (minPrice || maxPrice) {
+    activeFilters.push({
+      key: "price",
+      label: `${t("filterPrice")}: ${minPrice || "0"}—${maxPrice || "∞"}`,
+      onRemove: () => {
+        setMinPrice("");
+        setMaxPrice("");
+      },
+    });
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2 duration-450 animate-in fade-in slide-in-from-bottom-4">
@@ -141,24 +200,112 @@ export function ProductsTable() {
           />
         </div>
 
-        <Select
-          value={type}
-          items={Object.fromEntries(
-            TYPE_FILTERS.map((v) => [v, v === "any" ? t("anyType") : tt(v)])
-          )}
-          onValueChange={(v) => setType(v as ProductType | "any")}
+        <FiltersDialog
+          active={activeFilters}
+          onReset={() => {
+            setType("any");
+            setCurrency("any");
+            setActiveOnly("any");
+            setMinPrice("");
+            setMaxPrice("");
+          }}
         >
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TYPE_FILTERS.map((value) => (
-              <SelectItem key={value} value={value}>
-                {value === "any" ? t("anyType") : tt(value)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("columnType")}
+            </Label>
+            <Select
+              value={type}
+              items={Object.fromEntries(
+                TYPE_FILTERS.map((v) => [v, v === "any" ? t("anyType") : tt(v)])
+              )}
+              onValueChange={(v) => setType(v as ProductType | "any")}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TYPE_FILTERS.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {value === "any" ? t("anyType") : tt(value)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("filterCurrency")}
+            </Label>
+            <Select
+              value={currency}
+              items={{
+                any: t("anyCurrency"),
+                USD: t("form.currency.USD"),
+                UZS: t("form.currency.UZS"),
+              }}
+              onValueChange={(v) => setCurrency(v as ProductCurrency | "any")}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">{t("anyCurrency")}</SelectItem>
+                <SelectItem value="USD">{t("form.currency.USD")}</SelectItem>
+                <SelectItem value="UZS">{t("form.currency.UZS")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("filterActive")}
+            </Label>
+            <Select
+              value={activeOnly}
+              items={{
+                any: t("anyActive"),
+                true: t("onlyActive"),
+                false: t("onlyInactive"),
+              }}
+              onValueChange={(v) => setActiveOnly(v as "any" | "true" | "false")}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">{t("anyActive")}</SelectItem>
+                <SelectItem value="true">{t("onlyActive")}</SelectItem>
+                <SelectItem value="false">{t("onlyInactive")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("filterPrice")}
+            </Label>
+            <div className="flex items-center gap-2">
+              <Input
+                inputMode="numeric"
+                value={minPrice}
+                placeholder={t("priceFrom")}
+                onChange={(e) => setMinPrice(e.target.value.replace(/\D/g, ""))}
+                className="min-w-0 flex-1 tabular-nums"
+              />
+              <span className="text-muted-foreground">—</span>
+              <Input
+                inputMode="numeric"
+                value={maxPrice}
+                placeholder={t("priceTo")}
+                onChange={(e) => setMaxPrice(e.target.value.replace(/\D/g, ""))}
+                className="min-w-0 flex-1 tabular-nums"
+              />
+            </div>
+            <span className="text-xs text-muted-foreground">{t("priceHint")}</span>
+          </div>
+        </FiltersDialog>
 
         {data && (
           <span className="text-sm text-muted-foreground tabular-nums">
@@ -177,6 +324,8 @@ export function ProductsTable() {
           </div>
         )}
       </div>
+
+      <ActiveFilterChips active={activeFilters} />
 
       {loading && !data ? (
         <div className="flex flex-col gap-2">
@@ -199,9 +348,20 @@ export function ProductsTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("columnName")}</TableHead>
-                <TableHead>{t("columnType")}</TableHead>
-                <TableHead className="text-right">{t("columnPrice")}</TableHead>
+                <SortableTableHead field="name" sort={sort} onSort={setSort}>
+                  {t("columnName")}
+                </SortableTableHead>
+                <SortableTableHead field="type" sort={sort} onSort={setSort}>
+                  {t("columnType")}
+                </SortableTableHead>
+                <SortableTableHead
+                  field="price"
+                  sort={sort}
+                  onSort={setSort}
+                  align="end"
+                >
+                  {t("columnPrice")}
+                </SortableTableHead>
                 <TableHead>{t("columnSpic")}</TableHead>
                 {canManage && <TableHead className="w-20" />}
               </TableRow>

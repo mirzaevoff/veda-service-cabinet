@@ -55,7 +55,9 @@
     "errors": {
       "network": "No connection. Check your internet",
       "generic": "Something went wrong. Please try again"
-    }
+    },
+    "filterStatusLabel": "Status",
+    "filterRoleLabel": "Role"
   },
   "AdminRoles": {
     "title": "Roles & Access",
@@ -138,7 +140,16 @@
     "delete": "Delete",
     "edit": "Edit",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "sort": "Sorting",
+    "sortBy": "Sort by: {column}",
+    "filters": {
+      "button": "Filters",
+      "title": "Filters",
+      "hint": "Changes apply immediately",
+      "reset": "Reset all",
+      "done": "Done"
+    }
   },
   "Tickets": {
     "list": {
@@ -159,7 +170,17 @@
       "anySeverity": "Any type",
       "filterBreached": "Breached",
       "filterUnclaimed": "Unclaimed",
-      "unclaimedMark": "Unclaimed"
+      "unclaimedMark": "Unclaimed",
+      "searchPlaceholder": "Subject, name or phone",
+      "filterStatusLabel": "Status",
+      "filterCategoryLabel": "Category",
+      "filterEntityLabel": "Organization",
+      "filterSeverityLabel": "Request type",
+      "sortDeadline": "By SLA deadline",
+      "sortLastMessage": "By activity",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first",
+      "sortStatus": "By status"
     },
     "create": {
       "title": "New ticket",
@@ -642,7 +663,10 @@
       "ER913": "The photo is too old — take a new one (no older than {minutes} min)"
     },
     "lateNotice": "The window has expired — you can still complete the checklist; it will be marked “completed late”",
-    "freshnessNotice": "Photos must be taken no more than {minutes} min ago"
+    "freshnessNotice": "Photos must be taken no more than {minutes} min ago",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "sortCompleted": "By completion date"
   },
   "AdminSeverities": {
     "title": "Request types",
@@ -741,6 +765,16 @@
       "genericError": "Something went wrong. Please try again",
       "cancel": "Cancel",
       "save": "Save"
-    }
+    },
+    "filterCurrency": "Currency",
+    "anyCurrency": "Any currency",
+    "filterActive": "Activity",
+    "anyActive": "All items",
+    "onlyActive": "Active only",
+    "onlyInactive": "Hidden only",
+    "filterPrice": "Price, soums",
+    "priceFrom": "from",
+    "priceTo": "to",
+    "priceHint": "The range is compared against the soum price, including converted USD items"
   }
 }

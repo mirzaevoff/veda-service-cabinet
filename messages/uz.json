@@ -55,7 +55,9 @@
     "errors": {
       "network": "Aloqa yo'q. Internetni tekshiring",
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
-    }
+    },
+    "filterStatusLabel": "Holat",
+    "filterRoleLabel": "Rol"
   },
   "AdminRoles": {
     "title": "Rollar va ruxsatlar",
@@ -138,7 +140,16 @@
     "delete": "O'chirish",
     "edit": "O'zgartirish",
     "cancel": "Bekor qilish",
-    "save": "Saqlash"
+    "save": "Saqlash",
+    "sort": "Saralash",
+    "sortBy": "Saralash: {column}",
+    "filters": {
+      "button": "Filtrlar",
+      "title": "Filtrlar",
+      "hint": "O'zgarishlar darhol qo'llanadi",
+      "reset": "Hammasini tozalash",
+      "done": "Tayyor"
+    }
   },
   "Tickets": {
     "list": {
@@ -159,7 +170,17 @@
       "anySeverity": "Istalgan tur",
       "filterBreached": "Muddati buzilgan",
       "filterUnclaimed": "Olinmagan",
-      "unclaimedMark": "Olinmagan"
+      "unclaimedMark": "Olinmagan",
+      "searchPlaceholder": "Mavzu, ism yoki telefon",
+      "filterStatusLabel": "Holat",
+      "filterCategoryLabel": "Kategoriya",
+      "filterEntityLabel": "Tashkilot",
+      "filterSeverityLabel": "Murojaat turi",
+      "sortDeadline": "SLA muddati bo'yicha",
+      "sortLastMessage": "Faollik bo'yicha",
+      "sortNewest": "Avval yangilari",
+      "sortOldest": "Avval eskilari",
+      "sortStatus": "Holat bo'yicha"
     },
     "create": {
       "title": "Yangi murojaat",
@@ -641,7 +662,10 @@
       "ER913": "Foto juda eski — yangisini oling ({minutes} daqiqadan eski emas)"
     },
     "lateNotice": "Muddat tugadi — cheklistni hali yakunlash mumkin, u «kechikib bajarilgan» deb belgilanadi",
-    "freshnessNotice": "Fotolar {minutes} daqiqadan eski bo'lmasligi kerak"
+    "freshnessNotice": "Fotolar {minutes} daqiqadan eski bo'lmasligi kerak",
+    "sortNewest": "Avval yangilari",
+    "sortOldest": "Avval eskilari",
+    "sortCompleted": "Bajarilgan sana bo'yicha"
   },
   "AdminSeverities": {
     "title": "Murojaat turlari",
@@ -740,6 +764,16 @@
       "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
       "cancel": "Bekor qilish",
       "save": "Saqlash"
-    }
+    },
+    "filterCurrency": "Valyuta",
+    "anyCurrency": "Istalgan valyuta",
+    "filterActive": "Faollik",
+    "anyActive": "Barcha pozitsiyalar",
+    "onlyActive": "Faqat faollari",
+    "onlyInactive": "Faqat yashirilganlari",
+    "filterPrice": "Narx, so'm",
+    "priceFrom": "dan",
+    "priceTo": "gacha",
+    "priceHint": "Diapazon so'mdagi narx bilan solishtiriladi, dollarli pozitsiyalar qayta hisoblanadi"
   }
 }

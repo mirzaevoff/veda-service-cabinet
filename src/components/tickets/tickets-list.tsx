@@ -9,11 +9,15 @@ import {
   ChevronRight,
   MessagesSquare,
   Plus,
+  Search,
   UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -24,6 +28,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import {
+  ActiveFilterChips,
+  FiltersDialog,
+  type ActiveFilter,
+} from "@/components/common/filters-dialog";
+import { SortSelect, type SortOption } from "@/components/common/sort-select";
 import { TicketStatusBadge } from "./ticket-status-badge";
 import { SeverityBadge, SlaIndicator } from "./severity-badge";
 import { useTicketListEvents } from "@/hooks/use-ticket-socket";
@@ -43,6 +53,7 @@ import {
 } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatRelativeTime, pickLocalized } from "@/lib/format";
+import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
 import { getCached, setCached } from "@/lib/list-cache";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -71,9 +82,12 @@ export function TicketsList() {
   const severityId = searchParams.get("severity") ?? "";
   const breached = searchParams.get("breached") === "1";
   const unclaimed = searchParams.get("unclaimed") === "1";
+  const urlSearch = searchParams.get("q") ?? "";
+  // Дефолт: очередь суппорта — по дедлайну, свои обращения — по активности
+  const sort = searchParams.get("sort") ?? (scope === "all" ? "deadline:asc" : "lastMessageAt:desc");
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
-  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${page}`;
+  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${sort}:${urlSearch}:${page}`;
   const [data, setData] = useState<Page<Ticket> | null>(
     () => getCached<Page<Ticket>>(cacheKey) ?? null
   );
@@ -85,6 +99,9 @@ export function TicketsList() {
     () => getCached<LegalEntity[]>("ticket-filter-entities") ?? []
   );
   const showSkeleton = useDelayed(loading && !data);
+
+  const [search, setSearch] = useState(urlSearch);
+  const debouncedSearch = useDebouncedValue(search, 400);
 
   const setParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -98,11 +115,18 @@ export function TicketsList() {
     [router, pathname, searchParams]
   );
 
+  useEffect(() => {
+    if (debouncedSearch === urlSearch) return;
+    setParams({ q: debouncedSearch || null, page: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- setParams пересоздаётся на каждый searchParams
+  }, [debouncedSearch]);
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const result = await ticketsApi.list({
         page,
+        search: urlSearch || undefined,
         status: status || undefined,
         categoryId: categoryId || undefined,
         legalEntityId: entityId || undefined,
@@ -110,8 +134,7 @@ export function TicketsList() {
         severityId: (scope === "all" && severityId) || undefined,
         breached: (scope === "all" && breached) || undefined,
         unclaimed: (scope === "all" && unclaimed) || undefined,
-        // Очередь суппорта: красные сверху, ближе дедлайн — выше
-        sort: scope === "all" ? "deadline:asc" : undefined,
+        sort,
       });
       // Страница опустела (фильтр/удаление) — откат на первую
       if (result.items.length === 0 && result.page > 1) {
@@ -127,7 +150,7 @@ export function TicketsList() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, status, categoryId, entityId, scope, severityId, breached, unclaimed]);
+  }, [page, status, categoryId, entityId, scope, severityId, breached, unclaimed, sort, urlSearch]);
 
   useEffect(() => {
     const cached = getCached<Page<Ticket>>(cacheKey);
@@ -218,6 +241,64 @@ export function TicketsList() {
     [categories]
   );
 
+  // Фильтры для модалки: чипы + сброс строятся из одного описания
+  const activeFilters: ActiveFilter[] = [];
+  if (status) {
+    activeFilters.push({
+      key: "status",
+      label: `${t("filterStatusLabel")}: ${status === "open" ? t("statusOpen") : t("statusClosed")}`,
+      onRemove: () => setParams({ status: null, page: null }),
+    });
+  }
+  if (categoryId) {
+    const category = activeCategories.find((c) => c.id === categoryId);
+    activeFilters.push({
+      key: "category",
+      label: `${t("filterCategoryLabel")}: ${category ? pickLocalized(category.name, locale) : "—"}`,
+      onRemove: () => setParams({ category: null, page: null }),
+    });
+  }
+  if (entityId) {
+    const entity = entities.find((e) => e.id === entityId);
+    activeFilters.push({
+      key: "entity",
+      label: `${t("filterEntityLabel")}: ${entity ? entity.establishment || entity.name : "—"}`,
+      onRemove: () => setParams({ entity: null, page: null }),
+    });
+  }
+  if (isStaff && scope === "all" && severityId) {
+    const severity = severities.find((sev) => sev.id === severityId);
+    activeFilters.push({
+      key: "severity",
+      label: `${t("filterSeverityLabel")}: ${severity ? pickLocalized(severity.name, locale) : "—"}`,
+      onRemove: () => setParams({ severity: null, page: null }),
+    });
+  }
+  if (isStaff && scope === "all" && breached) {
+    activeFilters.push({
+      key: "breached",
+      label: t("filterBreached"),
+      onRemove: () => setParams({ breached: null, page: null }),
+    });
+  }
+  if (isStaff && scope === "all" && unclaimed) {
+    activeFilters.push({
+      key: "unclaimed",
+      label: t("filterUnclaimed"),
+      onRemove: () => setParams({ unclaimed: null, page: null }),
+    });
+  }
+
+  const sortOptions: SortOption[] = [
+    ...(isStaff && scope === "all"
+      ? [{ value: "deadline:asc", label: t("sortDeadline") }]
+      : []),
+    { value: "lastMessageAt:desc", label: t("sortLastMessage") },
+    { value: "createdAt:desc", label: t("sortNewest") },
+    { value: "createdAt:asc", label: t("sortOldest") },
+    { value: "status:asc", label: t("sortStatus") },
+  ];
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2 duration-450 animate-in fade-in slide-in-from-bottom-4">
@@ -233,137 +314,178 @@ export function TicketsList() {
           </Tabs>
         )}
 
-        <Select
-          value={status || "any"}
-          items={{
-            any: t("anyStatus"),
-            open: t("statusOpen"),
-            closed: t("statusClosed"),
-          }}
-          onValueChange={(v) =>
-            setParams({ status: v === "any" ? null : (v as string), page: null })
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            className="w-64 pl-9"
+          />
+        </div>
+
+        <SortSelect
+          value={sort}
+          options={sortOptions}
+          onChange={(next) => setParams({ sort: next, page: null })}
+        />
+
+        <FiltersDialog
+          active={activeFilters}
+          onReset={() =>
+            setParams({
+              status: null,
+              category: null,
+              entity: null,
+              severity: null,
+              breached: null,
+              unclaimed: null,
+              page: null,
+            })
           }
         >
-          <SelectTrigger className="w-36">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">{t("anyStatus")}</SelectItem>
-            <SelectItem value="open">{t("statusOpen")}</SelectItem>
-            <SelectItem value="closed">{t("statusClosed")}</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {activeCategories.length > 0 && (
-          <Select
-            value={categoryId || "any"}
-            items={Object.fromEntries([
-              ["any", t("anyCategory")],
-              ...activeCategories.map((c) => [c.id, pickLocalized(c.name, locale)]),
-            ])}
-            onValueChange={(v) =>
-              setParams({ category: v === "any" ? null : (v as string), page: null })
-            }
-          >
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("anyCategory")}</SelectItem>
-              {activeCategories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {pickLocalized(c.name, locale)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        {entities.length > 0 && (
-          <Select
-            value={entityId || "any"}
-            items={Object.fromEntries([
-              ["any", t("anyEntity")],
-              ...entities.map((e) => [
-                e.id,
-                e.establishment ? `${e.establishment} · ${e.name}` : e.name,
-              ]),
-            ])}
-            onValueChange={(v) =>
-              setParams({ entity: v === "any" ? null : (v as string), page: null })
-            }
-          >
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("anyEntity")}</SelectItem>
-              {entities.map((e) => (
-                <SelectItem key={e.id} value={e.id}>
-                  {e.establishment ? `${e.establishment} · ${e.name}` : e.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        {isStaff && scope === "all" && severities.length > 0 && (
-          <Select
-            value={severityId || "any"}
-            items={Object.fromEntries([
-              ["any", t("anySeverity")],
-              ...severities.map((s) => [s.id, pickLocalized(s.name, locale)]),
-            ])}
-            onValueChange={(v) =>
-              setParams({ severity: v === "any" ? null : (v as string), page: null })
-            }
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("anySeverity")}</SelectItem>
-              {severities.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {pickLocalized(s.name, locale)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        {isStaff && scope === "all" && (
-          <>
-            <button
-              type="button"
-              onClick={() =>
-                setParams({ breached: breached ? null : "1", page: null })
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("filterStatusLabel")}
+            </Label>
+            <Select
+              value={status || "any"}
+              items={{
+                any: t("anyStatus"),
+                open: t("statusOpen"),
+                closed: t("statusClosed"),
+              }}
+              onValueChange={(v) =>
+                setParams({ status: v === "any" ? null : (v as string), page: null })
               }
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-                breached
-                  ? "border-destructive bg-destructive/10 text-destructive"
-                  : "border-border text-muted-foreground hover:border-destructive/40"
-              )}
             >
-              {t("filterBreached")}
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setParams({ unclaimed: unclaimed ? null : "1", page: null })
-              }
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-                unclaimed
-                  ? "border-primary bg-accent-light text-primary"
-                  : "border-border text-muted-foreground hover:border-primary/40"
-              )}
-            >
-              {t("filterUnclaimed")}
-            </button>
-          </>
-        )}
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">{t("anyStatus")}</SelectItem>
+                <SelectItem value="open">{t("statusOpen")}</SelectItem>
+                <SelectItem value="closed">{t("statusClosed")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {activeCategories.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("filterCategoryLabel")}
+              </Label>
+              <Select
+                value={categoryId || "any"}
+                items={Object.fromEntries([
+                  ["any", t("anyCategory")],
+                  ...activeCategories.map((c) => [c.id, pickLocalized(c.name, locale)]),
+                ])}
+                onValueChange={(v) =>
+                  setParams({ category: v === "any" ? null : (v as string), page: null })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">{t("anyCategory")}</SelectItem>
+                  {activeCategories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {pickLocalized(c.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {entities.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("filterEntityLabel")}
+              </Label>
+              <Select
+                value={entityId || "any"}
+                items={Object.fromEntries([
+                  ["any", t("anyEntity")],
+                  ...entities.map((e) => [
+                    e.id,
+                    e.establishment ? `${e.establishment} · ${e.name}` : e.name,
+                  ]),
+                ])}
+                onValueChange={(v) =>
+                  setParams({ entity: v === "any" ? null : (v as string), page: null })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">{t("anyEntity")}</SelectItem>
+                  {entities.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.establishment ? `${e.establishment} · ${e.name}` : e.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {isStaff && scope === "all" && severities.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("filterSeverityLabel")}
+              </Label>
+              <Select
+                value={severityId || "any"}
+                items={Object.fromEntries([
+                  ["any", t("anySeverity")],
+                  ...severities.map((sev) => [sev.id, pickLocalized(sev.name, locale)]),
+                ])}
+                onValueChange={(v) =>
+                  setParams({ severity: v === "any" ? null : (v as string), page: null })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">{t("anySeverity")}</SelectItem>
+                  {severities.map((sev) => (
+                    <SelectItem key={sev.id} value={sev.id}>
+                      {pickLocalized(sev.name, locale)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {isStaff && scope === "all" && (
+            <div className="flex flex-col gap-2">
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm">
+                <Checkbox
+                  checked={breached}
+                  onCheckedChange={(v) =>
+                    setParams({ breached: v === true ? "1" : null, page: null })
+                  }
+                />
+                {t("filterBreached")}
+              </label>
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm">
+                <Checkbox
+                  checked={unclaimed}
+                  onCheckedChange={(v) =>
+                    setParams({ unclaimed: v === true ? "1" : null, page: null })
+                  }
+                />
+                {t("filterUnclaimed")}
+              </label>
+            </div>
+          )}
+        </FiltersDialog>
 
         <div className="ms-auto">
           <Link href="/tickets/new">
@@ -374,6 +496,8 @@ export function TicketsList() {
           </Link>
         </div>
       </div>
+
+      <ActiveFilterChips active={activeFilters} />
 
       {loading && !data ? (
         <div className="flex flex-col gap-2">

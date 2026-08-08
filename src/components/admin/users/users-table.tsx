@@ -23,7 +23,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import {
+  ActiveFilterChips,
+  FiltersDialog,
+  type ActiveFilter,
+} from "@/components/common/filters-dialog";
+import {
+  SortableTableHead,
+  type SortValue,
+} from "@/components/common/sortable-table-head";
 import { UserDrawer } from "./user-drawer";
 import type { Page, Role, UserProfile } from "@/lib/api";
 import { adminApi, SessionExpiredError } from "@/lib/api-authed";
@@ -44,6 +54,7 @@ export function UsersTable() {
   const debouncedSearch = useDebouncedValue(search, 400);
   const [status, setStatus] = useState<"" | "active" | "blocked">("");
   const [roleId, setRoleId] = useState("");
+  const [sort, setSort] = useState<SortValue>("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<Page<UserProfile> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +65,7 @@ export function UsersTable() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
     setPage(1);
-  }, [debouncedSearch, status, roleId]);
+  }, [debouncedSearch, status, roleId, sort]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -64,6 +75,7 @@ export function UsersTable() {
         search: debouncedSearch || undefined,
         status: status || undefined,
         roleId: roleId || undefined,
+        sort: sort || undefined,
       });
       if (result.items.length === 0 && result.page > 1) {
         setPage(1);
@@ -77,7 +89,7 @@ export function UsersTable() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, debouncedSearch, status, roleId]);
+  }, [page, debouncedSearch, status, roleId, sort]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный
@@ -92,6 +104,23 @@ export function UsersTable() {
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
 
+  const activeFilters: ActiveFilter[] = [];
+  if (status) {
+    activeFilters.push({
+      key: "status",
+      label: `${t("filterStatusLabel")}: ${status === "active" ? t("statusActive") : t("statusBlocked")}`,
+      onRemove: () => setStatus(""),
+    });
+  }
+  if (roleId) {
+    const role = roles.find((r) => r.id === roleId);
+    activeFilters.push({
+      key: "role",
+      label: `${t("filterRoleLabel")}: ${role ? pickLocalized(role.title, locale) || role.slug : "—"}`,
+      onRemove: () => setRoleId(""),
+    });
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2 duration-450 animate-in fade-in slide-in-from-bottom-4">
@@ -105,49 +134,67 @@ export function UsersTable() {
           />
         </div>
 
-        <Select
-          value={status || "any"}
-          items={{
-            any: t("allStatuses"),
-            active: t("statusActive"),
-            blocked: t("statusBlocked"),
+        <FiltersDialog
+          active={activeFilters}
+          onReset={() => {
+            setStatus("");
+            setRoleId("");
           }}
-          onValueChange={(v) =>
-            setStatus(v === "any" ? "" : (v as "active" | "blocked"))
-          }
         >
-          <SelectTrigger className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">{t("allStatuses")}</SelectItem>
-            <SelectItem value="active">{t("statusActive")}</SelectItem>
-            <SelectItem value="blocked">{t("statusBlocked")}</SelectItem>
-          </SelectContent>
-        </Select>
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-sm font-medium text-muted-foreground">
+              {t("filterStatusLabel")}
+            </Label>
+            <Select
+              value={status || "any"}
+              items={{
+                any: t("allStatuses"),
+                active: t("statusActive"),
+                blocked: t("statusBlocked"),
+              }}
+              onValueChange={(v) =>
+                setStatus(v === "any" ? "" : (v as "active" | "blocked"))
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">{t("allStatuses")}</SelectItem>
+                <SelectItem value="active">{t("statusActive")}</SelectItem>
+                <SelectItem value="blocked">{t("statusBlocked")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        {roles.length > 0 && (
-          <Select
-            value={roleId || "any"}
-            items={Object.fromEntries([
-              ["any", t("allRoles")],
-              ...roles.map((r) => [r.id, pickLocalized(r.title, locale) || r.slug]),
-            ])}
-            onValueChange={(v) => setRoleId(v === "any" ? "" : (v as string))}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("allRoles")}</SelectItem>
-              {roles.map((r) => (
-                <SelectItem key={r.id} value={r.id}>
-                  {pickLocalized(r.title, locale) || r.slug}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+          {roles.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">
+                {t("filterRoleLabel")}
+              </Label>
+              <Select
+                value={roleId || "any"}
+                items={Object.fromEntries([
+                  ["any", t("allRoles")],
+                  ...roles.map((r) => [r.id, pickLocalized(r.title, locale) || r.slug]),
+                ])}
+                onValueChange={(v) => setRoleId(v === "any" ? "" : (v as string))}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">{t("allRoles")}</SelectItem>
+                  {roles.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {pickLocalized(r.title, locale) || r.slug}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </FiltersDialog>
 
         {data && (
           <span className="ms-auto text-sm text-muted-foreground tabular-nums">
@@ -155,6 +202,8 @@ export function UsersTable() {
           </span>
         )}
       </div>
+
+      <ActiveFilterChips active={activeFilters} />
 
       {loading && !data ? (
         <div className="flex flex-col gap-2">
@@ -175,13 +224,24 @@ export function UsersTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("columnName")}</TableHead>
-                <TableHead>{t("columnPhone")}</TableHead>
+                <SortableTableHead field="name" sort={sort} onSort={setSort}>
+                  {t("columnName")}
+                </SortableTableHead>
+                <SortableTableHead field="phone" sort={sort} onSort={setSort}>
+                  {t("columnPhone")}
+                </SortableTableHead>
                 <TableHead>{t("columnRole")}</TableHead>
-                <TableHead>{t("columnStatus")}</TableHead>
-                <TableHead className="text-right">
+                <SortableTableHead field="status" sort={sort} onSort={setSort}>
+                  {t("columnStatus")}
+                </SortableTableHead>
+                <SortableTableHead
+                  field="createdAt"
+                  sort={sort}
+                  onSort={setSort}
+                  align="end"
+                >
                   {t("columnRegistered")}
-                </TableHead>
+                </SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

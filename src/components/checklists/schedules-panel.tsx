@@ -40,7 +40,7 @@ export function SchedulesPanel({
 
   const reload = useCallback(() => {
     checklistsApi.schedules
-      .list({ entity: entityId ?? undefined, limit: 50 })
+      .list({ entity: entityId ?? undefined, limit: 50, sort: "nextRunAt:asc" })
       .then((page) => setSchedules(page.items))
       .catch(() => setSchedules([]));
   }, [entityId]);

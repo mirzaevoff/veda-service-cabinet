@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { BarChart3 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,11 +8,15 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { DatePicker } from "@/components/common/date-picker";
+import {
+  SortableTableHead,
+  parseSortValue,
+  type SortValue,
+} from "@/components/common/sortable-table-head";
 import type { ChecklistStats, ChecklistStatsBucket } from "@/lib/api";
 import { checklistsApi } from "@/lib/api-authed";
 import { cn } from "@/lib/utils";
@@ -29,6 +33,20 @@ function BucketTable({
   buckets: ChecklistStatsBucket[];
 }) {
   const t = useTranslations("Checklists.stats");
+  // Сервер отдаёт массив целиком — сортируем на клиенте
+  const [sort, setSort] = useState<SortValue>("");
+
+  const sorted = useMemo(() => {
+    if (!sort) return buckets;
+    const { field, direction } = parseSortValue(sort);
+    const factor = direction === "asc" ? 1 : -1;
+    return [...buckets].sort((a, b) => {
+      if (field === "label") return factor * a.label.localeCompare(b.label);
+      const key = field as keyof ChecklistStatsBucket;
+      return factor * (Number(a[key]) - Number(b[key]));
+    });
+  }, [buckets, sort]);
+
   if (buckets.length === 0) return null;
   return (
     <div className="flex flex-col gap-2">
@@ -37,16 +55,53 @@ function BucketTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("label")}</TableHead>
-              <TableHead className="text-right">{t("generated")}</TableHead>
-              <TableHead className="text-right">{t("completed")}</TableHead>
-              <TableHead className="text-right">{t("completedLate")}</TableHead>
-              <TableHead className="text-right">{t("missed")}</TableHead>
-              <TableHead className="text-right">{t("onTime")}</TableHead>
+              <SortableTableHead field="label" sort={sort} onSort={setSort}>
+                {t("label")}
+              </SortableTableHead>
+              <SortableTableHead
+                field="generated"
+                sort={sort}
+                onSort={setSort}
+                align="end"
+              >
+                {t("generated")}
+              </SortableTableHead>
+              <SortableTableHead
+                field="completed"
+                sort={sort}
+                onSort={setSort}
+                align="end"
+              >
+                {t("completed")}
+              </SortableTableHead>
+              <SortableTableHead
+                field="completedLate"
+                sort={sort}
+                onSort={setSort}
+                align="end"
+              >
+                {t("completedLate")}
+              </SortableTableHead>
+              <SortableTableHead
+                field="missed"
+                sort={sort}
+                onSort={setSort}
+                align="end"
+              >
+                {t("missed")}
+              </SortableTableHead>
+              <SortableTableHead
+                field="onTimePct"
+                sort={sort}
+                onSort={setSort}
+                align="end"
+              >
+                {t("onTime")}
+              </SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {buckets.map((bucket) => (
+            {sorted.map((bucket) => (
               <TableRow key={bucket.id}>
                 <TableCell className="max-w-60 truncate font-medium">
                   {bucket.label}

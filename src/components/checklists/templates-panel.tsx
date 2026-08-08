@@ -37,7 +37,7 @@ export function TemplatesPanel({
 
   const reload = useCallback(() => {
     checklistsApi.templates
-      .list({ entity: entityId ?? undefined, limit: 50 })
+      .list({ entity: entityId ?? undefined, limit: 50, sort: "name:asc" })
       .then((page) => setTemplates(page.items.filter((tpl) => !tpl.archived)))
       .catch(() => setTemplates([]));
   }, [entityId]);

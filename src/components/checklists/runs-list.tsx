@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { SortSelect } from "@/components/common/sort-select";
+import type { SortValue } from "@/components/common/sortable-table-head";
 import { RunStatusBadge } from "./run-status-badge";
 import type { ChecklistRun, ChecklistTemplate, LegalEntity } from "@/lib/api";
 import { checklistsApi, legalEntitiesApi } from "@/lib/api-authed";
@@ -107,6 +109,7 @@ export function RunsList() {
   const router = useRouter();
 
   const [tab, setTab] = useState<"active" | "history">("active");
+  const [sort, setSort] = useState<SortValue>("scheduledAt:desc");
   const [runs, setRuns] = useState<ChecklistRun[] | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [choices, setChoices] = useState<
@@ -116,10 +119,10 @@ export function RunsList() {
 
   const reload = useCallback(() => {
     checklistsApi.runs
-      .list({ sort: "scheduledAt:desc", limit: 50 })
+      .list({ sort, limit: 50 })
       .then((page) => setRuns(page.items))
       .catch(() => setRuns([]));
-  }, []);
+  }, [sort]);
 
   useEffect(reload, [reload]);
 
@@ -187,10 +190,22 @@ export function RunsList() {
             </button>
           ))}
         </div>
-        <Button onClick={openPicker} className="gap-2">
-          <Play className="size-4" />
-          {t("startManual")}
-        </Button>
+        <div className="ms-auto flex items-center gap-2">
+          <SortSelect
+            value={sort}
+            options={[
+              { value: "scheduledAt:desc", label: t("sortNewest") },
+              { value: "scheduledAt:asc", label: t("sortOldest") },
+              { value: "completedAt:desc", label: t("sortCompleted") },
+            ]}
+            onChange={setSort}
+            className="w-48"
+          />
+          <Button onClick={openPicker} className="gap-2">
+            <Play className="size-4" />
+            {t("startManual")}
+          </Button>
+        </div>
       </div>
 
       {!runs ? (

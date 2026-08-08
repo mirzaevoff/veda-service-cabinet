@@ -55,7 +55,9 @@
     "errors": {
       "network": "Нет соединения. Проверьте интернет",
       "generic": "Что-то пошло не так. Попробуйте ещё раз"
-    }
+    },
+    "filterStatusLabel": "Статус",
+    "filterRoleLabel": "Роль"
   },
   "AdminRoles": {
     "title": "Роли и Доступы",
@@ -138,7 +140,16 @@
     "delete": "Удалить",
     "edit": "Изменить",
     "cancel": "Отмена",
-    "save": "Сохранить"
+    "save": "Сохранить",
+    "sort": "Сортировка",
+    "sortBy": "Сортировать по: {column}",
+    "filters": {
+      "button": "Фильтры",
+      "title": "Фильтры",
+      "hint": "Изменения применяются сразу",
+      "reset": "Сбросить всё",
+      "done": "Готово"
+    }
   },
   "Tickets": {
     "list": {
@@ -159,7 +170,17 @@
       "anySeverity": "Любой тип",
       "filterBreached": "Просроченные",
       "filterUnclaimed": "Невзятые",
-      "unclaimedMark": "Не взят"
+      "unclaimedMark": "Не взят",
+      "searchPlaceholder": "Тема, имя или телефон",
+      "filterStatusLabel": "Статус",
+      "filterCategoryLabel": "Категория",
+      "filterEntityLabel": "Организация",
+      "filterSeverityLabel": "Тип обращения",
+      "sortDeadline": "По дедлайну SLA",
+      "sortLastMessage": "По активности",
+      "sortNewest": "Сначала новые",
+      "sortOldest": "Сначала старые",
+      "sortStatus": "По статусу"
     },
     "create": {
       "title": "Новое обращение",
@@ -641,7 +662,10 @@
       "ER913": "Фото слишком старое — снимите новое (не старше {minutes} мин)"
     },
     "lateNotice": "Срок истёк — чеклист ещё можно завершить, он будет помечен «выполнен не вовремя»",
-    "freshnessNotice": "Фото должны быть сняты не раньше, чем {minutes} мин назад"
+    "freshnessNotice": "Фото должны быть сняты не раньше, чем {minutes} мин назад",
+    "sortNewest": "Сначала новые",
+    "sortOldest": "Сначала старые",
+    "sortCompleted": "По дате выполнения"
   },
   "AdminSeverities": {
     "title": "Типы обращений",
@@ -740,6 +764,16 @@
       "genericError": "Что-то пошло не так. Попробуйте ещё раз",
       "cancel": "Отмена",
       "save": "Сохранить"
-    }
+    },
+    "filterCurrency": "Валюта",
+    "anyCurrency": "Любая валюта",
+    "filterActive": "Активность",
+    "anyActive": "Все позиции",
+    "onlyActive": "Только активные",
+    "onlyInactive": "Только скрытые",
+    "filterPrice": "Цена, сум",
+    "priceFrom": "от",
+    "priceTo": "до",
+    "priceHint": "Диапазон сравнивается с ценой в сумах, включая пересчёт долларовых позиций"
   }
 }

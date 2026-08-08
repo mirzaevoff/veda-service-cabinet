@@ -35,7 +35,13 @@ export function RolesList({ embedded = false }: { embedded?: boolean }) {
 
   const load = useCallback(async () => {
     try {
-      setRoles(await adminApi.roles.list());
+      // Ролей мало и они приходят целиком — сортируем на клиенте
+      const list = await adminApi.roles.list();
+      setRoles(
+        [...list].sort((a, b) =>
+          (a.title.ru || a.slug).localeCompare(b.title.ru || b.slug)
+        )
+      );
     } catch (e) {
       if (e instanceof SessionExpiredError) router.replace("/login");
       else toast.error(tc("loadError"));

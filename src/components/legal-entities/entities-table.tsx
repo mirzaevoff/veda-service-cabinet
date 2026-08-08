@@ -16,6 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCurrentUser } from "@/components/common/current-user-provider";
+import {
+  SortableTableHead,
+  type SortValue,
+} from "@/components/common/sortable-table-head";
 import { EntityFormDialog } from "./entity-form-dialog";
 import { EntityDrawer } from "./entity-drawer";
 import { directorName } from "./entity-requisites";
@@ -37,6 +41,7 @@ export function EntitiesTable() {
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);
+  const [sort, setSort] = useState<SortValue>("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<Page<LegalEntity> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,7 +52,7 @@ export function EntitiesTable() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при поиске
     setPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, sort]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -55,6 +60,7 @@ export function EntitiesTable() {
       const result = await legalEntitiesApi.list({
         page,
         search: debouncedSearch || undefined,
+        sort: sort || undefined,
       });
       if (result.items.length === 0 && result.page > 1) {
         setPage(1);
@@ -68,7 +74,7 @@ export function EntitiesTable() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, sort]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный
@@ -125,10 +131,28 @@ export function EntitiesTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("columnName")}</TableHead>
-                <TableHead>{t("columnTaxId")}</TableHead>
+                <SortableTableHead field="name" sort={sort} onSort={setSort}>
+                  {t("columnName")}
+                </SortableTableHead>
+                <SortableTableHead
+                  field="establishment"
+                  sort={sort}
+                  onSort={setSort}
+                >
+                  {t("establishment")}
+                </SortableTableHead>
+                <SortableTableHead field="taxId" sort={sort} onSort={setSort}>
+                  {t("columnTaxId")}
+                </SortableTableHead>
                 <TableHead>{t("columnDirector")}</TableHead>
-                <TableHead className="text-right">{t("columnAdded")}</TableHead>
+                <SortableTableHead
+                  field="createdAt"
+                  sort={sort}
+                  onSort={setSort}
+                  align="end"
+                >
+                  {t("columnAdded")}
+                </SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,13 +162,11 @@ export function EntitiesTable() {
                   onClick={() => setSelectedId(entity.id)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="max-w-80">
-                    <div className="truncate font-medium">{entity.name}</div>
-                    {entity.establishment && (
-                      <div className="truncate text-xs text-muted-foreground">
-                        {entity.establishment}
-                      </div>
-                    )}
+                  <TableCell className="max-w-72 truncate font-medium">
+                    {entity.name}
+                  </TableCell>
+                  <TableCell className="max-w-56 truncate text-muted-foreground">
+                    {entity.establishment || "—"}
                   </TableCell>
                   <TableCell className="text-muted-foreground tabular-nums">
                     {entity.taxId}
