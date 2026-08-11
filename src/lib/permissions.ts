@@ -20,6 +20,8 @@ export const PERMISSIONS = {
   bankManage: "bank.manage",
   iikoPartnerView: "iikoPartner.view",
   iikoPartnerManage: "iikoPartner.manage",
+  venuesView: "venues.view",
+  venuesManage: "venues.manage",
 } as const;
 
 export function can(

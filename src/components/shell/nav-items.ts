@@ -1,6 +1,7 @@
 import {
   Building2,
   Handshake,
+  Store,
   Landmark,
   LayoutDashboard,
   LibraryBig,
@@ -38,6 +39,12 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     key: "main",
     items: [
+      {
+        key: "venues",
+        href: "/venues",
+        icon: Store,
+        permission: PERMISSIONS.venuesView,
+      },
       { key: "legalEntities", href: "/legal-entities", icon: Building2 },
       {
         key: "products",

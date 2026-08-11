@@ -21,7 +21,8 @@
     "bank": "Bank",
     "services": "Services",
     "finance": "Finance",
-    "iikoPartner": "iiko Partner"
+    "iikoPartner": "iiko Partner",
+    "venues": "Venues"
   },
   "Shell": {
     "logout": "Sign out",
@@ -972,5 +973,75 @@
       "firstAppeared": "Appeared in the list",
       "loadMore": "Show more"
     }
+  },
+  "Venues": {
+    "title": "Venues",
+    "description": "Client venues and outlets from iiko, linked to our legal entities",
+    "summary": {
+      "rms": "Outlets",
+      "chains": "Chains",
+      "linked": "Linked to entity"
+    },
+    "kind": {
+      "rms": "Outlet",
+      "chain": "Chain"
+    },
+    "searchPlaceholder": "Name, UID, city, chain",
+    "filterKind": "Kind",
+    "anyKind": "Outlets and chains",
+    "filterLinked": "Entity link",
+    "anyLinked": "Any",
+    "filterLinkedYes": "With entity",
+    "filterLinkedNo": "Without entity",
+    "filterActivity": "Activity",
+    "filterOnlyActive": "Active only",
+    "filterWithInactive": "Including inactive",
+    "filterChain": "Chain",
+    "sync": "Sync now",
+    "syncDone": "Done: {seen} rows, {created} new, {chains} chains, {deactivated} deactivated",
+    "syncPartial": "Partial sync — the portal did not return every row",
+    "syncError": "Sync failed. Please try again",
+    "lastSync": "Sync: {time}",
+    "lastSyncError": "Last sync failed: {error}",
+    "empty": "No venues found — check the filters or run a sync",
+    "colName": "Name",
+    "colKind": "Kind",
+    "colType": "Format",
+    "colCity": "City",
+    "colEntity": "Our entity",
+    "colLastSeen": "Last seen",
+    "colUid": "UID",
+    "clientId": "iiko client ID",
+    "inactive": "Inactive",
+    "inChain": "in chain “{name}”",
+    "ourEntity": "Our legal entity",
+    "noEntity": "No entity linked",
+    "link": "Link",
+    "unlink": "Unlink",
+    "linked": "Entity linked",
+    "unlinked": "Entity unlinked",
+    "entitySearchPlaceholder": "Entity name or TIN",
+    "entityNotFound": "Nothing found",
+    "iikoCard": "iiko card",
+    "syncCard": "Refresh",
+    "cardSynced": "Card refreshed",
+    "cardSyncedAt": "Card refreshed {time}",
+    "cardNotSynced": "Card has not been fetched yet",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "emailForInvoices": "Invoices email",
+    "manager": "Manager",
+    "iikoEntity": "Entity per iiko",
+    "iikoTaxId": "TIN per iiko",
+    "version": "iiko version",
+    "hostingLink": "Hosting",
+    "webLink": "iikoWeb",
+    "showChainPoints": "Show chain outlets",
+    "errors": {
+      "ER700": "No such legal entity — refresh the list",
+      "generic": "Something went wrong. Please try again"
+    },
+    "colServer": "Server"
   }
 }

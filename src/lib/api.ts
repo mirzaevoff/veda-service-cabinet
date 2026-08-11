@@ -801,3 +801,72 @@ export interface IikoServersSyncResult {
   /** Пагинация портала не дотянула все строки */
   partial: boolean;
 }
+
+// ─── Venues (заведения клиентов поверх данных iiko) ───
+
+export type VenueKind = "rms" | "chain";
+
+export interface VenueRef {
+  id: string;
+  name: string;
+}
+
+/** Живой статус сервера точки из мониторинга iiko-partner */
+export interface VenueServer {
+  uid: string;
+  status: IikoServerStatus;
+  statusChangedAt: string;
+  downSince: string | null;
+  version: string;
+}
+
+export interface Venue {
+  id: string;
+  iikoClientId: string;
+  kind: VenueKind;
+  uid: string;
+  name: string;
+  type: string;
+  city: string;
+  /** Родительская сеть (для RMS внутри сети) */
+  chain: VenueRef | null;
+  chainName: string;
+  address: string;
+  phone: string;
+  email: string;
+  emailForInvoices: string;
+  manager: string;
+  /** ЮЛ, как его видит iiko (часто мусор) */
+  iikoLegalEntityName: string;
+  iikoTaxId: string;
+  version: string;
+  hostingLink: string;
+  webLink: string;
+  /** НАШЕ привязанное ЮЛ */
+  legalEntity: VenueRef | null;
+  /** Живой статус сервера (null — точки нет в мониторинге) */
+  server: VenueServer | null;
+  active: boolean;
+  cardSyncedAt: string | null;
+  lastSeenAt: string;
+}
+
+export interface VenuesSummary {
+  rms: number;
+  chains: number;
+  linked: number;
+  lastListSyncAt: string | null;
+  lastListSyncError: string | null;
+}
+
+export interface VenuesList extends Page<Venue> {
+  summary: VenuesSummary;
+}
+
+export interface VenuesSyncResult {
+  seen: number;
+  created: number;
+  chains: number;
+  deactivated: number;
+  partial: boolean;
+}

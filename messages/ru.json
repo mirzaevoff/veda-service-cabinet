@@ -21,7 +21,8 @@
     "bank": "Банк",
     "services": "Сервисы",
     "finance": "Финансы",
-    "iikoPartner": "iiko Partner"
+    "iikoPartner": "iiko Partner",
+    "venues": "Заведения"
   },
   "Shell": {
     "logout": "Выйти",
@@ -971,5 +972,75 @@
       "firstAppeared": "Появился в списке",
       "loadMore": "Показать ещё"
     }
+  },
+  "Venues": {
+    "title": "Заведения",
+    "description": "Заведения клиентов и их точки из iiko, с привязкой к нашим юрлицам",
+    "summary": {
+      "rms": "Точки",
+      "chains": "Сети",
+      "linked": "Привязано к ЮЛ"
+    },
+    "kind": {
+      "rms": "Точка",
+      "chain": "Сеть"
+    },
+    "searchPlaceholder": "Название, UID, город, сеть",
+    "filterKind": "Тип",
+    "anyKind": "Точки и сети",
+    "filterLinked": "Привязка к ЮЛ",
+    "anyLinked": "Не важно",
+    "filterLinkedYes": "С юрлицом",
+    "filterLinkedNo": "Без юрлица",
+    "filterActivity": "Активность",
+    "filterOnlyActive": "Только активные",
+    "filterWithInactive": "Включая неактивные",
+    "filterChain": "Сеть",
+    "sync": "Синхронизировать",
+    "syncDone": "Готово: строк {seen}, новых {created}, сетей {chains}, деактивировано {deactivated}",
+    "syncPartial": "Синк неполный — портал отдал не все строки",
+    "syncError": "Не получилось синхронизировать. Попробуйте ещё раз",
+    "lastSync": "Синк: {time}",
+    "lastSyncError": "Последний синк с ошибкой: {error}",
+    "empty": "Заведений не найдено — проверьте фильтры или запустите синхронизацию",
+    "colName": "Название",
+    "colKind": "Тип",
+    "colType": "Формат",
+    "colCity": "Город",
+    "colEntity": "Наше ЮЛ",
+    "colLastSeen": "Виден",
+    "colUid": "UID",
+    "clientId": "ID клиента iiko",
+    "inactive": "Неактивно",
+    "inChain": "в сети «{name}»",
+    "ourEntity": "Наше юрлицо",
+    "noEntity": "Юрлицо не привязано",
+    "link": "Привязать",
+    "unlink": "Отвязать",
+    "linked": "Юрлицо привязано",
+    "unlinked": "Юрлицо отвязано",
+    "entitySearchPlaceholder": "Название или ИНН юрлица",
+    "entityNotFound": "Ничего не нашлось",
+    "iikoCard": "Карточка iiko",
+    "syncCard": "Обновить",
+    "cardSynced": "Карточка обновлена",
+    "cardSyncedAt": "Карточка обновлена {time}",
+    "cardNotSynced": "Карточка ещё не загружалась",
+    "address": "Адрес",
+    "phone": "Телефон",
+    "email": "Почта",
+    "emailForInvoices": "Почта для счетов",
+    "manager": "Менеджер",
+    "iikoEntity": "ЮЛ по данным iiko",
+    "iikoTaxId": "ИНН по данным iiko",
+    "version": "Версия iiko",
+    "hostingLink": "Хостинг",
+    "webLink": "iikoWeb",
+    "showChainPoints": "Показать точки сети",
+    "errors": {
+      "ER700": "Такого юрлица нет — обновите список",
+      "generic": "Что-то пошло не так. Попробуйте ещё раз"
+    },
+    "colServer": "Сервер"
   }
 }

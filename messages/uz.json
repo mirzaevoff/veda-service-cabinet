@@ -21,7 +21,8 @@
     "bank": "Bank",
     "services": "Servislar",
     "finance": "Moliya",
-    "iikoPartner": "iiko Partner"
+    "iikoPartner": "iiko Partner",
+    "venues": "Muassasalar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -971,5 +972,75 @@
       "firstAppeared": "Ro'yxatda paydo bo'ldi",
       "loadMore": "Yana ko'rsatish"
     }
+  },
+  "Venues": {
+    "title": "Muassasalar",
+    "description": "iiko dagi mijoz muassasalari va nuqtalari, bizning yuridik shaxslarga bog'lanadi",
+    "summary": {
+      "rms": "Nuqtalar",
+      "chains": "Tarmoqlar",
+      "linked": "YuShga bog'langan"
+    },
+    "kind": {
+      "rms": "Nuqta",
+      "chain": "Tarmoq"
+    },
+    "searchPlaceholder": "Nomi, UID, shahar, tarmoq",
+    "filterKind": "Turi",
+    "anyKind": "Nuqtalar va tarmoqlar",
+    "filterLinked": "YuSh bog'lanishi",
+    "anyLinked": "Farqi yo'q",
+    "filterLinkedYes": "YuSh bilan",
+    "filterLinkedNo": "YuShsiz",
+    "filterActivity": "Faollik",
+    "filterOnlyActive": "Faqat faollar",
+    "filterWithInactive": "Nofaollar bilan",
+    "filterChain": "Tarmoq",
+    "sync": "Sinxronlash",
+    "syncDone": "Tayyor: {seen} qator, {created} yangi, {chains} tarmoq, {deactivated} o'chirilgan",
+    "syncPartial": "Sinxronlash to'liq emas — portal hamma qatorni bermadi",
+    "syncError": "Sinxronlab bo'lmadi. Qayta urinib ko'ring",
+    "lastSync": "Sinx: {time}",
+    "lastSyncError": "Oxirgi sinx xato bilan: {error}",
+    "empty": "Muassasalar topilmadi — filtrlarni tekshiring yoki sinxronlashni ishga tushiring",
+    "colName": "Nomi",
+    "colKind": "Turi",
+    "colType": "Format",
+    "colCity": "Shahar",
+    "colEntity": "Bizning YuSh",
+    "colLastSeen": "Ko'ringan",
+    "colUid": "UID",
+    "clientId": "iiko mijoz ID",
+    "inactive": "Nofaol",
+    "inChain": "«{name}» tarmog'ida",
+    "ourEntity": "Bizning yuridik shaxs",
+    "noEntity": "Yuridik shaxs bog'lanmagan",
+    "link": "Bog'lash",
+    "unlink": "Uzish",
+    "linked": "Yuridik shaxs bog'landi",
+    "unlinked": "Yuridik shaxs uzildi",
+    "entitySearchPlaceholder": "YuSh nomi yoki STIR",
+    "entityNotFound": "Hech narsa topilmadi",
+    "iikoCard": "iiko kartochkasi",
+    "syncCard": "Yangilash",
+    "cardSynced": "Kartochka yangilandi",
+    "cardSyncedAt": "Kartochka {time} da yangilangan",
+    "cardNotSynced": "Kartochka hali yuklanmagan",
+    "address": "Manzil",
+    "phone": "Telefon",
+    "email": "Pochta",
+    "emailForInvoices": "Hisob-fakturalar pochtasi",
+    "manager": "Menejer",
+    "iikoEntity": "iiko bo'yicha YuSh",
+    "iikoTaxId": "iiko bo'yicha STIR",
+    "version": "iiko versiyasi",
+    "hostingLink": "Hosting",
+    "webLink": "iikoWeb",
+    "showChainPoints": "Tarmoq nuqtalarini ko'rsatish",
+    "errors": {
+      "ER700": "Bunday yuridik shaxs yo'q — ro'yxatni yangilang",
+      "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    },
+    "colServer": "Server"
   }
 }

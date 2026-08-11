@@ -23,6 +23,9 @@ import {
   type IikoServerEvent,
   type IikoServersList,
   type IikoServersSyncResult,
+  type Venue,
+  type VenuesList,
+  type VenuesSyncResult,
   type EntityMemberRole,
   type LegalEntity,
   type LegalEntityLookup,
@@ -644,6 +647,29 @@ export const iikoPartnerApi = {
         method: "POST",
       }),
   },
+};
+
+export const venuesApi = {
+  list: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    kind?: string;
+    chainId?: string;
+    linked?: boolean;
+    active?: boolean;
+    sort?: string;
+  } = {}) => authedRequest<VenuesList>(`/venues${query({ ...params })}`),
+  get: (id: string) => authedRequest<Venue>(`/venues/${id}`),
+  linkLegalEntity: (id: string, legalEntityId: string | null) =>
+    authedRequest<Venue>(`/venues/${id}/legal-entity`, {
+      method: "PATCH",
+      body: JSON.stringify({ legalEntityId }),
+    }),
+  sync: () =>
+    authedRequest<VenuesSyncResult>("/venues/sync", { method: "POST" }),
+  syncCard: (id: string) =>
+    authedRequest<Venue>(`/venues/${id}/sync-card`, { method: "POST" }),
 };
 
 export const banksApi = {
