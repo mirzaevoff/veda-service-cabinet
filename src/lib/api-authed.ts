@@ -4,6 +4,13 @@ import {
   type AccessRequest,
   type AccessRequestStatus,
   type AuthSession,
+  type Bank,
+  type BankAccount,
+  type BankRates,
+  type BankReconciliation,
+  type BankReconciliationStatus,
+  type BankTransaction,
+  type BankTransactionDirection,
   type ChecklistItemInput,
   type ChecklistRun,
   type ChecklistRunStatus,
@@ -251,6 +258,7 @@ export const legalEntitiesApi = {
     rawName?: string;
     establishment?: string;
     bankCode?: string;
+    bank?: string;
     bankAccount?: string;
     address?: string;
     director?: { firstName: string; lastName: string; middleName: string } | null;
@@ -267,6 +275,7 @@ export const legalEntitiesApi = {
       rawName: string;
       establishment: string;
       bankCode: string;
+      bank: string;
       bankAccount: string;
       address: string;
       director: { firstName: string; lastName: string; middleName: string } | null;
@@ -588,6 +597,99 @@ export const settingsApi = {
       method: "PATCH",
       body: JSON.stringify({ value }),
     }),
+  /** Реквизиты организации из Didox — сохраняет и возвращает группу Organization */
+  organizationAutofill: (taxId: string) =>
+    authedRequest<Setting[]>("/settings/organization/autofill", {
+      method: "POST",
+      body: JSON.stringify({ taxId }),
+    }),
+};
+
+export const banksApi = {
+  /** Справочник банков для выпадашек: смарт-поиск по названию/МФО */
+  list: (params: { search?: string; page?: number; limit?: number } = {}) =>
+    authedRequest<Page<Bank>>(`/banks${query({ ...params })}`),
+};
+
+export interface BankTransactionListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  /** docDate:desc (default) | docDate:asc | amount:* */
+  sort?: string;
+  account?: string;
+  direction?: BankTransactionDirection;
+  dtype?: string;
+  state?: string;
+  /** Ташкентские дни YYYY-MM-DD */
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export const bankApi = {
+  accounts: {
+    list: (params: { enabled?: boolean; sort?: string } = {}) =>
+      authedRequest<Page<BankAccount>>(`/bank/accounts${query({ ...params })}`),
+    create: (body: {
+      branch: string;
+      account: string;
+      title: string;
+      enabled?: boolean;
+    }) =>
+      authedRequest<BankAccount>("/bank/accounts", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    update: (id: string, body: Partial<{ title: string; enabled: boolean }>) =>
+      authedRequest<BankAccount>(`/bank/accounts/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    remove: (id: string) =>
+      authedRequest<void>(`/bank/accounts/${id}`, { method: "DELETE" }),
+    sync: (id: string) =>
+      authedRequest<{ seen: number; upserted: number }>(
+        `/bank/accounts/${id}/sync`,
+        { method: "POST" }
+      ),
+  },
+
+  transactions: {
+    list: (params: BankTransactionListParams = {}) =>
+      authedRequest<Page<BankTransaction>>(
+        `/bank/transactions${query({ ...params })}`
+      ),
+    get: (id: string) =>
+      authedRequest<BankTransaction>(`/bank/transactions/${id}`),
+    refreshDetails: (id: string) =>
+      authedRequest<BankTransaction>(
+        `/bank/transactions/${id}/refresh-details`,
+        { method: "POST" }
+      ),
+  },
+
+  reconciliations: {
+    list: (
+      params: {
+        page?: number;
+        limit?: number;
+        account?: string;
+        status?: BankReconciliationStatus;
+        dateFrom?: string;
+        dateTo?: string;
+      } = {}
+    ) =>
+      authedRequest<Page<BankReconciliation>>(
+        `/bank/reconciliations${query({ ...params })}`
+      ),
+    run: (accountId: string, date: string) =>
+      authedRequest<BankReconciliation>("/bank/reconciliations/run", {
+        method: "POST",
+        body: JSON.stringify({ accountId, date }),
+      }),
+  },
+
+  rates: () => authedRequest<BankRates>("/bank/rates"),
 };
 
 export interface ProductListParams {

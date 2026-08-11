@@ -16,6 +16,8 @@ export const PERMISSIONS = {
   settingsManage: "settings.manage",
   productsList: "products.list",
   productsManage: "products.manage",
+  bankView: "bank.view",
+  bankManage: "bank.manage",
 } as const;
 
 export function can(

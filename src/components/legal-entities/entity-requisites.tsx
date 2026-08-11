@@ -20,7 +20,12 @@ export function EntityRequisites({ entity }: { entity: LegalEntity }) {
   const rows: [string, string][] = [
     [t("establishment"), entity.establishment],
     [t("taxId"), entity.taxId],
-    [t("bank"), [entity.bankCode, entity.bankAccount].filter(Boolean).join(" · ")],
+    [
+      t("bank"),
+      [entity.bank, entity.bankCode, entity.bankAccount]
+        .filter(Boolean)
+        .join(" · "),
+    ],
     [t("address"), entity.address],
     [t("director"), directorName(entity.director)],
     [

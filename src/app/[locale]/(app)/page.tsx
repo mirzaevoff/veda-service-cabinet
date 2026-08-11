@@ -1,13 +1,19 @@
 import { getTranslations } from "next-intl/server";
 import { Rocket } from "lucide-react";
 import { AppFooter } from "@/components/common/app-footer";
+import { BankRatesWidget } from "@/components/bank/bank-rates-widget";
 
 export default async function DashboardPage() {
   const t = await getTranslations("Dashboard");
 
   return (
-    <div className="relative flex min-h-full flex-col items-center justify-center pb-16">
-      <div className="flex flex-col items-center gap-5 text-center">
+    <div className="relative flex min-h-full flex-col items-center pb-16">
+      {/* Виджет курсов сам скрывается без права bank.view */}
+      <div className="flex w-full justify-center pt-2">
+        <BankRatesWidget />
+      </div>
+
+      <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
         <div className="duration-450 animate-in fade-in zoom-in-90">
           <div className="flex size-14 animate-pulse items-center justify-center rounded-lg bg-accent-light [animation-duration:2.5s]">
             <Rocket className="size-[26px] text-primary" strokeWidth={1.75} />

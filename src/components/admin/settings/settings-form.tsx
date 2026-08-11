@@ -2,11 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { RotateCcw, SlidersHorizontal } from "lucide-react";
+import { RotateCcw, SlidersHorizontal, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
@@ -30,6 +38,10 @@ export function SettingsForm() {
   const [drafts, setDrafts] = useState<Record<string, string | boolean>>({});
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [autofillOpen, setAutofillOpen] = useState(false);
+  const [autofillTaxId, setAutofillTaxId] = useState("");
+  const [autofillBusy, setAutofillBusy] = useState(false);
+  const [autofillError, setAutofillError] = useState<string | null>(null);
   const showSkeleton = useDelayed(!items);
 
   const load = useCallback(() => {
@@ -99,6 +111,31 @@ export function SettingsForm() {
     }
   }
 
+  async function autofill() {
+    if (!/^(\d{9}|\d{14})$/.test(autofillTaxId)) {
+      setAutofillError(t("taxIdFormat"));
+      return;
+    }
+    setAutofillBusy(true);
+    setAutofillError(null);
+    try {
+      await settingsApi.organizationAutofill(autofillTaxId);
+      toast.success(t("autofillDone"));
+      setAutofillOpen(false);
+      load();
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER703")
+        setAutofillError(t("autofillNotFound"));
+      else if (e instanceof ApiError && e.code === "ER702")
+        setAutofillError(t("autofillDidoxDown"));
+      else if (e instanceof ApiError && e.code === "ER101")
+        setAutofillError(t("taxIdFormat"));
+      else setAutofillError(t("genericError"));
+    } finally {
+      setAutofillBusy(false);
+    }
+  }
+
   function isDirty(setting: Setting) {
     const draft = drafts[setting.key];
     return setting.type === "boolean"
@@ -128,9 +165,36 @@ export function SettingsForm() {
     );
   }
 
+  const groups = [...new Set(items.map((s) => s.group))];
+
   return (
-    <div className="flex max-w-2xl flex-col gap-3">
-      {items.map((setting, i) => (
+    <div className="flex max-w-2xl flex-col gap-6">
+      {groups.map((group) => (
+        <section key={group} className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="font-semibold">
+              {t.has(`groups.${group}`) ? t(`groups.${group}`) : group}
+            </h3>
+            {group === "Organization" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const current = items.find((s) => s.key === "org.taxId");
+                  setAutofillTaxId(String(current?.value ?? ""));
+                  setAutofillError(null);
+                  setAutofillOpen(true);
+                }}
+                className="gap-2"
+              >
+                <Sparkles className="size-4" />
+                {t("autofill")}
+              </Button>
+            )}
+          </div>
+          {items
+            .filter((s) => s.group === group)
+            .map((setting, i) => (
         <div
           key={setting.key}
           className="flex flex-col gap-3 rounded-lg border border-border p-4 duration-450 animate-in fade-in slide-in-from-bottom-2 [animation-fill-mode:backwards]"
@@ -220,7 +284,50 @@ export function SettingsForm() {
             <p className="text-xs text-destructive">{errors[setting.key]}</p>
           )}
         </div>
+            ))}
+        </section>
       ))}
+
+      {/* Автозаполнение реквизитов организации из Didox */}
+      <Dialog open={autofillOpen} onOpenChange={setAutofillOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("autofillTitle")}</DialogTitle>
+            <DialogDescription>{t("autofillHint")}</DialogDescription>
+          </DialogHeader>
+          <form
+            className="flex flex-col gap-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void autofill();
+            }}
+          >
+            <Input
+              value={autofillTaxId}
+              inputMode="numeric"
+              maxLength={14}
+              autoFocus
+              placeholder="310529901"
+              onChange={(e) => {
+                setAutofillTaxId(e.target.value.replace(/\D/g, ""));
+                setAutofillError(null);
+              }}
+              className="tabular-nums"
+            />
+            {autofillError && (
+              <p className="text-xs text-destructive">{autofillError}</p>
+            )}
+          </form>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setAutofillOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={() => void autofill()} disabled={autofillBusy}>
+              {autofillBusy ? <Spinner className="size-4" /> : t("autofillRun")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -17,7 +17,8 @@
     "directories": "Ma'lumotnomalar",
     "panel": "Boshqaruv paneli",
     "help": "Yordam",
-    "products": "Mahsulot va xizmatlar"
+    "products": "Mahsulot va xizmatlar",
+    "bank": "Bank"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -501,7 +502,9 @@
         "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
       },
       "positionsLabel": "Lavozimlar"
-    }
+    },
+    "bankName": "Bank",
+    "bankNamePlaceholder": "Bank nomi"
   },
   "Checklists": {
     "title": "Cheklistlar",
@@ -714,7 +717,21 @@
     "notANumber": "Raqam kiriting",
     "invalidValue": "Noto'g'ri qiymat",
     "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
-    "empty": "Hozircha sozlamalar yo'q"
+    "empty": "Hozircha sozlamalar yo'q",
+    "groups": {
+      "Currency": "Valyuta",
+      "Organization": "Tashkilot",
+      "Kapitalbank": "Kapitalbank"
+    },
+    "autofill": "STIR bo'yicha to'ldirish",
+    "autofillTitle": "Reyestrdan rekvizitlar",
+    "autofillHint": "Didoxdan nomi, hisob, MFO, bank, manzil va direktorni olamiz. Telefon va pochta qo'lda kiritiladi",
+    "autofillRun": "To'ldirish",
+    "autofillDone": "Rekvizitlar to'ldirildi",
+    "autofillNotFound": "STIR reyestrda topilmadi",
+    "autofillDidoxDown": "Reyestr xizmati ishlamayapti — keyinroq urinib ko'ring",
+    "taxIdFormat": "Raqamni tekshiring — 9 raqam (STIR) yoki 14 (PINFL)",
+    "cancel": "Bekor qilish"
   },
   "Products": {
     "title": "Mahsulot va xizmatlar",
@@ -775,5 +792,101 @@
     "priceFrom": "dan",
     "priceTo": "gacha",
     "priceHint": "Diapazon so'mdagi narx bilan solishtiriladi, dollarli pozitsiyalar qayta hisoblanadi"
+  },
+  "Bank": {
+    "title": "Bank",
+    "description": "Kapitalbank tranzaksiyalari, hisoblar va solishtirish",
+    "tabs": {
+      "transactions": "Tranzaksiyalar",
+      "accounts": "Hisoblar",
+      "reconciliations": "Solishtirish"
+    },
+    "transactions": {
+      "searchPlaceholder": "Maqsad, ism, STIR, hisob, raqam",
+      "sortNewest": "Avval yangilari",
+      "sortOldest": "Avval eskilari",
+      "sortAmountDesc": "Summa: kamayish bo'yicha",
+      "sortAmountAsc": "Summa: o'sish bo'yicha",
+      "filterAccount": "Hisob",
+      "anyAccount": "Barcha hisoblar",
+      "filterDirection": "Yo'nalish",
+      "anyDirection": "Istalgan",
+      "directionIn": "Kirimlar",
+      "directionOut": "Chiqimlar",
+      "filterPeriod": "Davr",
+      "from": "Sanadan",
+      "to": "Sanagacha",
+      "total": "Jami: {count}",
+      "empty": "Tranzaksiyalar yo'q — hisoblar va filtrlarni tekshiring",
+      "internal": "O'zaro o'tkazma",
+      "soum": "so'm",
+      "payer": "To'lovchi",
+      "payerDetails": "To'lovchi rekvizitlari",
+      "receiver": "Oluvchi",
+      "receiverDetails": "Oluvchi rekvizitlari",
+      "purpose": "Maqsad",
+      "purpCode": "Maqsad kodi",
+      "docType": "Hujjat turi",
+      "bankId": "Bank ID",
+      "refreshDetails": "Bankdan kartochkani yangilash",
+      "detailsRefreshed": "Kartochka yangilandi",
+      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    },
+    "accounts": {
+      "add": "Hisob qo'shish",
+      "addHint": "Hisob 15 daqiqalik sink va tungi solishtirishga qo'shiladi",
+      "title": "Nomi",
+      "titlePlaceholder": "Asosiy hisob",
+      "branch": "MFO",
+      "account": "Hisob raqami",
+      "immutableHint": "MFO va raqam o'zgarmas: rekvizitlar o'zgarsa yangi hisob yarating va eskisini o'chiring",
+      "validation": "MFO — 5 raqam, hisob — 20 raqam, nomi majburiy",
+      "duplicate": "Bu hisob allaqachon qo'shilgan",
+      "created": "Hisob qo'shildi",
+      "empty": "Birinchi hisobni qo'shing — sink ko'chirmani aks ettira boshlaydi",
+      "enabled": "Kuzatilmoqda",
+      "balance": "Qoldiq",
+      "available": "Mavjud",
+      "turnovers": "Kunlik aylanma",
+      "lastSync": "Sink: {time}",
+      "neverSynced": "Hali sinklanmagan",
+      "syncNow": "Hozir sinklash",
+      "synced": "Sink bajarildi: {upserted} yangi",
+      "syncFailed": "Sink o'tmadi — kartochkadagi xatoni ko'ring",
+      "deleted": "Hisob o'chirildi",
+      "hasHistory": "Hisobda tranzaksiyalar tarixi bor — faqat o'chirib qo'yish mumkin",
+      "deleteConfirmTitle": "«{title}» o'chirilsinmi?",
+      "deleteConfirmText": "O'chirish faqat tranzaksiyalar tarixisiz mumkin",
+      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    },
+    "reconciliations": {
+      "anyStatus": "Barcha holatlar",
+      "status": {
+        "matched": "Mos keldi",
+        "discrepancy": "Tafovut",
+        "unconfirmed": "Kun yopilmagan",
+        "error": "Xato"
+      },
+      "run": "Qo'lda solishtirish",
+      "runHint": "Kunimizni bank ko'chirmasi bilan solishtiramiz: hujjatlar soni va summalar",
+      "runNow": "Solishtirish",
+      "runDone": "Solishtirish yakunlandi: {status}",
+      "account": "Hisob",
+      "date": "Sana (Toshkent kuni)",
+      "empty": "Hozircha solishtirishlar yo'q — tungi kron jurnalni to'ldiradi",
+      "dayNotClosed": "bank kunni hali yopmagan",
+      "docs": "Hujjatlar (biz/bank)",
+      "debit": "Debet",
+      "credit": "Kredit",
+      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    },
+    "rates": {
+      "title": "Kapitalbank kurslari",
+      "stale": "ma'lumotlar eskirgan bo'lishi mumkin",
+      "cb": "MB",
+      "buy": "Olish",
+      "sell": "Sotish",
+      "empty": "Kurslar mavjud emas"
+    }
   }
 }

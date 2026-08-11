@@ -26,6 +26,7 @@ interface FormState {
   rawName: string;
   establishment: string;
   bankCode: string;
+  bank: string;
   bankAccount: string;
   address: string;
   directorLastName: string;
@@ -40,6 +41,7 @@ const EMPTY: FormState = {
   rawName: "",
   establishment: "",
   bankCode: "",
+  bank: "",
   bankAccount: "",
   address: "",
   directorLastName: "",
@@ -55,6 +57,7 @@ function fromEntity(entity: LegalEntity): FormState {
     rawName: entity.rawName,
     establishment: entity.establishment,
     bankCode: entity.bankCode,
+    bank: entity.bank,
     bankAccount: entity.bankAccount,
     address: entity.address,
     directorLastName: entity.director?.lastName ?? "",
@@ -120,6 +123,7 @@ export function EntityFormDialog({
         name: found.name,
         rawName: found.rawName,
         bankCode: found.bankCode,
+        bank: found.bank,
         bankAccount: found.bankAccount,
         address: found.address,
         directorLastName: found.director?.lastName ?? "",
@@ -164,6 +168,7 @@ export function EntityFormDialog({
       rawName: form.rawName.trim() || undefined,
       establishment: form.establishment.trim(),
       bankCode: form.bankCode.trim() || undefined,
+      bank: form.bank.trim() || undefined,
       bankAccount: form.bankAccount.trim() || undefined,
       address: form.address.trim() || undefined,
       director,
@@ -293,6 +298,19 @@ export function EntityFormDialog({
                 className="tabular-nums"
               />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="le-bank" className="text-sm font-medium text-muted-foreground">
+              {t("bankName")}
+            </Label>
+            <Input
+              id="le-bank"
+              value={form.bank}
+              maxLength={300}
+              placeholder={t("bankNamePlaceholder")}
+              onChange={(e) => set("bank", e.target.value)}
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">

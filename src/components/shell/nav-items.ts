@@ -1,5 +1,6 @@
 import {
   Building2,
+  Landmark,
   LayoutDashboard,
   LibraryBig,
   ListChecks,
@@ -56,6 +57,12 @@ export const NAV_SECTIONS: NavSection[] = [
           PERMISSIONS.rolesRead,
           PERMISSIONS.ticketsCategoriesManage,
         ],
+      },
+      {
+        key: "bank",
+        href: "/admin/bank",
+        icon: Landmark,
+        permission: PERMISSIONS.bankView,
       },
       {
         key: "panel",

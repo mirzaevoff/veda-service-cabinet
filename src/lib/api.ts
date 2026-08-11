@@ -331,6 +331,8 @@ export interface LegalEntity {
   /** Название заведения («Ресторан „У Бабушки"»), пустая строка если не задано */
   establishment: string;
   bankCode: string;
+  /** Название банка (из собственного справочника, по МФО) */
+  bank: string;
   bankAccount: string;
   address: string;
   director: LegalEntityDirector | null;
@@ -345,10 +347,19 @@ export interface LegalEntityLookup {
   taxId: string;
   rawName: string;
   bankCode: string;
+  /** Название банка из нашего справочника (по МФО) */
+  bank: string;
   bankAccount: string;
   address: string;
   director: LegalEntityDirector | null;
   registrationDate: string | null;
+}
+
+/** Справочник банков (зеркало классификатора Didox) */
+export interface Bank {
+  /** МФО (= bankCode) */
+  bankId: string;
+  name: string;
 }
 
 // --- Чеклисты (API 0.17) ---------------------------------------------------
@@ -523,6 +534,128 @@ export interface Product {
 /** Страница каталога: плюс курс, по которому посчитаны суммы */
 export interface ProductsPage extends Page<Product> {
   usdRate: number;
+}
+
+// --- Банк (Kapitalbank, API 0.21) -------------------------------------------
+
+/** Снапшот остатков/оборотов счёта из GetAcc1C (суммы в тийинах) */
+export interface BankAccountSnapshot {
+  name: string;
+  val: string;
+  /** Входящий остаток */
+  s_in: number;
+  /** Исходящий остаток */
+  s_out: number;
+  /** Обороты дебет */
+  dt: number;
+  /** Обороты кредит */
+  ct: number;
+  /** Доступно к оплате */
+  canpay: number;
+  state: number;
+  stateName: string;
+  syncedAt: string;
+}
+
+export interface BankAccount {
+  id: string;
+  /** МФО, 5 цифр — иммутабелен */
+  branch: string;
+  /** Номер счёта, 20 цифр — иммутабелен */
+  account: string;
+  title: string;
+  enabled: boolean;
+  snapshot: BankAccountSnapshot | null;
+  lastSyncAt: string | null;
+  lastSyncOkAt: string | null;
+  lastSyncError: string | null;
+  createdAt: string;
+}
+
+export type BankTransactionDirection = "in" | "out";
+export type BankTransactionSource = "kapitalbank" | "system";
+
+/** Банковские поля хранятся дословно (snake_case банка); суммы в тийинах */
+export interface BankTransaction {
+  id: string;
+  source: BankTransactionSource;
+  bankAccountId: string;
+  /** UTC-инстант ташкентской полуночи ddate */
+  docDate: string;
+  /** Вычислено по своему счёту (полю dir банка не доверяем) */
+  direction: BankTransactionDirection;
+  /** Контрагент — тоже наш отслеживаемый счёт (перевод между своими) */
+  counterpartyTracked: boolean;
+  amount: number;
+  b2_id: string;
+  num: string;
+  ddate: string;
+  mfo_dt: string;
+  acc_dt: string;
+  name_dt: string;
+  inn_dt: string;
+  mfo_ct: string;
+  acc_ct: string;
+  name_ct: string;
+  inn_ct: string;
+  purpose: string;
+  purp_code: string;
+  dtype: string;
+  state: number | null;
+  syncedAt: string;
+  raw: Record<string, unknown>;
+  detailsRaw: Record<string, unknown> | null;
+}
+
+export type BankReconciliationStatus =
+  | "matched"
+  | "discrepancy"
+  | "unconfirmed"
+  | "error";
+
+export interface BankReconciliation {
+  id: string;
+  bankAccountId: string;
+  /** Ташкентский день YYYY-MM-DD */
+  date: string;
+  status: BankReconciliationStatus;
+  bankDocCount: number;
+  ourDocCount: number;
+  bankTotalDebit: number;
+  bankTotalCredit: number;
+  ourTotalDebit: number;
+  ourTotalCredit: number;
+  bankSaldoIn: number;
+  bankSaldoOut: number;
+  /** 1 — день закрыт банком окончательно */
+  fin: number | null;
+  operDayState: string;
+  attempts: number;
+  message: string;
+  finalizedAt: string | null;
+}
+
+export interface BankRate {
+  order?: string;
+  flag_url?: string;
+  kod?: string;
+  char_kod?: string;
+  name?: string;
+  course_cb?: string;
+  change_cb?: string;
+  course_buy?: string;
+  change_buy?: string;
+  course_sell?: string;
+  change_sell?: string;
+}
+
+export interface BankRates {
+  filial?: string;
+  date?: string;
+  time?: string;
+  courses: BankRate[];
+  /** Банк не ответил — отдан последний кэш */
+  stale: boolean;
 }
 
 export const api = {

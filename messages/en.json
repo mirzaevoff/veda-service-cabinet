@@ -17,7 +17,8 @@
     "directories": "Directories",
     "panel": "Control panel",
     "help": "Help",
-    "products": "Products & services"
+    "products": "Products & services",
+    "bank": "Bank"
   },
   "Shell": {
     "logout": "Sign out",
@@ -502,7 +503,9 @@
         "generic": "Something went wrong. Please try again"
       },
       "positionsLabel": "Positions"
-    }
+    },
+    "bankName": "Bank",
+    "bankNamePlaceholder": "Bank name"
   },
   "Checklists": {
     "title": "Checklists",
@@ -715,7 +718,21 @@
     "notANumber": "Enter a number",
     "invalidValue": "Invalid value",
     "genericError": "Something went wrong. Please try again",
-    "empty": "No settings yet"
+    "empty": "No settings yet",
+    "groups": {
+      "Currency": "Currency",
+      "Organization": "Organization",
+      "Kapitalbank": "Kapitalbank"
+    },
+    "autofill": "Fill by TIN",
+    "autofillTitle": "Requisites from the registry",
+    "autofillHint": "We will pull the name, account, MFO, bank, address and director from Didox. Phone and email are filled manually",
+    "autofillRun": "Fill",
+    "autofillDone": "Requisites filled",
+    "autofillNotFound": "TIN not found in the registry",
+    "autofillDidoxDown": "The registry service is unavailable — try later",
+    "taxIdFormat": "Check the number — 9 digits (TIN) or 14 (PINFL)",
+    "cancel": "Cancel"
   },
   "Products": {
     "title": "Products & services",
@@ -776,5 +793,101 @@
     "priceFrom": "from",
     "priceTo": "to",
     "priceHint": "The range is compared against the soum price, including converted USD items"
+  },
+  "Bank": {
+    "title": "Bank",
+    "description": "Kapitalbank transactions, accounts and reconciliation",
+    "tabs": {
+      "transactions": "Transactions",
+      "accounts": "Accounts",
+      "reconciliations": "Reconciliation"
+    },
+    "transactions": {
+      "searchPlaceholder": "Purpose, name, TIN, account, number",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first",
+      "sortAmountDesc": "Amount: descending",
+      "sortAmountAsc": "Amount: ascending",
+      "filterAccount": "Account",
+      "anyAccount": "All accounts",
+      "filterDirection": "Direction",
+      "anyDirection": "Any",
+      "directionIn": "Incoming",
+      "directionOut": "Outgoing",
+      "filterPeriod": "Period",
+      "from": "From",
+      "to": "To",
+      "total": "Total: {count}",
+      "empty": "No transactions — check accounts and filters",
+      "internal": "Between own",
+      "soum": "soum",
+      "payer": "Payer",
+      "payerDetails": "Payer requisites",
+      "receiver": "Receiver",
+      "receiverDetails": "Receiver requisites",
+      "purpose": "Purpose",
+      "purpCode": "Purpose code",
+      "docType": "Document type",
+      "bankId": "Bank ID",
+      "refreshDetails": "Refresh details from the bank",
+      "detailsRefreshed": "Details refreshed",
+      "genericError": "Something went wrong. Please try again"
+    },
+    "accounts": {
+      "add": "Add account",
+      "addHint": "The account joins the 15-minute sync and nightly reconciliation",
+      "title": "Title",
+      "titlePlaceholder": "Main account",
+      "branch": "MFO",
+      "account": "Account number",
+      "immutableHint": "MFO and number are immutable: on change, create a new account and disable the old one",
+      "validation": "MFO — 5 digits, account — 20 digits, title is required",
+      "duplicate": "This account is already added",
+      "created": "Account added",
+      "empty": "Add the first account — the sync will start mirroring the statement",
+      "enabled": "Tracked",
+      "balance": "Balance",
+      "available": "Available",
+      "turnovers": "Day turnovers",
+      "lastSync": "Sync: {time}",
+      "neverSynced": "Not synced yet",
+      "syncNow": "Sync now",
+      "synced": "Sync done: {upserted} new",
+      "syncFailed": "Sync failed — see the error on the card",
+      "deleted": "Account deleted",
+      "hasHistory": "The account has transaction history — it can only be disabled",
+      "deleteConfirmTitle": "Delete “{title}”?",
+      "deleteConfirmText": "Deletion is possible only without transaction history",
+      "genericError": "Something went wrong. Please try again"
+    },
+    "reconciliations": {
+      "anyStatus": "All statuses",
+      "status": {
+        "matched": "Matched",
+        "discrepancy": "Discrepancy",
+        "unconfirmed": "Day not closed",
+        "error": "Error"
+      },
+      "run": "Manual reconciliation",
+      "runHint": "We compare our day against the bank statement: document count and totals",
+      "runNow": "Reconcile",
+      "runDone": "Reconciliation finished: {status}",
+      "account": "Account",
+      "date": "Date (Tashkent day)",
+      "empty": "No reconciliations yet — the nightly cron fills the journal",
+      "dayNotClosed": "the bank has not closed the day yet",
+      "docs": "Documents (us/bank)",
+      "debit": "Debit",
+      "credit": "Credit",
+      "genericError": "Something went wrong. Please try again"
+    },
+    "rates": {
+      "title": "Kapitalbank rates",
+      "stale": "data may be stale",
+      "cb": "CB",
+      "buy": "Buy",
+      "sell": "Sell",
+      "empty": "Rates unavailable"
+    }
   }
 }
