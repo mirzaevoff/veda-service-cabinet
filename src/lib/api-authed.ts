@@ -666,6 +666,12 @@ export const venuesApi = {
       method: "PATCH",
       body: JSON.stringify({ legalEntityId }),
     }),
+  /** Поставить «временно не работает» (until — автовозврат) или снять (null) */
+  setStatus: (id: string, status: "temporarily_closed" | null, until?: string | null) =>
+    authedRequest<Venue>(`/venues/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status, ...(until !== undefined ? { until } : {}) }),
+    }),
   sync: () =>
     authedRequest<VenuesSyncResult>("/venues/sync", { method: "POST" }),
   syncCard: (id: string) =>

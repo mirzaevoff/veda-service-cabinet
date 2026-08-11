@@ -266,7 +266,8 @@
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring",
       "ER408": "Avval tiketni ishga oling",
       "ER409": "Siz allaqachon ishtirokchisiz",
-      "ER412": "Tiket yopilgan — ishga olib bo'lmaydi"
+      "ER412": "Tiket yopilgan — ishga olib bo'lmaydi",
+      "ER413": "Qo'llab-quvvatlash murojaatlarga javob beradi, ularni yaratmaydi"
     },
     "sla": {
       "breached": "SLA buzilgan",
@@ -1042,6 +1043,24 @@
       "ER700": "Bunday yuridik shaxs yo'q — ro'yxatni yangilang",
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
     },
-    "colServer": "Server"
+    "colServer": "Server",
+    "colStatus": "Holat",
+    "status": {
+      "open": "Ishlayapti",
+      "closed": "Ishlamayapti",
+      "temporarily_closed": "Vaqtincha ishlamaydi"
+    },
+    "serverBadge": "Server: {status}",
+    "statusAutoHint": "Holat server bo'yicha avtomatik aniqlanadi",
+    "markClosed": "Vaqtincha ishlamaydi",
+    "markClosedHint": "Qo'lda belgi avtomatik holatni olib tashlanguncha yoki ko'rsatilgan vaqtgacha bekor qiladi",
+    "markClosedNow": "Belgilash",
+    "untilLabel": "Avtomatik qaytarish",
+    "untilHint": "Majburiy emas: bu vaqtdan keyin belgi o'zi olinadi",
+    "markedClosed": "«Vaqtincha ishlamaydi» deb belgilandi",
+    "clearStatus": "Belgini olib tashlash",
+    "statusCleared": "Belgi olindi — holat yana avtomatik",
+    "tempClosedUntil": "{time} gacha vaqtincha ishlamaydi",
+    "tempClosedManual": "Qo'lda «vaqtincha ishlamaydi» deb belgilangan"
   }
 }

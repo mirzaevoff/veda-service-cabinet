@@ -267,7 +267,8 @@
       "generic": "Something went wrong. Please try again",
       "ER408": "Claim the ticket first",
       "ER409": "You are already a participant",
-      "ER412": "The ticket is closed — cannot claim"
+      "ER412": "The ticket is closed — cannot claim",
+      "ER413": "Support answers tickets rather than creating them"
     },
     "sla": {
       "breached": "SLA breached",
@@ -1043,6 +1044,24 @@
       "ER700": "No such legal entity — refresh the list",
       "generic": "Something went wrong. Please try again"
     },
-    "colServer": "Server"
+    "colServer": "Server",
+    "colStatus": "Status",
+    "status": {
+      "open": "Open",
+      "closed": "Closed",
+      "temporarily_closed": "Temporarily closed"
+    },
+    "serverBadge": "Server: {status}",
+    "statusAutoHint": "Status is derived automatically from the server",
+    "markClosed": "Temporarily closed",
+    "markClosedHint": "A manual mark overrides the automatic status until cleared or until the set time",
+    "markClosedNow": "Mark",
+    "untilLabel": "Auto-reopen at",
+    "untilHint": "Optional: the mark lapses by itself after this time",
+    "markedClosed": "Marked temporarily closed",
+    "clearStatus": "Clear mark",
+    "statusCleared": "Mark cleared — status is automatic again",
+    "tempClosedUntil": "Temporarily closed until {time}",
+    "tempClosedManual": "Manually marked temporarily closed"
   }
 }

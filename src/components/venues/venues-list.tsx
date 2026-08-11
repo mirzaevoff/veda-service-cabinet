@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
+  Clock,
   ExternalLink,
   Link2,
   Link2Off,
@@ -27,6 +28,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Sheet,
   SheetContent,
@@ -58,6 +67,7 @@ import {
   type IikoServerStatus,
   type LegalEntity,
   type Venue,
+  type VenueStatus,
   type VenuesList,
 } from "@/lib/api";
 import {
@@ -78,10 +88,15 @@ const SERVER_STATUS_STYLES: Record<IikoServerStatus, string> = {
   unknown: "bg-secondary text-muted-foreground",
 };
 
+const VENUE_STATUS_STYLES: Record<VenueStatus, string> = {
+  open: "bg-success-light text-success",
+  closed: "bg-secondary text-muted-foreground",
+  temporarily_closed: "bg-warning-light text-warning",
+};
+
 /** Заведения клиентов: зеркало Customers портала iiko + привязка к нашим ЮЛ */
 export function VenuesList() {
   const t = useTranslations("Venues");
-  const ts = useTranslations("IikoPartner.servers");
   const tc = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
@@ -391,7 +406,7 @@ export function VenuesList() {
                       {t("colCity")}
                     </SortableTableHead>
                     <TableHead>{t("colEntity")}</TableHead>
-                    <TableHead>{t("colServer")}</TableHead>
+                    <TableHead>{t("colStatus")}</TableHead>
                     <SortableTableHead
                       field="lastSeenAt"
                       sort={sort}
@@ -456,15 +471,15 @@ export function VenuesList() {
                         )}
                       </TableCell>
                       <TableCell>
-                        {venue.server ? (
+                        {venue.kind === "rms" ? (
                           <Badge
                             variant="secondary"
                             className={cn(
                               "shrink-0",
-                              SERVER_STATUS_STYLES[venue.server.status]
+                              VENUE_STATUS_STYLES[venue.status]
                             )}
                           >
-                            {ts(`status.${venue.server.status}`)}
+                            {t(`status.${venue.status}`)}
                           </Badge>
                         ) : (
                           <span className="text-sm text-muted-foreground">—</span>
@@ -549,8 +564,12 @@ function VenueSheet({
   onShowChainPoints: (chain: { id: string; name: string }) => void;
 }) {
   const t = useTranslations("Venues");
+  const ts = useTranslations("IikoPartner.servers");
   const tc = useTranslations("Common");
   const [cardSyncing, setCardSyncing] = useState(false);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [statusUntil, setStatusUntil] = useState("");
+  const [statusBusy, setStatusBusy] = useState(false);
   const [linking, setLinking] = useState(false);
   const [picking, setPicking] = useState(false);
   const [entityQuery, setEntityQuery] = useState("");
@@ -613,6 +632,26 @@ function VenueSheet({
     }
   }
 
+  async function setStatus(status: "temporarily_closed" | null) {
+    if (!venue) return;
+    setStatusBusy(true);
+    try {
+      const updated = await venuesApi.setStatus(
+        venue.id,
+        status,
+        status && statusUntil ? new Date(statusUntil).toISOString() : null
+      );
+      onChanged(updated);
+      setStatusDialogOpen(false);
+      setStatusUntil("");
+      toast.success(status ? t("markedClosed") : t("statusCleared"));
+    } catch {
+      toast.error(t("errors.generic"));
+    } finally {
+      setStatusBusy(false);
+    }
+  }
+
   const externalLinks = venue
     ? ([
         [t("hostingLink"), venue.hostingLink],
@@ -642,6 +681,22 @@ function VenueSheet({
                   )}
                   {t(`kind.${venue.kind}`)}
                 </Badge>
+                {venue.kind === "rms" && (
+                  <Badge
+                    variant="secondary"
+                    className={VENUE_STATUS_STYLES[venue.status]}
+                  >
+                    {t(`status.${venue.status}`)}
+                  </Badge>
+                )}
+                {venue.server && (
+                  <Badge
+                    variant="secondary"
+                    className={SERVER_STATUS_STYLES[venue.server.status]}
+                  >
+                    {t("serverBadge", { status: ts(`status.${venue.server.status}`) })}
+                  </Badge>
+                )}
                 {!venue.active && (
                   <Badge variant="secondary" className="text-muted-foreground">
                     {t("inactive")}
@@ -656,6 +711,47 @@ function VenueSheet({
             </SheetHeader>
 
             <div className="flex flex-col gap-5 px-4 pb-6">
+              {/* Временно не работает: ручной override */}
+              {canManage && venue.kind === "rms" && (
+                <section className="flex flex-col gap-2 rounded-lg border border-border p-4">
+                  {venue.manualStatus ? (
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="flex items-center gap-1.5 text-sm text-warning">
+                        <Clock className="size-3.5 shrink-0" />
+                        {venue.manualStatusUntil
+                          ? t("tempClosedUntil", {
+                              time: formatTime(venue.manualStatusUntil),
+                            })
+                          : t("tempClosedManual")}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={statusBusy}
+                        onClick={() => void setStatus(null)}
+                      >
+                        {t("clearStatus")}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        {t("statusAutoHint")}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setStatusDialogOpen(true)}
+                        className="gap-1.5"
+                      >
+                        <Clock className="size-3.5" />
+                        {t("markClosed")}
+                      </Button>
+                    </div>
+                  )}
+                </section>
+              )}
+
               {/* Наше ЮЛ */}
               <section className="flex flex-col gap-2.5 rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2">
@@ -845,6 +941,44 @@ function VenueSheet({
                 </Button>
               )}
             </div>
+
+            <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t("markClosed")}</DialogTitle>
+                  <DialogDescription>{t("markClosedHint")}</DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="venue-status-until"
+                    className="text-sm font-medium text-muted-foreground"
+                  >
+                    {t("untilLabel")}
+                  </Label>
+                  <Input
+                    id="venue-status-until"
+                    type="datetime-local"
+                    value={statusUntil}
+                    onChange={(e) => setStatusUntil(e.target.value)}
+                    className="w-fit"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {t("untilHint")}
+                  </span>
+                </div>
+                <DialogFooter>
+                  <Button variant="ghost" onClick={() => setStatusDialogOpen(false)}>
+                    {tc("cancel")}
+                  </Button>
+                  <Button
+                    onClick={() => void setStatus("temporarily_closed")}
+                    disabled={statusBusy}
+                  >
+                    {statusBusy ? <Spinner className="size-4" /> : t("markClosedNow")}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </>
         )}
       </SheetContent>

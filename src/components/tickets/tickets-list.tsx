@@ -487,14 +487,17 @@ export function TicketsList() {
           )}
         </FiltersDialog>
 
-        <div className="ms-auto">
-          <Link href="/tickets/new">
-            <Button className="gap-2">
-              <Plus className="size-4" />
-              {t("newTicket")}
-            </Button>
-          </Link>
-        </div>
+        {/* Поддержка (tickets.manage) отвечает на обращения, а не создаёт их (ER413) */}
+        {!can(PERMISSIONS.ticketsManage) && (
+          <div className="ms-auto">
+            <Link href="/tickets/new">
+              <Button className="gap-2">
+                <Plus className="size-4" />
+                {t("newTicket")}
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       <ActiveFilterChips active={activeFilters} />

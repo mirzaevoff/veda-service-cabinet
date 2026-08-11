@@ -121,6 +121,9 @@ export function CreateTicketFlow() {
         setSubcategory(null);
       } else if (e instanceof ApiError && e.code === "ER405") {
         fail(te("ER405"));
+      } else if (e instanceof ApiError && e.code === "ER413") {
+        toast.error(te("ER413"));
+        router.replace("/tickets");
       } else {
         fail(te(e instanceof ApiError && e.code === "NETWORK" ? "network" : "generic"));
       }

@@ -806,6 +806,9 @@ export interface IikoServersSyncResult {
 
 export type VenueKind = "rms" | "chain";
 
+/** Эффективный статус: ручной temporarily_closed перекрывает авто open/closed по серверу */
+export type VenueStatus = "open" | "closed" | "temporarily_closed";
+
 export interface VenueRef {
   id: string;
   name: string;
@@ -846,6 +849,10 @@ export interface Venue {
   legalEntity: VenueRef | null;
   /** Живой статус сервера (null — точки нет в мониторинге) */
   server: VenueServer | null;
+  status: VenueStatus;
+  /** Ручной override админа (null — автоматически) */
+  manualStatus: "temporarily_closed" | null;
+  manualStatusUntil: string | null;
   active: boolean;
   cardSyncedAt: string | null;
   lastSeenAt: string;
