@@ -805,7 +805,7 @@
   },
   "Bank": {
     "title": "Bank",
-    "description": "Kapitalbank tranzaksiyalari, hisoblar va solishtirish",
+    "description": "Tranzaksiyalar, hisoblar va solishtirish",
     "tabs": {
       "transactions": "Tranzaksiyalar",
       "accounts": "Hisoblar",

@@ -5,8 +5,11 @@ import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  Building2,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
+  FileText,
   Landmark,
   RefreshCw,
   Repeat,
@@ -424,11 +427,16 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
 
                 {/* Назначение */}
                 {selected.purpose && (
-                  <section className="flex flex-col gap-1.5">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t("purpose")}
-                    </h4>
-                    <p className="text-sm leading-relaxed break-words">
+                  <section className="flex flex-col gap-2.5 rounded-lg border border-border p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+                        <FileText className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                      </div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {t("purpose")}
+                      </h4>
+                    </div>
+                    <p className="rounded-md bg-secondary/50 px-3 py-2.5 text-[0.8rem] leading-relaxed break-words text-foreground/90">
                       {selected.purpose}
                     </p>
                   </section>
@@ -439,6 +447,7 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
                   [
                     {
                       title: t("payer"),
+                      icon: Building2,
                       name: selected.name_dt,
                       inn: selected.inn_dt,
                       acc: selected.acc_dt,
@@ -446,6 +455,7 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
                     },
                     {
                       title: t("receiver"),
+                      icon: Landmark,
                       name: selected.name_ct,
                       inn: selected.inn_ct,
                       acc: selected.acc_ct,
@@ -453,10 +463,18 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
                     },
                   ] as const
                 ).map((party) => (
-                  <section key={party.title} className="flex flex-col gap-1.5">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {party.title}
-                    </h4>
+                  <section
+                    key={party.title}
+                    className="flex flex-col gap-2.5 rounded-lg border border-border p-4"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+                        <party.icon className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                      </div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {party.title}
+                      </h4>
+                    </div>
                     <dl className="flex flex-col gap-1 text-sm">
                       {(
                         [
@@ -483,10 +501,15 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
                 ))}
 
                 {/* Банковские данные */}
-                <section className="flex flex-col gap-1.5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {t("bankData")}
-                  </h4>
+                <section className="flex flex-col gap-2.5 rounded-lg border border-border p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+                      <CreditCard className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                    </div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("bankData")}
+                    </h4>
+                  </div>
                   <dl className="flex flex-col gap-1 text-sm">
                     {(
                       [

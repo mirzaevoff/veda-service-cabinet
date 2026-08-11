@@ -806,7 +806,7 @@
   },
   "Bank": {
     "title": "Bank",
-    "description": "Kapitalbank transactions, accounts and reconciliation",
+    "description": "Transactions, accounts and reconciliation",
     "tabs": {
       "transactions": "Transactions",
       "accounts": "Accounts",
