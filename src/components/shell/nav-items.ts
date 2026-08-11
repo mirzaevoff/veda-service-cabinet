@@ -1,5 +1,6 @@
 import {
   Building2,
+  Handshake,
   Landmark,
   LayoutDashboard,
   LibraryBig,
@@ -48,7 +49,15 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     key: "services",
-    items: [{ key: "checklists", href: "/checklists", icon: ListChecks }],
+    items: [
+      { key: "checklists", href: "/checklists", icon: ListChecks },
+      {
+        key: "iikoPartner",
+        href: "/iiko-partner",
+        icon: Handshake,
+        permission: PERMISSIONS.iikoPartnerView,
+      },
+    ],
   },
   {
     key: "finance",

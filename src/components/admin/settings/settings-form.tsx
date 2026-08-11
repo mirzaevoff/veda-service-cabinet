@@ -297,6 +297,11 @@ export function SettingsForm() {
                 {setting.description}
               </span>
             )}
+            {setting.secret && (
+              <span className="text-xs text-muted-foreground">
+                {t("secretHint")}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -311,7 +316,9 @@ export function SettingsForm() {
             ) : (
               <Input
                 id={`setting-${setting.key}`}
+                type={setting.secret ? "password" : "text"}
                 inputMode={setting.type === "number" ? "decimal" : "text"}
+                autoComplete={setting.secret ? "new-password" : undefined}
                 value={String(drafts[setting.key] ?? "")}
                 onChange={(e) => {
                   setDrafts((prev) => ({ ...prev, [setting.key]: e.target.value }));

@@ -20,7 +20,8 @@
     "products": "Mahsulot va xizmatlar",
     "bank": "Bank",
     "services": "Servislar",
-    "finance": "Moliya"
+    "finance": "Moliya",
+    "iikoPartner": "iiko Partner"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -730,7 +731,8 @@
     "groups": {
       "Currency": "Valyuta",
       "Organization": "Tashkilot",
-      "Kapitalbank": "Kapitalbank"
+      "Kapitalbank": "Kapitalbank",
+      "iiko Partner Portal": "iiko hamkorlik portali"
     },
     "autofill": "STIR bo'yicha to'ldirish",
     "autofillTitle": "Reyestrdan rekvizitlar",
@@ -740,7 +742,8 @@
     "autofillNotFound": "STIR reyestrda topilmadi",
     "autofillDidoxDown": "Reyestr xizmati ishlamayapti — keyinroq urinib ko'ring",
     "taxIdFormat": "Raqamni tekshiring — 9 raqam (STIR) yoki 14 (PINFL)",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "secretHint": "Qiymat yashirilgan. Almashtirish uchun yangisini kiriting"
   },
   "Products": {
     "title": "Mahsulot va xizmatlar",
@@ -904,6 +907,29 @@
       "buy": "Olish",
       "sell": "Sotish",
       "empty": "Kurslar mavjud emas"
+    }
+  },
+  "IikoPartner": {
+    "title": "iiko Partner",
+    "description": "pp.iiko.ru hamkorlik portalidagi kompaniya profili",
+    "refresh": "Portaldan yangilash",
+    "refreshed": "Profil yangilandi",
+    "retry": "Qayta urinish",
+    "openSettings": "Sozlamalarni ochish",
+    "companyCard": "Kompaniya",
+    "partnerCard": "Hamkor maqomi",
+    "discount": "{percent}% chegirma",
+    "masterPartner": "Master-hamkor",
+    "manager": "Menejer",
+    "staleBanner": "Portal ishlamayapti — {time} dagi saqlangan nusxa ko'rsatilmoqda",
+    "fetchedAt": "{time} da yangilangan",
+    "fromCache": "keshdan",
+    "errors": {
+      "ER1300": "iiko portali ishlamayapti va saqlangan nusxa yo'q. Keyinroq urinib ko'ring",
+      "ER1301": "Portal login yoki parolni rad etdi — sozlamalarda tekshiring",
+      "ER1302": "Portal logini va paroli kiritilmagan. Ularni global sozlamalarda belgilang",
+      "ER1303": "Portal sahifasini o'qib bo'lmadi — u yangilangan bo'lishi mumkin. Dasturchilarga xabar bering",
+      "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
     }
   }
 }

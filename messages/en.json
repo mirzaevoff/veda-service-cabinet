@@ -20,7 +20,8 @@
     "products": "Products & services",
     "bank": "Bank",
     "services": "Services",
-    "finance": "Finance"
+    "finance": "Finance",
+    "iikoPartner": "iiko Partner"
   },
   "Shell": {
     "logout": "Sign out",
@@ -731,7 +732,8 @@
     "groups": {
       "Currency": "Currency",
       "Organization": "Organization",
-      "Kapitalbank": "Kapitalbank"
+      "Kapitalbank": "Kapitalbank",
+      "iiko Partner Portal": "iiko Partner Portal"
     },
     "autofill": "Fill by TIN",
     "autofillTitle": "Requisites from the registry",
@@ -741,7 +743,8 @@
     "autofillNotFound": "TIN not found in the registry",
     "autofillDidoxDown": "The registry service is unavailable — try later",
     "taxIdFormat": "Check the number — 9 digits (TIN) or 14 (PINFL)",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "secretHint": "The value is hidden. Enter a new one to replace it"
   },
   "Products": {
     "title": "Products & services",
@@ -905,6 +908,29 @@
       "buy": "Buy",
       "sell": "Sell",
       "empty": "Rates unavailable"
+    }
+  },
+  "IikoPartner": {
+    "title": "iiko Partner",
+    "description": "Company profile on the pp.iiko.ru partner portal",
+    "refresh": "Refresh from portal",
+    "refreshed": "Profile refreshed",
+    "retry": "Retry",
+    "openSettings": "Open settings",
+    "companyCard": "Company",
+    "partnerCard": "Partner status",
+    "discount": "{percent}% discount",
+    "masterPartner": "Master partner",
+    "manager": "Manager",
+    "staleBanner": "Portal is unreachable — showing a saved copy from {time}",
+    "fetchedAt": "Updated {time}",
+    "fromCache": "from cache",
+    "errors": {
+      "ER1300": "The iiko portal is unreachable and no saved copy exists. Try again later",
+      "ER1301": "The portal rejected the login or password — check them in settings",
+      "ER1302": "Portal login and password are not set. Add them in global settings",
+      "ER1303": "Failed to parse the portal page — it may have been redesigned. Contact the developers",
+      "generic": "Something went wrong. Please try again"
     }
   }
 }

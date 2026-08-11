@@ -18,6 +18,8 @@ import {
   type ChecklistStats,
   type ChecklistTemplate,
   type EntityInvite,
+  type IikoPartnerHealth,
+  type IikoPartnerProfile,
   type EntityMemberRole,
   type LegalEntity,
   type LegalEntityLookup,
@@ -603,6 +605,14 @@ export const settingsApi = {
       method: "POST",
       body: JSON.stringify({ taxId }),
     }),
+};
+
+export const iikoPartnerApi = {
+  profile: (refresh = false) =>
+    authedRequest<IikoPartnerProfile>(
+      `/iiko-partner/profile${refresh ? "?refresh=true" : ""}`
+    ),
+  health: () => authedRequest<IikoPartnerHealth>("/iiko-partner/health"),
 };
 
 export const banksApi = {

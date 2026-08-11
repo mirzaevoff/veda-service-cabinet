@@ -509,6 +509,8 @@ export interface Setting {
   description?: string;
   min?: number;
   max?: number;
+  /** Write-only: GET отдаёт маску вместо значения, PATCH с маской игнорируется */
+  secret?: boolean;
   updatedAt: string;
 }
 
@@ -696,3 +698,58 @@ export const api = {
       headers: { Authorization: `Bearer ${accessToken}` },
     }),
 };
+
+// ─── iiko Partner (партнёрский портал pp.iiko.ru) ───
+
+export interface IikoPartnerPhone {
+  number: string;
+  label: string | null;
+}
+
+export interface IikoPartnerCompany {
+  name: string;
+  addressLines: string[];
+  phones: IikoPartnerPhone[];
+  email: string | null;
+}
+
+export interface IikoPartnerMetric {
+  label: string;
+  /** Как отображено на портале */
+  value: string;
+  valueNumber: number | null;
+  period: string;
+  /** Рост год к году, % */
+  yoyPercent: number | null;
+  trend: "up" | "down" | null;
+}
+
+export interface IikoPartnerManager {
+  name: string;
+  email: string | null;
+}
+
+export interface IikoPartnerStatus {
+  status: string;
+  discountPercent: number | null;
+  masterPartner: string | null;
+  metrics: IikoPartnerMetric[];
+  manager: IikoPartnerManager | null;
+}
+
+export interface IikoPartnerProfile {
+  company: IikoPartnerCompany;
+  partner: IikoPartnerStatus;
+  fetchedAt: string;
+  /** Отдано из 5-минутного кэша */
+  cached: boolean;
+  /** Портал недоступен — отдана просроченная копия */
+  stale: boolean;
+}
+
+export interface IikoPartnerHealth {
+  mode: "mock" | "real";
+  configured: boolean;
+  baseUrl: string;
+  profileCachedAt: string | null;
+}
