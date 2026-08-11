@@ -168,7 +168,7 @@ export function SettingsForm() {
   const groups = [...new Set(items.map((s) => s.group))];
 
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
+    <div className="flex max-w-3xl flex-col gap-6">
       {groups.map((group) => (
         <section key={group} className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
@@ -232,7 +232,11 @@ export function SettingsForm() {
                   setDrafts((prev) => ({ ...prev, [setting.key]: e.target.value }));
                   setErrors((prev) => ({ ...prev, [setting.key]: "" }));
                 }}
-                className="w-48 tabular-nums"
+                className={
+                  setting.type === "number"
+                    ? "w-48 tabular-nums"
+                    : "min-w-0 flex-1 basis-64"
+                }
               />
             )}
 
