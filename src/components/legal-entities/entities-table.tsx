@@ -21,7 +21,6 @@ import {
   type SortValue,
 } from "@/components/common/sortable-table-head";
 import { EntityFormDialog } from "./entity-form-dialog";
-import { EntityDrawer } from "./entity-drawer";
 import { directorName } from "./entity-requisites";
 import type { LegalEntity, Page } from "@/lib/api";
 import { legalEntitiesApi, SessionExpiredError } from "@/lib/api-authed";
@@ -46,7 +45,6 @@ export function EntitiesTable() {
   const [data, setData] = useState<Page<LegalEntity> | null>(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const showSkeleton = useDelayed(loading && !data);
 
   useEffect(() => {
@@ -159,7 +157,7 @@ export function EntitiesTable() {
               {data.items.map((entity) => (
                 <TableRow
                   key={entity.id}
-                  onClick={() => setSelectedId(entity.id)}
+                  onClick={() => router.push(`/legal-entities/${entity.id}`)}
                   className="cursor-pointer"
                 >
                   <TableCell className="max-w-72 truncate font-medium">
@@ -218,12 +216,6 @@ export function EntitiesTable() {
           setCreating(false);
           void load();
         }}
-      />
-
-      <EntityDrawer
-        entityId={selectedId}
-        onClose={() => setSelectedId(null)}
-        onChanged={() => void load()}
       />
     </div>
   );

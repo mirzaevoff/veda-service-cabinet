@@ -517,7 +517,8 @@
       "positionsLabel": "Positions"
     },
     "bankName": "Bank",
-    "bankNamePlaceholder": "Bank name"
+    "bankNamePlaceholder": "Bank name",
+    "requisites": "Bank details"
   },
   "Checklists": {
     "title": "Checklists",
@@ -1008,7 +1009,7 @@
     "colKind": "Kind",
     "colType": "Format",
     "colCity": "City",
-    "colEntity": "Our entity",
+    "colEntity": "Legal entity",
     "colLastSeen": "Last seen",
     "colUid": "UID",
     "clientId": "iiko client ID",

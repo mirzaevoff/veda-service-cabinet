@@ -516,7 +516,8 @@
       "positionsLabel": "Должности"
     },
     "bankName": "Банк",
-    "bankNamePlaceholder": "Название банка"
+    "bankNamePlaceholder": "Название банка",
+    "requisites": "Реквизиты"
   },
   "Checklists": {
     "title": "Чеклисты",
@@ -963,7 +964,7 @@
       "colVersion": "Версия",
       "colStatus": "Статус",
       "colStatusChanged": "Статус с",
-      "colLastSeen": "Виден",
+      "colLastSeen": "Последняя активность",
       "clientId": "ID клиента",
       "firstSeen": "Впервые",
       "downSince": "недоступен с {time}",
@@ -1007,8 +1008,8 @@
     "colKind": "Тип",
     "colType": "Формат",
     "colCity": "Город",
-    "colEntity": "Наше ЮЛ",
-    "colLastSeen": "Виден",
+    "colEntity": "Юр. лицо",
+    "colLastSeen": "Последняя активность",
     "colUid": "UID",
     "clientId": "ID клиента iiko",
     "inactive": "Неактивно",

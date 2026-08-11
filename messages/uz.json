@@ -516,7 +516,8 @@
       "positionsLabel": "Lavozimlar"
     },
     "bankName": "Bank",
-    "bankNamePlaceholder": "Bank nomi"
+    "bankNamePlaceholder": "Bank nomi",
+    "requisites": "Rekvizitlar"
   },
   "Checklists": {
     "title": "Cheklistlar",
@@ -963,7 +964,7 @@
       "colVersion": "Versiya",
       "colStatus": "Holat",
       "colStatusChanged": "Holat vaqti",
-      "colLastSeen": "Ko'ringan",
+      "colLastSeen": "So'nggi faollik",
       "clientId": "Mijoz ID",
       "firstSeen": "Birinchi marta",
       "downSince": "{time} dan beri ishlamayapti",
@@ -1007,8 +1008,8 @@
     "colKind": "Turi",
     "colType": "Format",
     "colCity": "Shahar",
-    "colEntity": "Bizning YuSh",
-    "colLastSeen": "Ko'ringan",
+    "colEntity": "Yuridik shaxs",
+    "colLastSeen": "So'nggi faollik",
     "colUid": "UID",
     "clientId": "iiko mijoz ID",
     "inactive": "Nofaol",
