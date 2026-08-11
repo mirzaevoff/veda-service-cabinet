@@ -20,6 +20,9 @@ import {
   type EntityInvite,
   type IikoPartnerHealth,
   type IikoPartnerProfile,
+  type IikoServerEvent,
+  type IikoServersList,
+  type IikoServersSyncResult,
   type EntityMemberRole,
   type LegalEntity,
   type LegalEntityLookup,
@@ -613,6 +616,34 @@ export const iikoPartnerApi = {
       `/iiko-partner/profile${refresh ? "?refresh=true" : ""}`
     ),
   health: () => authedRequest<IikoPartnerHealth>("/iiko-partner/health"),
+  servers: {
+    list: (params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      status?: string;
+      sort?: string;
+    }) => {
+      const qs = new URLSearchParams();
+      if (params?.page) qs.set("page", String(params.page));
+      if (params?.limit) qs.set("limit", String(params.limit));
+      if (params?.search) qs.set("search", params.search);
+      if (params?.status) qs.set("status", params.status);
+      if (params?.sort) qs.set("sort", params.sort);
+      const query = qs.toString();
+      return authedRequest<IikoServersList>(
+        `/iiko-partner/servers${query ? `?${query}` : ""}`
+      );
+    },
+    events: (id: string, page = 1) =>
+      authedRequest<Page<IikoServerEvent>>(
+        `/iiko-partner/servers/${id}/events?page=${page}`
+      ),
+    sync: () =>
+      authedRequest<IikoServersSyncResult>("/iiko-partner/servers/sync", {
+        method: "POST",
+      }),
+  },
 };
 
 export const banksApi = {

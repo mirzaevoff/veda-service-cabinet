@@ -930,6 +930,46 @@
       "ER1302": "Portal logini va paroli kiritilmagan. Ularni global sozlamalarda belgilang",
       "ER1303": "Portal sahifasini o'qib bo'lmadi — u yangilangan bo'lishi mumkin. Dasturchilarga xabar bering",
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "servers": "Mijoz serverlari"
+    },
+    "servers": {
+      "summary": {
+        "total": "Jami",
+        "up": "Onlayn",
+        "down": "Ishlamayapti",
+        "maintenance": "Texnik xizmat"
+      },
+      "status": {
+        "up": "Onlayn",
+        "down": "Ishlamayapti",
+        "maintenance": "Texnik xizmat",
+        "unknown": "Noma'lum"
+      },
+      "searchPlaceholder": "UID, nuqta, versiya, mijoz ID",
+      "anyStatus": "Barcha holatlar",
+      "sync": "Sinxronlash",
+      "syncDone": "Tayyor: {seen} qator, {created} yangi, {transitions} o'tish",
+      "syncPartial": "Sinxronlash to'liq emas — portal hamma qatorni bermadi",
+      "syncError": "Sinxronlab bo'lmadi. Qayta urinib ko'ring",
+      "lastSync": "Sinx: {time}",
+      "lastSyncError": "Oxirgi sinx xato bilan: {error}",
+      "empty": "Hozircha serverlar yo'q — sinxronlashni ishga tushiring",
+      "colPoint": "Nuqta",
+      "colUid": "UID",
+      "colVersion": "Versiya",
+      "colStatus": "Holat",
+      "colStatusChanged": "Holat vaqti",
+      "colLastSeen": "Ko'ringan",
+      "clientId": "Mijoz ID",
+      "firstSeen": "Birinchi marta",
+      "downSince": "{time} dan beri ishlamayapti",
+      "history": "O'tishlar tarixi",
+      "historyEmpty": "Hali o'tishlar bo'lmagan",
+      "firstAppeared": "Ro'yxatda paydo bo'ldi",
+      "loadMore": "Yana ko'rsatish"
     }
   }
 }

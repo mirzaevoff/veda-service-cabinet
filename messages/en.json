@@ -931,6 +931,46 @@
       "ER1302": "Portal login and password are not set. Add them in global settings",
       "ER1303": "Failed to parse the portal page — it may have been redesigned. Contact the developers",
       "generic": "Something went wrong. Please try again"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "servers": "Client servers"
+    },
+    "servers": {
+      "summary": {
+        "total": "Total",
+        "up": "Online",
+        "down": "Down",
+        "maintenance": "Maintenance"
+      },
+      "status": {
+        "up": "Online",
+        "down": "Down",
+        "maintenance": "Maintenance",
+        "unknown": "Unknown"
+      },
+      "searchPlaceholder": "UID, point, version, client ID",
+      "anyStatus": "Any status",
+      "sync": "Sync now",
+      "syncDone": "Done: {seen} rows, {created} new, {transitions} transitions",
+      "syncPartial": "Partial sync — the portal did not return every row",
+      "syncError": "Sync failed. Please try again",
+      "lastSync": "Sync: {time}",
+      "lastSyncError": "Last sync failed: {error}",
+      "empty": "No servers yet — run a sync",
+      "colPoint": "Point",
+      "colUid": "UID",
+      "colVersion": "Version",
+      "colStatus": "Status",
+      "colStatusChanged": "Status since",
+      "colLastSeen": "Last seen",
+      "clientId": "Client ID",
+      "firstSeen": "First seen",
+      "downSince": "down since {time}",
+      "history": "Transition history",
+      "historyEmpty": "No transitions yet",
+      "firstAppeared": "Appeared in the list",
+      "loadMore": "Show more"
     }
   }
 }

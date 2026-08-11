@@ -753,3 +753,51 @@ export interface IikoPartnerHealth {
   baseUrl: string;
   profileCachedAt: string | null;
 }
+
+export type IikoServerStatus = "up" | "down" | "maintenance" | "unknown";
+
+export interface IikoServer {
+  id: string;
+  uid: string;
+  clientId: string | null;
+  pointName: string;
+  version: string;
+  status: IikoServerStatus;
+  statusChangedAt: string;
+  /** Заполнено, пока сервер недоступен */
+  downSince: string | null;
+  firstSeenAt: string;
+  lastSeenAt: string;
+}
+
+export interface IikoServersSummary {
+  total: number;
+  up: number;
+  down: number;
+  maintenance: number;
+  unknown: number;
+  lastSyncAt: string | null;
+  lastSyncError: string | null;
+}
+
+export interface IikoServersList extends Page<IikoServer> {
+  summary: IikoServersSummary;
+}
+
+export interface IikoServerEvent {
+  id: string;
+  uid: string;
+  pointName: string;
+  /** null — сервер впервые появился в списке */
+  from: IikoServerStatus | null;
+  to: IikoServerStatus;
+  at: string;
+}
+
+export interface IikoServersSyncResult {
+  seen: number;
+  created: number;
+  transitions: number;
+  /** Пагинация портала не дотянула все строки */
+  partial: boolean;
+}

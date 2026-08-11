@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { PageHeader } from "@/components/shell/page-header";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type IikoPartnerProfile } from "@/lib/api";
 import { iikoPartnerApi, SessionExpiredError } from "@/lib/api-authed";
@@ -87,9 +86,9 @@ export function PartnerProfile() {
     }).format(new Date(iso));
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <PageHeader title={t("title")} description={t("description")}>
-        {profile && (
+    <div className="flex flex-col gap-4">
+      {profile && (
+        <div className="flex justify-end">
           <Button
             variant="outline"
             onClick={() => void load(true)}
@@ -103,8 +102,8 @@ export function PartnerProfile() {
             )}
             {t("refresh")}
           </Button>
-        )}
-      </PageHeader>
+        </div>
+      )}
 
       {loading && !profile ? (
         showSkeleton && (
