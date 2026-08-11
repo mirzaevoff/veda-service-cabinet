@@ -136,7 +136,7 @@ export function RolesList({ embedded = false }: { embedded?: boolean }) {
   );
 
   return (
-    <div className={embedded ? undefined : "mx-auto max-w-6xl"}>
+    <div className={embedded ? undefined : "mx-auto max-w-7xl"}>
       {!embedded && <PageHeader title={t("title")} description={t("description")} />}
 
       {!roles ? (

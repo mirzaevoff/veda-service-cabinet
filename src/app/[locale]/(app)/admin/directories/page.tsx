@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RolesList } from "@/components/admin/roles/roles-list";
 import { CategoryTree } from "@/components/admin/categories/category-tree";
 import { SeveritiesManager } from "@/components/admin/severities/severities-manager";
 import { NoAccess } from "@/components/admin/no-access";
@@ -20,15 +20,19 @@ export default function AdminDirectoriesPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const requested = searchParams.get("tab") ?? "";
+
+  // Роли переехали на отдельную страницу — старые ссылки редиректим
+  useEffect(() => {
+    if (requested === "roles") router.replace("/admin/roles");
+  }, [requested, router]);
+
   const tabs = [
-    { key: "roles", visible: can(PERMISSIONS.rolesRead) },
     { key: "categories", visible: can(PERMISSIONS.ticketsCategoriesManage) },
     { key: "severities", visible: can(PERMISSIONS.ticketsCategoriesManage) },
   ].filter((tab) => tab.visible);
 
   if (tabs.length === 0) return <NoAccess />;
-
-  const requested = searchParams.get("tab") ?? "";
   const active = tabs.some((tab) => tab.key === requested)
     ? requested
     : tabs[0].key;
@@ -52,9 +56,6 @@ export default function AdminDirectoriesPage() {
           ))}
         </TabsList>
 
-        <TabsContent value="roles">
-          <RolesList embedded />
-        </TabsContent>
         <TabsContent value="categories">
           <CategoryTree embedded />
         </TabsContent>

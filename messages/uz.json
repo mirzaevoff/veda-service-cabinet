@@ -4,7 +4,7 @@
     "tickets": "Yordam",
     "admin": "Administratsiya",
     "users": "Foydalanuvchilar",
-    "roles": "Rollar",
+    "roles": "Rollar va ruxsatlar",
     "categories": "Kategoriyalar",
     "collapse": "Yig'ish",
     "expand": "Yoyish",
@@ -705,7 +705,6 @@
     "title": "Ma'lumotnomalar",
     "description": "Tizim ma'lumotnomalarini boshqarish",
     "tabs": {
-      "roles": "Rollar va ruxsatlar",
       "categories": "Kategoriyalar",
       "severities": "Murojaat turlari"
     }

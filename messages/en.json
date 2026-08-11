@@ -4,7 +4,7 @@
     "tickets": "Support",
     "admin": "Administration",
     "users": "Users",
-    "roles": "Roles",
+    "roles": "Roles & Access",
     "categories": "Categories",
     "collapse": "Collapse",
     "expand": "Expand",
@@ -706,7 +706,6 @@
     "title": "Directories",
     "description": "System dictionaries management",
     "tabs": {
-      "roles": "Roles & Access",
       "categories": "Categories",
       "severities": "Request types"
     }

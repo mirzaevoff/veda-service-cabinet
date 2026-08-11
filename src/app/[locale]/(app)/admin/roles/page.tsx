@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "@/i18n/navigation";
+import { RolesList } from "@/components/admin/roles/roles-list";
+import { NoAccess } from "@/components/admin/no-access";
+import { useCurrentUser } from "@/components/common/current-user-provider";
+import { PERMISSIONS } from "@/lib/permissions";
 
-/** Раздел переехал — держим старый URL как редирект */
-export default function LegacyRedirect() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace("/admin/directories?tab=roles");
-  }, [router]);
-  return null;
+/** Роли и Доступы: отдельная страница с широким контейнером */
+export default function AdminRolesPage() {
+  const { can, loading } = useCurrentUser();
+
+  if (!loading && !can(PERMISSIONS.rolesRead)) return <NoAccess />;
+
+  return <RolesList />;
 }
