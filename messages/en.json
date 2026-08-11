@@ -18,7 +18,9 @@
     "panel": "Control panel",
     "help": "Help",
     "products": "Products & services",
-    "bank": "Bank"
+    "bank": "Bank",
+    "services": "Services",
+    "finance": "Finance"
   },
   "Shell": {
     "logout": "Sign out",
@@ -96,7 +98,15 @@
     "slugFormat": "Slug: 2–50 chars, lowercase letters, digits, dash",
     "slugRequired": "Enter a role identifier",
     "titleSection": "Title (ru / uz / en)",
-    "titleRequired": "Enter the Russian title"
+    "titleRequired": "Enter the Russian title",
+    "newRole": "New role",
+    "customBadge": "Custom",
+    "fullAccess": "Full access",
+    "checkedOf": "Selected {checked} of {total}",
+    "searchPermissions": "Search by name or code…",
+    "selectAll": "Select all",
+    "clearAll": "Clear all",
+    "nothingFound": "Nothing found"
   },
   "AdminCategories": {
     "title": "Categories",
@@ -822,16 +832,24 @@
       "internal": "Between own",
       "soum": "soum",
       "payer": "Payer",
-      "payerDetails": "Payer requisites",
       "receiver": "Receiver",
-      "receiverDetails": "Receiver requisites",
       "purpose": "Purpose",
       "purpCode": "Purpose code",
       "docType": "Document type",
       "bankId": "Bank ID",
       "refreshDetails": "Refresh details from the bank",
       "detailsRefreshed": "Details refreshed",
-      "genericError": "Something went wrong. Please try again"
+      "genericError": "Something went wrong. Please try again",
+      "detailTitle": "Transaction",
+      "chipIn": "Incoming",
+      "chipOut": "Outgoing",
+      "partyName": "Name",
+      "partyInn": "TIN",
+      "partyAccount": "Account",
+      "partyMfo": "MFO",
+      "bankData": "Bank data",
+      "docNum": "Number",
+      "docDate": "Document date"
     },
     "accounts": {
       "add": "Add account",
@@ -873,7 +891,7 @@
       "runNow": "Reconcile",
       "runDone": "Reconciliation finished: {status}",
       "account": "Account",
-      "date": "Date (Tashkent day)",
+      "date": "Date",
       "empty": "No reconciliations yet — the nightly cron fills the journal",
       "dayNotClosed": "the bank has not closed the day yet",
       "docs": "Documents (us/bank)",
@@ -882,7 +900,7 @@
       "genericError": "Something went wrong. Please try again"
     },
     "rates": {
-      "title": "Kapitalbank rates",
+      "title": "Exchange rates",
       "stale": "data may be stale",
       "cb": "CB",
       "buy": "Buy",

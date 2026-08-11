@@ -18,7 +18,9 @@
     "panel": "Boshqaruv paneli",
     "help": "Yordam",
     "products": "Mahsulot va xizmatlar",
-    "bank": "Bank"
+    "bank": "Bank",
+    "services": "Servislar",
+    "finance": "Moliya"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -96,7 +98,15 @@
     "slugFormat": "Slug: 2–50 belgi, kichik harflar, raqamlar, defis",
     "slugRequired": "Rol identifikatorini kiriting",
     "titleSection": "Nomi (ru / uz / en)",
-    "titleRequired": "Ruscha nomini kiriting"
+    "titleRequired": "Ruscha nomini kiriting",
+    "newRole": "Yangi rol",
+    "customBadge": "Maxsus",
+    "fullAccess": "To'liq kirish",
+    "checkedOf": "{total} tadan {checked} tasi belgilangan",
+    "searchPermissions": "Nomi yoki kodi bo'yicha qidirish…",
+    "selectAll": "Hammasini tanlash",
+    "clearAll": "Hammasini olib tashlash",
+    "nothingFound": "Hech narsa topilmadi"
   },
   "AdminCategories": {
     "title": "Kategoriyalar",
@@ -821,16 +831,24 @@
       "internal": "O'zaro o'tkazma",
       "soum": "so'm",
       "payer": "To'lovchi",
-      "payerDetails": "To'lovchi rekvizitlari",
       "receiver": "Oluvchi",
-      "receiverDetails": "Oluvchi rekvizitlari",
       "purpose": "Maqsad",
       "purpCode": "Maqsad kodi",
       "docType": "Hujjat turi",
       "bankId": "Bank ID",
       "refreshDetails": "Bankdan kartochkani yangilash",
       "detailsRefreshed": "Kartochka yangilandi",
-      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring"
+      "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring",
+      "detailTitle": "Tranzaksiya",
+      "chipIn": "Kirim",
+      "chipOut": "Chiqim",
+      "partyName": "Nomi",
+      "partyInn": "STIR",
+      "partyAccount": "Hisob raqami",
+      "partyMfo": "MFO",
+      "bankData": "Bank ma'lumotlari",
+      "docNum": "Raqam",
+      "docDate": "Hujjat sanasi"
     },
     "accounts": {
       "add": "Hisob qo'shish",
@@ -872,7 +890,7 @@
       "runNow": "Solishtirish",
       "runDone": "Solishtirish yakunlandi: {status}",
       "account": "Hisob",
-      "date": "Sana (Toshkent kuni)",
+      "date": "Sana",
       "empty": "Hozircha solishtirishlar yo'q — tungi kron jurnalni to'ldiradi",
       "dayNotClosed": "bank kunni hali yopmagan",
       "docs": "Hujjatlar (biz/bank)",
@@ -881,7 +899,7 @@
       "genericError": "Nimadir xato ketdi. Qayta urinib ko'ring"
     },
     "rates": {
-      "title": "Kapitalbank kurslari",
+      "title": "Valyuta kurslari",
       "stale": "ma'lumotlar eskirgan bo'lishi mumkin",
       "cb": "MB",
       "buy": "Olish",

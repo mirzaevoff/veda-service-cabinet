@@ -368,38 +368,149 @@ export function BankTransactions({ accounts }: { accounts: BankAccount[] }) {
           {selected && (
             <>
               <SheetHeader>
-                <SheetTitle className="pr-6">
-                  {selected.direction === "in" ? "+" : "−"}
-                  {formatTiyin(selected.amount)} {t("soum")}
-                </SheetTitle>
-                <SheetDescription>
-                  {formatDay(selected.docDate, locale)} ·{" "}
-                  {accountTitle(selected.bankAccountId)}
-                  {selected.num && ` · №${selected.num}`}
+                <SheetTitle className="pr-6">{t("detailTitle")}</SheetTitle>
+                <SheetDescription className="flex flex-wrap items-center gap-1.5">
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      selected.direction === "in"
+                        ? "bg-success-light text-success"
+                        : "bg-destructive/10 text-destructive"
+                    )}
+                  >
+                    {selected.direction === "in" ? t("chipIn") : t("chipOut")}
+                  </Badge>
+                  {selected.counterpartyTracked && (
+                    <Badge variant="secondary" className="gap-1 bg-secondary text-muted-foreground">
+                      <Repeat className="size-3" />
+                      {t("internal")}
+                    </Badge>
+                  )}
                 </SheetDescription>
               </SheetHeader>
-              <div className="flex flex-col gap-4 px-4 pb-6">
-                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-                  {(
-                    [
-                      [t("payer"), `${selected.name_dt || "—"}`],
-                      [t("payerDetails"), [selected.inn_dt && `ИНН ${selected.inn_dt}`, selected.acc_dt, selected.mfo_dt && `МФО ${selected.mfo_dt}`].filter(Boolean).join(" · ")],
-                      [t("receiver"), `${selected.name_ct || "—"}`],
-                      [t("receiverDetails"), [selected.inn_ct && `ИНН ${selected.inn_ct}`, selected.acc_ct, selected.mfo_ct && `МФО ${selected.mfo_ct}`].filter(Boolean).join(" · ")],
-                      [t("purpose"), selected.purpose],
-                      [t("purpCode"), selected.purp_code],
-                      [t("docType"), selected.dtype],
-                      [t("bankId"), selected.b2_id],
-                    ] as const
-                  )
-                    .filter(([, value]) => value)
-                    .map(([label, value]) => (
-                      <div key={label} className="col-span-2 grid grid-cols-subgrid">
-                        <dt className="text-muted-foreground">{label}</dt>
-                        <dd className="min-w-0 break-words">{value}</dd>
-                      </div>
-                    ))}
-                </dl>
+
+              <div className="flex flex-col gap-5 px-4 pb-6">
+                {/* Сумма */}
+                <div className="flex items-center gap-3 rounded-lg border border-border bg-secondary/40 p-4">
+                  <div
+                    className={cn(
+                      "flex size-10 shrink-0 items-center justify-center rounded-md",
+                      selected.direction === "in" ? "bg-success-light" : "bg-destructive/10"
+                    )}
+                  >
+                    {selected.direction === "in" ? (
+                      <ArrowDownLeft className="size-5 text-success" strokeWidth={1.75} />
+                    ) : (
+                      <ArrowUpRight className="size-5 text-destructive" strokeWidth={1.75} />
+                    )}
+                  </div>
+                  <div className="flex min-w-0 flex-col">
+                    <span
+                      className={cn(
+                        "text-xl font-bold tabular-nums",
+                        selected.direction === "in" ? "text-success" : "text-destructive"
+                      )}
+                    >
+                      {selected.direction === "in" ? "+" : "−"}
+                      {formatTiyin(selected.amount)} {t("soum")}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {formatDay(selected.docDate, locale)} ·{" "}
+                      {accountTitle(selected.bankAccountId)}
+                      {selected.num && ` · №${selected.num}`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Назначение */}
+                {selected.purpose && (
+                  <section className="flex flex-col gap-1.5">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("purpose")}
+                    </h4>
+                    <p className="text-sm leading-relaxed break-words">
+                      {selected.purpose}
+                    </p>
+                  </section>
+                )}
+
+                {/* Стороны */}
+                {(
+                  [
+                    {
+                      title: t("payer"),
+                      name: selected.name_dt,
+                      inn: selected.inn_dt,
+                      acc: selected.acc_dt,
+                      mfo: selected.mfo_dt,
+                    },
+                    {
+                      title: t("receiver"),
+                      name: selected.name_ct,
+                      inn: selected.inn_ct,
+                      acc: selected.acc_ct,
+                      mfo: selected.mfo_ct,
+                    },
+                  ] as const
+                ).map((party) => (
+                  <section key={party.title} className="flex flex-col gap-1.5">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {party.title}
+                    </h4>
+                    <dl className="flex flex-col gap-1 text-sm">
+                      {(
+                        [
+                          [t("partyName"), party.name],
+                          [t("partyInn"), party.inn],
+                          [t("partyAccount"), party.acc],
+                          [t("partyMfo"), party.mfo],
+                        ] as const
+                      )
+                        .filter(([, value]) => value)
+                        .map(([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex items-baseline justify-between gap-4"
+                          >
+                            <dt className="shrink-0 text-muted-foreground">{label}</dt>
+                            <dd className="min-w-0 break-all text-right font-medium tabular-nums">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  </section>
+                ))}
+
+                {/* Банковские данные */}
+                <section className="flex flex-col gap-1.5">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {t("bankData")}
+                  </h4>
+                  <dl className="flex flex-col gap-1 text-sm">
+                    {(
+                      [
+                        [t("bankId"), selected.b2_id],
+                        [t("docNum"), selected.num],
+                        [t("purpCode"), selected.purp_code],
+                        [t("docType"), selected.dtype],
+                        [t("docDate"), selected.ddate],
+                      ] as const
+                    )
+                      .filter(([, value]) => value)
+                      .map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="flex items-baseline justify-between gap-4"
+                        >
+                          <dt className="shrink-0 text-muted-foreground">{label}</dt>
+                          <dd className="min-w-0 break-all text-right font-medium tabular-nums">
+                            {value}
+                          </dd>
+                        </div>
+                      ))}
+                  </dl>
+                </section>
 
                 {canManage && (
                   <Button

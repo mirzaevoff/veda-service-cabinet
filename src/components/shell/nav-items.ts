@@ -43,27 +43,26 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: Package,
         permission: PERMISSIONS.productsList,
       },
-      { key: "checklists", href: "/checklists", icon: ListChecks },
     ],
   },
   {
-    key: "admin",
+    key: "services",
+    items: [{ key: "checklists", href: "/checklists", icon: ListChecks }],
+  },
+  {
+    key: "finance",
     items: [
-      {
-        key: "directories",
-        href: "/admin/directories",
-        icon: LibraryBig,
-        anyPermission: [
-          PERMISSIONS.rolesRead,
-          PERMISSIONS.ticketsCategoriesManage,
-        ],
-      },
       {
         key: "bank",
         href: "/admin/bank",
         icon: Landmark,
         permission: PERMISSIONS.bankView,
       },
+    ],
+  },
+  {
+    key: "admin",
+    items: [
       {
         key: "panel",
         href: "/admin/panel",
@@ -71,6 +70,15 @@ export const NAV_SECTIONS: NavSection[] = [
         anyPermission: [
           PERMISSIONS.notificationsSend,
           PERMISSIONS.settingsManage,
+        ],
+      },
+      {
+        key: "directories",
+        href: "/admin/directories",
+        icon: LibraryBig,
+        anyPermission: [
+          PERMISSIONS.rolesRead,
+          PERMISSIONS.ticketsCategoriesManage,
         ],
       },
       {

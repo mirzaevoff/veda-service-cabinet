@@ -8,7 +8,9 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { NAV_SECTIONS, isNavItemActive, isNavItemVisible } from "./nav-items";
 import { useUnreadTickets } from "@/hooks/use-unread-tickets";
 import { Link, usePathname } from "@/i18n/navigation";
+import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { version } from "../../../package.json";
 
 const COLLAPSE_KEY = "sidebar-collapsed";
 
@@ -19,12 +21,17 @@ export function AppSidebar() {
   const unread = useUnreadTickets();
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [apiVersion, setApiVersion] = useState<string | null>(null);
 
   useEffect(() => {
     // localStorage доступен только после маунта — иначе SSR/CSR разъедутся
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
     setHydrated(true);
+    api
+      .info()
+      .then((info) => setApiVersion(info.version))
+      .catch(() => {});
   }, []);
 
   function toggle() {
@@ -122,6 +129,12 @@ export function AppSidebar() {
             </>
           )}
         </Button>
+        {!collapsed && (
+          <div className="mt-1 px-3 pb-1 text-[0.7rem] leading-4 text-muted-foreground/70 tabular-nums">
+            <span className="block truncate">Veda Service v{version}</span>
+            {apiVersion && <span className="block truncate">API v{apiVersion}</span>}
+          </div>
+        )}
       </div>
     </aside>
   );

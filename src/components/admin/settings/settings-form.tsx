@@ -23,6 +23,7 @@ import { ApiError } from "@/lib/api";
 import { settingsApi, SessionExpiredError } from "@/lib/api-authed";
 import { useDelayed } from "@/hooks/use-delayed";
 import { useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 /**
  * Глобальные настройки: метаданные (тип, подпись, границы) приходят
@@ -136,6 +137,32 @@ export function SettingsForm() {
     }
   }
 
+  /** Групповое сохранение: все изменённые ключи секции разом */
+  async function saveGroup(settings: Setting[]) {
+    const dirty = settings.filter(isDirty);
+    if (dirty.length === 0) return;
+    setSavingKey("__group__");
+    let allOk = true;
+    for (const setting of dirty) {
+      try {
+        const updated = await settingsApi.update(
+          setting.key,
+          String(drafts[setting.key] ?? "")
+        );
+        setItems(
+          (prev) =>
+            prev?.map((s) => (s.key === updated.key ? updated : s)) ?? prev
+        );
+        setErrors((prev) => ({ ...prev, [setting.key]: "" }));
+      } catch {
+        allOk = false;
+        setErrors((prev) => ({ ...prev, [setting.key]: t("invalidValue") }));
+      }
+    }
+    setSavingKey(null);
+    if (allOk) toast.success(t("saved"));
+  }
+
   function isDirty(setting: Setting) {
     const draft = drafts[setting.key];
     return setting.type === "boolean"
@@ -192,7 +219,65 @@ export function SettingsForm() {
               </Button>
             )}
           </div>
-          {items
+          {group === "Organization" ? (
+            (() => {
+              const orgSettings = items.filter((s) => s.group === group);
+              const anyDirty = orgSettings.some(isDirty);
+              const fullWidth = new Set(["org.name", "org.address", "org.bankName"]);
+              return (
+                <div className="flex flex-col gap-4 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-2">
+                  <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+                    {orgSettings.map((setting) => (
+                      <div
+                        key={setting.key}
+                        className={cn(
+                          "flex min-w-0 flex-col gap-1.5",
+                          fullWidth.has(setting.key) && "sm:col-span-2"
+                        )}
+                      >
+                        <Label
+                          htmlFor={`setting-${setting.key}`}
+                          className="text-sm font-medium text-muted-foreground"
+                        >
+                          {setting.label}
+                        </Label>
+                        <Input
+                          id={`setting-${setting.key}`}
+                          value={String(drafts[setting.key] ?? "")}
+                          onChange={(e) => {
+                            setDrafts((prev) => ({
+                              ...prev,
+                              [setting.key]: e.target.value,
+                            }));
+                            setErrors((prev) => ({ ...prev, [setting.key]: "" }));
+                          }}
+                        />
+                        {errors[setting.key] && (
+                          <p className="text-xs text-destructive">
+                            {errors[setting.key]}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      size="sm"
+                      disabled={!anyDirty || savingKey === "__group__"}
+                      onClick={() => saveGroup(orgSettings)}
+                    >
+                      {savingKey === "__group__" ? (
+                        <Spinner className="size-4" />
+                      ) : (
+                        t("save")
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })()
+          ) : (
+            items
             .filter((s) => s.group === group)
             .map((setting, i) => (
         <div
@@ -288,7 +373,8 @@ export function SettingsForm() {
             <p className="text-xs text-destructive">{errors[setting.key]}</p>
           )}
         </div>
-            ))}
+            ))
+          )}
         </section>
       ))}
 

@@ -20,8 +20,8 @@ export default function AdminPanelPage() {
   const searchParams = useSearchParams();
 
   const tabs = [
-    { key: "broadcast", visible: can(PERMISSIONS.notificationsSend) },
     { key: "settings", visible: can(PERMISSIONS.settingsManage) },
+    { key: "broadcast", visible: can(PERMISSIONS.notificationsSend) },
   ].filter((tab) => tab.visible);
 
   if (tabs.length === 0) return <NoAccess />;

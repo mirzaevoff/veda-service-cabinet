@@ -133,7 +133,12 @@ export function BankReconciliations({ accounts }: { accounts: BankAccount[] }) {
           <Button
             onClick={() => {
               setRunAccount(accounts[0]?.id ?? "");
-              setRunDate("");
+              // Сегодняшний ташкентский день; en-CA даёт формат YYYY-MM-DD
+              setRunDate(
+                new Intl.DateTimeFormat("en-CA", {
+                  timeZone: "Asia/Tashkent",
+                }).format(new Date())
+              );
               setRunOpen(true);
             }}
             disabled={accounts.length === 0}
