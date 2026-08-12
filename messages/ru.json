@@ -1093,6 +1093,7 @@
     "tempClosedManual": "Помечено «временно не работает» вручную",
     "statusSection": "Статус",
     "copyUid": "Скопировать UID",
-    "uidCopied": "UID скопирован"
+    "uidCopied": "UID скопирован",
+    "serverRow": "Сервер"
   }
 }

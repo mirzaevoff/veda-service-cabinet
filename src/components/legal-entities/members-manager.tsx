@@ -377,6 +377,7 @@ export function MembersManager({
             <div className="flex items-start gap-2">
               <div className="min-w-0 flex-1">
                 <PhoneInput
+                  compact
                   value={digits}
                   onChange={(v) => {
                     setDigits(v);
@@ -388,7 +389,7 @@ export function MembersManager({
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
-                    <Button variant="outline" className="h-[54px] gap-1.5 whitespace-nowrap">
+                    <Button variant="outline" className="h-9 gap-1.5 whitespace-nowrap">
                       {t(inviteRole)}
                       <ChevronDown className="size-3.5" />
                     </Button>

@@ -1094,6 +1094,7 @@
     "tempClosedManual": "Manually marked temporarily closed",
     "statusSection": "Status",
     "copyUid": "Copy UID",
-    "uidCopied": "UID copied"
+    "uidCopied": "UID copied",
+    "serverRow": "Server"
   }
 }

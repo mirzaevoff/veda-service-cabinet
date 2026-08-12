@@ -90,6 +90,20 @@ const SERVER_STATUS_STYLES: Record<IikoServerStatus, string> = {
   unknown: "bg-secondary text-muted-foreground",
 };
 
+/** Портал экранирует кавычки/апострофы — чистим для показа */
+function unescapePortal(value: string) {
+  return value.replace(/\\(['"])/g, "$1");
+}
+
+/** Моноширинный чип для идентификаторов и версий */
+function CodeChip({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs">
+      {children}
+    </code>
+  );
+}
+
 const VENUE_STATUS_STYLES: Record<VenueStatus, string> = {
   open: "bg-success-light text-success",
   closed: "bg-secondary text-muted-foreground",
@@ -887,52 +901,135 @@ function VenueSheet({
                     </Button>
                   )}
                 </div>
-                <dl className="flex flex-col gap-1 text-sm">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <dt className="shrink-0 text-muted-foreground">{t("colUid")}</dt>
-                    <dd className="flex min-w-0 items-center gap-1.5 text-right font-medium tabular-nums">
-                      {venue.uid}
-                      <button
-                        type="button"
-                        aria-label={t("copyUid")}
-                        onClick={() => {
-                          void navigator.clipboard.writeText(venue.uid);
-                          toast.success(t("uidCopied"));
-                        }}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        <Copy className="size-3.5" />
-                      </button>
-                    </dd>
-                  </div>
-                  {(
-                    [
-                      [t("clientId"), venue.iikoClientId],
-                      [t("colType"), venue.type],
-                      [t("colCity"), venue.city],
-                      [t("address"), venue.address],
-                      [t("phone"), venue.phone],
-                      [t("email"), venue.email],
-                      [t("emailForInvoices"), venue.emailForInvoices],
-                      [t("manager"), venue.manager],
-                      [t("iikoEntity"), venue.iikoLegalEntityName],
-                      [t("iikoTaxId"), venue.iikoTaxId],
-                      [t("version"), venue.version],
-                    ] as const
-                  )
-                    .filter(([, value]) => value)
-                    .map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="flex items-baseline justify-between gap-4"
-                      >
-                        <dt className="shrink-0 text-muted-foreground">{label}</dt>
-                        <dd className="min-w-0 break-words text-right font-medium">
-                          {value}
+                <div className="flex flex-col divide-y divide-border text-sm">
+                  {/* Идентификаторы и сервер */}
+                  <dl className="flex flex-col gap-1.5 pb-3">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <dt className="shrink-0 text-muted-foreground">{t("colUid")}</dt>
+                      <dd className="flex min-w-0 items-center gap-1.5">
+                        <CodeChip>{venue.uid}</CodeChip>
+                        <button
+                          type="button"
+                          aria-label={t("copyUid")}
+                          onClick={() => {
+                            void navigator.clipboard.writeText(venue.uid);
+                            toast.success(t("uidCopied"));
+                          }}
+                          className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <Copy className="size-3.5" />
+                        </button>
+                      </dd>
+                    </div>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <dt className="shrink-0 text-muted-foreground">{t("clientId")}</dt>
+                      <dd><CodeChip>{venue.iikoClientId}</CodeChip></dd>
+                    </div>
+                    {venue.version && (
+                      <div className="flex items-baseline justify-between gap-4">
+                        <dt className="shrink-0 text-muted-foreground">{t("version")}</dt>
+                        <dd><CodeChip>{venue.version}</CodeChip></dd>
+                      </div>
+                    )}
+                    {venue.server && (
+                      <div className="flex items-center justify-between gap-4">
+                        <dt className="shrink-0 text-muted-foreground">{t("serverRow")}</dt>
+                        <dd className="flex min-w-0 items-center gap-2">
+                          {venue.server.status === "down" && venue.server.downSince && (
+                            <span className="text-xs text-muted-foreground">
+                              {t("downSince", { time: formatTime(venue.server.downSince) })}
+                            </span>
+                          )}
+                          <Badge
+                            variant="secondary"
+                            className={cn(
+                              "shrink-0",
+                              SERVER_STATUS_STYLES[venue.server.status]
+                            )}
+                          >
+                            {ts(`status.${venue.server.status}`)}
+                          </Badge>
                         </dd>
                       </div>
-                    ))}
-                </dl>
+                    )}
+                  </dl>
+
+                  {/* О заведении */}
+                  <dl className="flex flex-col gap-1.5 py-3">
+                    {venue.type && (
+                      <div className="flex items-baseline justify-between gap-4">
+                        <dt className="shrink-0 text-muted-foreground">{t("colType")}</dt>
+                        <dd className="min-w-0 text-right text-muted-foreground">
+                          {venue.type}
+                        </dd>
+                      </div>
+                    )}
+                    {venue.city && (
+                      <div className="flex items-baseline justify-between gap-4">
+                        <dt className="shrink-0 text-muted-foreground">{t("colCity")}</dt>
+                        <dd className="min-w-0 text-right font-medium">{venue.city}</dd>
+                      </div>
+                    )}
+                    {venue.address && (
+                      <div className="flex flex-col gap-0.5">
+                        <dt className="text-muted-foreground">{t("address")}</dt>
+                        <dd className="break-words text-xs leading-relaxed text-muted-foreground">
+                          {unescapePortal(venue.address)}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+
+                  {/* Контакты */}
+                  {(venue.phone || venue.email || venue.emailForInvoices || venue.manager) && (
+                    <dl className="flex flex-col gap-1.5 py-3">
+                      {(
+                        [
+                          [t("phone"), venue.phone],
+                          [t("email"), venue.email],
+                          [t("emailForInvoices"), venue.emailForInvoices],
+                          [t("manager"), venue.manager],
+                        ] as const
+                      )
+                        .filter(([, value]) => value)
+                        .map(([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex items-baseline justify-between gap-4"
+                          >
+                            <dt className="shrink-0 text-muted-foreground">{label}</dt>
+                            <dd className="min-w-0 break-words text-right font-medium tabular-nums">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  )}
+
+                  {/* По данным iiko */}
+                  {(venue.iikoLegalEntityName || venue.iikoTaxId) && (
+                    <dl className="flex flex-col gap-1.5 pt-3">
+                      {(
+                        [
+                          [t("iikoEntity"), unescapePortal(venue.iikoLegalEntityName)],
+                          [t("iikoTaxId"), venue.iikoTaxId],
+                        ] as const
+                      )
+                        .filter(([, value]) => value)
+                        .map(([label, value]) => (
+                          <div
+                            key={label}
+                            className="flex items-baseline justify-between gap-4"
+                          >
+                            <dt className="shrink-0 text-muted-foreground">{label}</dt>
+                            <dd className="min-w-0 break-words text-right text-muted-foreground tabular-nums">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  )}
+                </div>
                 {externalLinks.some(([, url]) => url) && (
                   <div className="flex flex-wrap gap-2">
                     {externalLinks

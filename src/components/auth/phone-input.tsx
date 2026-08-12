@@ -18,21 +18,32 @@ export function PhoneInput({
   value,
   onChange,
   invalid,
+  compact,
   ...props
 }: Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> & {
   /** 9 цифр без префикса +998 */
   value: string;
   onChange: (digits: string) => void;
   invalid?: boolean;
+  /** Обычная высота поля — для форм и модалок (по умолчанию крупный логин-вариант) */
+  compact?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "flex h-[54px] items-center rounded-md border-[1.5px] border-input bg-card transition-colors focus-within:border-primary",
+        "flex items-center rounded-md border-input bg-card transition-colors focus-within:border-primary",
+        compact ? "h-9 border" : "h-[54px] border-[1.5px]",
         invalid && "border-destructive"
       )}
     >
-      <span className="select-none pl-4 text-base text-foreground">+998</span>
+      <span
+        className={cn(
+          "select-none text-foreground",
+          compact ? "pl-3 text-sm" : "pl-4 text-base"
+        )}
+      >
+        +998
+      </span>
       <Input
         type="tel"
         inputMode="tel"
@@ -47,7 +58,10 @@ export function PhoneInput({
           onChange(digits.slice(0, 9));
         }}
         aria-invalid={invalid || undefined}
-        className="h-full flex-1 border-0 bg-transparent pl-2 !text-base shadow-none focus-visible:border-0 focus-visible:ring-0 aria-invalid:ring-0 dark:bg-transparent"
+        className={cn(
+          "h-full flex-1 border-0 bg-transparent pl-2 shadow-none focus-visible:border-0 focus-visible:ring-0 aria-invalid:ring-0 dark:bg-transparent",
+          compact ? "!text-sm" : "!text-base"
+        )}
         {...props}
       />
     </div>

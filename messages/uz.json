@@ -1093,6 +1093,7 @@
     "tempClosedManual": "Qo'lda «vaqtincha ishlamaydi» deb belgilangan",
     "statusSection": "Holat",
     "copyUid": "UID nusxalash",
-    "uidCopied": "UID nusxalandi"
+    "uidCopied": "UID nusxalandi",
+    "serverRow": "Server"
   }
 }
