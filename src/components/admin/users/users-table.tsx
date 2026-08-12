@@ -251,7 +251,27 @@ export function UsersTable() {
                   onClick={() => setSelected(u)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="font-medium">{fullName(u)}</TableCell>
+                  <TableCell>
+                    <span className="flex items-center gap-2">
+                      <span
+                        title={
+                          u.online
+                            ? t("online")
+                            : u.lastSeenAt
+                              ? t("lastSeen", {
+                                  time: formatRelativeTime(u.lastSeenAt, locale),
+                                })
+                              : t("neverSeen")
+                        }
+                        className={
+                          u.online
+                            ? "size-2 shrink-0 rounded-full bg-success"
+                            : "size-2 shrink-0 rounded-full bg-border"
+                        }
+                      />
+                      <span className="font-medium">{fullName(u)}</span>
+                    </span>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {u.phone}
                   </TableCell>

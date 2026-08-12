@@ -17,6 +17,7 @@ import {
   type ChecklistSchedule,
   type ChecklistStats,
   type ChecklistTemplate,
+  type Dashboard,
   type EntityInvite,
   type IikoPartnerHealth,
   type IikoPartnerProfile,
@@ -647,6 +648,10 @@ export const iikoPartnerApi = {
         method: "POST",
       }),
   },
+};
+
+export const dashboardApi = {
+  get: () => authedRequest<Dashboard>("/dashboard"),
 };
 
 export const venuesApi = {

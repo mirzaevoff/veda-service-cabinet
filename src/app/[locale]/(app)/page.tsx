@@ -1,31 +1,16 @@
-import { getTranslations } from "next-intl/server";
-import { Rocket } from "lucide-react";
 import { AppFooter } from "@/components/common/app-footer";
 import { BankRatesWidget } from "@/components/bank/bank-rates-widget";
+import { DashboardBlocks } from "@/components/dashboard/dashboard-blocks";
 
-export default async function DashboardPage() {
-  const t = await getTranslations("Dashboard");
-
+export default function DashboardPage() {
   return (
-    <div className="relative flex min-h-full flex-col items-center pb-16">
+    <div className="relative flex min-h-full flex-col items-center gap-5 pb-24">
       {/* Виджет курсов сам скрывается без права bank.view */}
       <div className="flex w-full justify-center pt-2">
         <BankRatesWidget />
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
-        <div className="duration-450 animate-in fade-in zoom-in-90">
-          <div className="flex size-14 animate-pulse items-center justify-center rounded-lg bg-accent-light [animation-duration:2.5s]">
-            <Rocket className="size-[26px] text-primary" strokeWidth={1.75} />
-          </div>
-        </div>
-        <h2 className="text-2xl font-bold tracking-tight duration-450 animate-in fade-in slide-in-from-bottom-4">
-          {t("inDevelopment")}
-        </h2>
-        <p className="max-w-sm text-sm text-muted-foreground duration-450 animate-in fade-in slide-in-from-bottom-4 [animation-delay:120ms] [animation-fill-mode:backwards]">
-          {t("comingSoon")}
-        </p>
-      </div>
+      <DashboardBlocks />
 
       <AppFooter />
     </div>

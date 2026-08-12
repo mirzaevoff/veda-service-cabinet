@@ -84,6 +84,10 @@ export interface UserProfile {
     permissions: string[];
   };
   status: "active" | "blocked";
+  /** Последняя авторизованная активность (ISO) или null */
+  lastSeenAt?: string | null;
+  /** Активность за последние 5 минут (вычисляется сервером) */
+  online?: boolean;
   createdAt: string;
 }
 
@@ -876,4 +880,62 @@ export interface VenuesSyncResult {
   chains: number;
   deactivated: number;
   partial: boolean;
+}
+
+// ─── Dashboard (агрегат для главной; блоки по правам, без права — null) ───
+
+export interface DashboardRatesBlock {
+  date: string | null;
+  items: Array<{
+    charCode: string;
+    name: string;
+    buy: string;
+    sell: string;
+    cb: string;
+  }>;
+  stale: boolean;
+}
+
+export interface DashboardServersBlock {
+  total: number;
+  up: number;
+  down: number;
+  maintenance: number;
+  unknown: number;
+  lastSyncAt: string | null;
+}
+
+export interface DashboardVenuesBlock {
+  total: number;
+  rms: number;
+  chains: number;
+  /** Привязаны к нашему ЮЛ */
+  linked: number;
+  open: number;
+  closed: number;
+  temporarilyClosed: number;
+}
+
+export interface DashboardTicketsBlock {
+  open: number;
+  closed: number;
+  /** Открытые, никем не взятые */
+  unclaimed: number;
+  /** Открытые с просроченным SLA */
+  breached: number;
+}
+
+export interface DashboardUsersBlock {
+  total: number;
+  /** Активность за последние 5 минут */
+  online: number;
+}
+
+export interface Dashboard {
+  rates: DashboardRatesBlock | null;
+  servers: DashboardServersBlock | null;
+  venues: DashboardVenuesBlock | null;
+  tickets: DashboardTicketsBlock | null;
+  users: DashboardUsersBlock | null;
+  generatedAt: string;
 }

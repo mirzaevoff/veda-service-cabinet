@@ -62,7 +62,10 @@
       "generic": "Something went wrong. Please try again"
     },
     "filterStatusLabel": "Status",
-    "filterRoleLabel": "Role"
+    "filterRoleLabel": "Role",
+    "online": "Online",
+    "lastSeen": "Last seen {time}",
+    "neverSeen": "Never signed in"
   },
   "AdminRoles": {
     "title": "Roles & Access",
@@ -277,7 +280,28 @@
   },
   "Dashboard": {
     "inDevelopment": "Under development",
-    "comingSoon": "This section is coming soon — we're already working on it"
+    "comingSoon": "This section is coming soon — we're already working on it",
+    "blocks": {
+      "servers": "Client servers",
+      "serversTotal": "monitored",
+      "serversUp": "Online",
+      "serversDown": "Down",
+      "serversMaintenance": "Maintenance",
+      "venues": "Venues",
+      "venuesTotal": "{rms} outlets · {chains} chains",
+      "venuesOpen": "Open",
+      "venuesClosed": "Closed",
+      "venuesTempClosed": "Temporarily closed",
+      "venuesLinked": "Linked to entities",
+      "tickets": "Tickets",
+      "ticketsOpen": "open",
+      "ticketsUnclaimed": "Unclaimed",
+      "ticketsBreached": "SLA breached",
+      "ticketsClosed": "Closed total",
+      "users": "Users",
+      "usersOnline": "online now",
+      "usersTotal": "Total active"
+    }
   },
   "Home": {
     "eyebrow": "Veda Vector",

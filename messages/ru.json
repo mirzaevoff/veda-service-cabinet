@@ -62,7 +62,10 @@
       "generic": "Что-то пошло не так. Попробуйте ещё раз"
     },
     "filterStatusLabel": "Статус",
-    "filterRoleLabel": "Роль"
+    "filterRoleLabel": "Роль",
+    "online": "Онлайн",
+    "lastSeen": "Был(а) в сети {time}",
+    "neverSeen": "Ещё не заходил(а)"
   },
   "AdminRoles": {
     "title": "Роли и Доступы",
@@ -276,7 +279,28 @@
   },
   "Dashboard": {
     "inDevelopment": "В разработке",
-    "comingSoon": "Раздел появится совсем скоро — мы уже работаем над ним"
+    "comingSoon": "Раздел появится совсем скоро — мы уже работаем над ним",
+    "blocks": {
+      "servers": "Серверы клиентов",
+      "serversTotal": "в мониторинге",
+      "serversUp": "В сети",
+      "serversDown": "Недоступны",
+      "serversMaintenance": "Обслуживание",
+      "venues": "Заведения",
+      "venuesTotal": "точек {rms} · сетей {chains}",
+      "venuesOpen": "Работают",
+      "venuesClosed": "Не работают",
+      "venuesTempClosed": "Временно не работают",
+      "venuesLinked": "Привязано к юрлицам",
+      "tickets": "Обращения",
+      "ticketsOpen": "открытых",
+      "ticketsUnclaimed": "Не взяты в работу",
+      "ticketsBreached": "Просрочен SLA",
+      "ticketsClosed": "Закрытых всего",
+      "users": "Пользователи",
+      "usersOnline": "онлайн сейчас",
+      "usersTotal": "Всего активных"
+    }
   },
   "Home": {
     "eyebrow": "Veda Vector",

@@ -62,7 +62,10 @@
       "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
     },
     "filterStatusLabel": "Holat",
-    "filterRoleLabel": "Rol"
+    "filterRoleLabel": "Rol",
+    "online": "Onlayn",
+    "lastSeen": "Oxirgi faollik: {time}",
+    "neverSeen": "Hali kirmagan"
   },
   "AdminRoles": {
     "title": "Rollar va ruxsatlar",
@@ -276,7 +279,28 @@
   },
   "Dashboard": {
     "inDevelopment": "Ishlab chiqilmoqda",
-    "comingSoon": "Bo'lim tez orada paydo bo'ladi — biz ustida ishlayapmiz"
+    "comingSoon": "Bo'lim tez orada paydo bo'ladi — biz ustida ishlayapmiz",
+    "blocks": {
+      "servers": "Mijoz serverlari",
+      "serversTotal": "monitoringda",
+      "serversUp": "Onlayn",
+      "serversDown": "Ishlamayapti",
+      "serversMaintenance": "Texnik xizmat",
+      "venues": "Muassasalar",
+      "venuesTotal": "{rms} nuqta · {chains} tarmoq",
+      "venuesOpen": "Ishlayapti",
+      "venuesClosed": "Ishlamayapti",
+      "venuesTempClosed": "Vaqtincha ishlamaydi",
+      "venuesLinked": "YuShga bog'langan",
+      "tickets": "Murojaatlar",
+      "ticketsOpen": "ochiq",
+      "ticketsUnclaimed": "Olinmagan",
+      "ticketsBreached": "SLA buzilgan",
+      "ticketsClosed": "Jami yopilgan",
+      "users": "Foydalanuvchilar",
+      "usersOnline": "hozir onlayn",
+      "usersTotal": "Jami faol"
+    }
   },
   "Home": {
     "eyebrow": "Veda Vector",
