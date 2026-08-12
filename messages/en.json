@@ -492,7 +492,7 @@
       }
     },
     "members": {
-      "title": "Members",
+      "title": "Users",
       "manage": "Members",
       "empty": "Nobody yet",
       "owner": "Owner",
@@ -515,7 +515,12 @@
         "ER806": "An invite for this number already exists",
         "generic": "Something went wrong. Please try again"
       },
-      "positionsLabel": "Positions"
+      "positionsLabel": "Positions",
+      "emptyTitle": "Nobody here yet",
+      "emptyHint": "Invite the first user by phone number",
+      "inviteTitle": "Invite a user",
+      "inviteDescription": "If the person is already registered they get access right away; otherwise they will see the invite on sign-in",
+      "cancel": "Cancel"
     },
     "bankName": "Bank",
     "bankNamePlaceholder": "Bank name",
@@ -1016,7 +1021,7 @@
     "clientId": "iiko client ID",
     "inactive": "Inactive",
     "inChain": "in chain “{name}”",
-    "ourEntity": "Our legal entity",
+    "ourEntity": "Legal entity",
     "noEntity": "No entity linked",
     "link": "Link",
     "unlink": "Unlink",
@@ -1062,6 +1067,9 @@
     "clearStatus": "Clear mark",
     "statusCleared": "Mark cleared — status is automatic again",
     "tempClosedUntil": "Temporarily closed until {time}",
-    "tempClosedManual": "Manually marked temporarily closed"
+    "tempClosedManual": "Manually marked temporarily closed",
+    "statusSection": "Status",
+    "copyUid": "Copy UID",
+    "uidCopied": "UID copied"
   }
 }

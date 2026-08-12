@@ -2,17 +2,31 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BriefcaseBusiness, ChevronDown, MailPlus, X } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  ChevronDown,
+  MailPlus,
+  UserRoundPlus,
+  UsersRound,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { PhoneInput } from "@/components/auth/phone-input";
 import { useCurrentUser } from "@/components/common/current-user-provider";
@@ -62,6 +76,7 @@ export function MembersManager({
   const [positions, setPositions] = useState<Position[]>([]);
   const [digits, setDigits] = useState("");
   const [inviteRole, setInviteRole] = useState<EntityMemberRole>("member");
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -106,6 +121,7 @@ export function MembersManager({
         role: inviteRole,
       });
       setDigits("");
+      setInviteOpen(false);
       if (result === "added") {
         toast.success(t("inviteAdded"));
         onChanged();
@@ -164,9 +180,34 @@ export function MembersManager({
 
   return (
     <div className="flex flex-col gap-3">
-      <Label className="text-sm font-medium text-muted-foreground">
-        {t("title")}
-      </Label>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+            <UsersRound className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          </div>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("title")}
+          </h4>
+          {members.length > 0 && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {members.length}
+            </span>
+          )}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setError(null);
+            setDigits("");
+            setInviteOpen(true);
+          }}
+          className="gap-1.5"
+        >
+          <UserRoundPlus className="size-3.5" />
+          {t("invite")}
+        </Button>
+      </div>
 
       {members.length > 0 ? (
         <div className="flex flex-col gap-1.5">
@@ -273,7 +314,15 @@ export function MembersManager({
           ))}
         </div>
       ) : (
-        <p className="text-xs text-muted-foreground">{t("empty")}</p>
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border py-10 text-center duration-300 animate-in fade-in">
+          <div className="flex size-12 items-center justify-center rounded-lg bg-accent-light">
+            <UsersRound className="size-6 text-primary" strokeWidth={1.75} />
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{t("emptyTitle")}</span>
+            <span className="text-xs text-muted-foreground">{t("emptyHint")}</span>
+          </div>
+        </div>
       )}
 
       {invites.length > 0 && (
@@ -311,52 +360,66 @@ export function MembersManager({
         </div>
       )}
 
-      <form
-        className="flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void invite();
-        }}
-      >
-        <div className="flex items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <PhoneInput
-              value={digits}
-              onChange={(v) => {
-                setDigits(v);
-                setError(null);
-              }}
-              invalid={!!error}
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="outline" className="h-[54px] gap-1.5 whitespace-nowrap">
-                  {t(inviteRole)}
-                  <ChevronDown className="size-3.5" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setInviteRole("member")}>
-                {t("member")}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setInviteRole("owner")}>
-                {t("owner")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
-            type="submit"
-            disabled={busy || digits.length !== 9}
-            className="h-[54px]"
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("inviteTitle")}</DialogTitle>
+            <DialogDescription>{t("inviteDescription")}</DialogDescription>
+          </DialogHeader>
+          <form
+            id="invite-member-form"
+            className="flex flex-col gap-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void invite();
+            }}
           >
-            {busy ? <Spinner className="size-4" /> : t("invite")}
-          </Button>
-        </div>
-        {error && <p className="text-xs text-destructive">{error}</p>}
-      </form>
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <PhoneInput
+                  value={digits}
+                  onChange={(v) => {
+                    setDigits(v);
+                    setError(null);
+                  }}
+                  invalid={!!error}
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline" className="h-[54px] gap-1.5 whitespace-nowrap">
+                      {t(inviteRole)}
+                      <ChevronDown className="size-3.5" />
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setInviteRole("member")}>
+                    {t("member")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setInviteRole("owner")}>
+                    {t("owner")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            {error && <p className="text-xs text-destructive">{error}</p>}
+          </form>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setInviteOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button
+              type="submit"
+              form="invite-member-form"
+              disabled={busy || digits.length !== 9}
+            >
+              {busy ? <Spinner className="size-4" /> : t("invite")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

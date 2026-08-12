@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  Activity,
   Building2,
   ChevronLeft,
   ChevronRight,
   CircleAlert,
   Clock,
+  Copy,
   ExternalLink,
   Link2,
   Link2Off,
@@ -713,7 +715,15 @@ function VenueSheet({
             <div className="flex flex-col gap-5 px-4 pb-6">
               {/* Временно не работает: ручной override */}
               {canManage && venue.kind === "rms" && (
-                <section className="flex flex-col gap-2 rounded-lg border border-border p-4">
+                <section className="flex flex-col gap-2.5 rounded-lg border border-border p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+                      <Activity className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                    </div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("statusSection")}
+                    </h4>
+                  </div>
                   {venue.manualStatus ? (
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span className="flex items-center gap-1.5 text-sm text-warning">
@@ -850,11 +860,16 @@ function VenueSheet({
               </section>
 
               {/* Карточка iiko */}
-              <section className="flex flex-col gap-2.5">
+              <section className="flex flex-col gap-2.5 rounded-lg border border-border p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {t("iikoCard")}
-                  </h4>
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+                      <Store className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                    </div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {t("iikoCard")}
+                    </h4>
+                  </div>
                   {canManage && (
                     <Button
                       variant="ghost"
@@ -873,9 +888,25 @@ function VenueSheet({
                   )}
                 </div>
                 <dl className="flex flex-col gap-1 text-sm">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <dt className="shrink-0 text-muted-foreground">{t("colUid")}</dt>
+                    <dd className="flex min-w-0 items-center gap-1.5 text-right font-medium tabular-nums">
+                      {venue.uid}
+                      <button
+                        type="button"
+                        aria-label={t("copyUid")}
+                        onClick={() => {
+                          void navigator.clipboard.writeText(venue.uid);
+                          toast.success(t("uidCopied"));
+                        }}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        <Copy className="size-3.5" />
+                      </button>
+                    </dd>
+                  </div>
                   {(
                     [
-                      [t("colUid"), venue.uid],
                       [t("clientId"), venue.iikoClientId],
                       [t("colType"), venue.type],
                       [t("colCity"), venue.city],

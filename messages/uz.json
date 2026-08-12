@@ -491,7 +491,7 @@
       }
     },
     "members": {
-      "title": "Ishtirokchilar",
+      "title": "Foydalanuvchilar",
       "manage": "Ishtirokchilar",
       "empty": "Hozircha hech kim yo'q",
       "owner": "Boshqaruvchi",
@@ -514,7 +514,12 @@
         "ER806": "Bu raqamga taklif allaqachon mavjud",
         "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
       },
-      "positionsLabel": "Lavozimlar"
+      "positionsLabel": "Lavozimlar",
+      "emptyTitle": "Hozircha hech kim yo'q",
+      "emptyHint": "Birinchi foydalanuvchini telefon raqami orqali taklif qiling",
+      "inviteTitle": "Foydalanuvchini taklif qilish",
+      "inviteDescription": "Agar odam ro'yxatdan o'tgan bo'lsa — darhol kirish oladi, aks holda kirishda taklifni ko'radi",
+      "cancel": "Bekor qilish"
     },
     "bankName": "Bank",
     "bankNamePlaceholder": "Bank nomi",
@@ -1015,7 +1020,7 @@
     "clientId": "iiko mijoz ID",
     "inactive": "Nofaol",
     "inChain": "«{name}» tarmog'ida",
-    "ourEntity": "Bizning yuridik shaxs",
+    "ourEntity": "Yuridik shaxs",
     "noEntity": "Yuridik shaxs bog'lanmagan",
     "link": "Bog'lash",
     "unlink": "Uzish",
@@ -1061,6 +1066,9 @@
     "clearStatus": "Belgini olib tashlash",
     "statusCleared": "Belgi olindi — holat yana avtomatik",
     "tempClosedUntil": "{time} gacha vaqtincha ishlamaydi",
-    "tempClosedManual": "Qo'lda «vaqtincha ishlamaydi» deb belgilangan"
+    "tempClosedManual": "Qo'lda «vaqtincha ishlamaydi» deb belgilangan",
+    "statusSection": "Holat",
+    "copyUid": "UID nusxalash",
+    "uidCopied": "UID nusxalandi"
   }
 }

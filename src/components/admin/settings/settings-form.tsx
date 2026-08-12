@@ -26,6 +26,55 @@ import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 /**
+ * Раскладка карточек групп: порядок и ширина полей в 6-колоночной сетке.
+ * Ключи, которых нет в конфиге, добавляются в конец на всю ширину.
+ */
+const GROUP_LAYOUTS: Record<string, { key: string; span: 2 | 3 | 6 }[]> = {
+  Organization: [
+    { key: "org.taxId", span: 3 },
+    { key: "org.name", span: 3 },
+    { key: "org.address", span: 6 },
+    { key: "org.bankCode", span: 2 },
+    { key: "org.bankName", span: 2 },
+    { key: "org.bankAccount", span: 2 },
+    { key: "org.director", span: 6 },
+    { key: "org.phone", span: 3 },
+    { key: "org.email", span: 3 },
+  ],
+  "iiko Partner Portal": [
+    { key: "iikoPartner.baseUrl", span: 6 },
+    { key: "iikoPartner.login", span: 3 },
+    { key: "iikoPartner.password", span: 3 },
+  ],
+  Kapitalbank: [
+    { key: "kapitalbank.baseUrl", span: 3 },
+    { key: "kapitalbank.reserveUrl", span: 3 },
+  ],
+};
+
+const SPAN_CLASS: Record<number, string> = {
+  2: "sm:col-span-2",
+  3: "sm:col-span-3",
+  6: "sm:col-span-6",
+};
+
+/** Настройки группы в порядке раскладки + ширина каждого поля */
+function orderGroup(settings: Setting[], group: string) {
+  const layout = GROUP_LAYOUTS[group] ?? [];
+  const bySpan = new Map(layout.map((f) => [f.key, f.span]));
+  const ordered = [
+    ...layout
+      .map((f) => settings.find((s) => s.key === f.key))
+      .filter((s): s is Setting => !!s),
+    ...settings.filter((s) => !bySpan.has(s.key)),
+  ];
+  return ordered.map((setting) => ({
+    setting,
+    span: bySpan.get(setting.key) ?? 6,
+  }));
+}
+
+/**
  * Глобальные настройки: метаданные (тип, подпись, границы) приходят
  * из реестра на сервере, поэтому форма строится динамически —
  * новая настройка в API появляется здесь без правок кабинета.
@@ -69,49 +118,6 @@ export function SettingsForm() {
 
   useEffect(load, [load]);
 
-  async function save(setting: Setting) {
-    const draft = drafts[setting.key];
-    let value: number | string | boolean;
-    if (setting.type === "number") {
-      const parsed = Number(String(draft).replace(",", "."));
-      if (!Number.isFinite(parsed)) {
-        setErrors((prev) => ({ ...prev, [setting.key]: t("notANumber") }));
-        return;
-      }
-      value = parsed;
-    } else if (setting.type === "boolean") {
-      value = Boolean(draft);
-    } else {
-      value = String(draft);
-    }
-
-    setSavingKey(setting.key);
-    setErrors((prev) => ({ ...prev, [setting.key]: "" }));
-    try {
-      const updated = await settingsApi.update(setting.key, value);
-      setItems(
-        (prev) =>
-          prev?.map((s) => (s.key === updated.key ? updated : s)) ?? prev
-      );
-      toast.success(t("saved"));
-    } catch (e) {
-      if (e instanceof ApiError && e.code === "ER1001") {
-        const data = (e.data ?? {}) as { min?: number; max?: number };
-        setErrors((prev) => ({
-          ...prev,
-          [setting.key]:
-            data.min !== undefined || data.max !== undefined
-              ? t("outOfRange", { min: data.min ?? "—", max: data.max ?? "—" })
-              : t("invalidValue"),
-        }));
-      } else {
-        setErrors((prev) => ({ ...prev, [setting.key]: t("genericError") }));
-      }
-    } finally {
-      setSavingKey(null);
-    }
-  }
-
   async function autofill() {
     if (!/^(\d{9}|\d{14})$/.test(autofillTaxId)) {
       setAutofillError(t("taxIdFormat"));
@@ -144,19 +150,42 @@ export function SettingsForm() {
     setSavingKey("__group__");
     let allOk = true;
     for (const setting of dirty) {
+      const draft = drafts[setting.key];
+      let value: number | string | boolean;
+      if (setting.type === "number") {
+        const parsed = Number(String(draft).replace(",", "."));
+        if (!Number.isFinite(parsed)) {
+          allOk = false;
+          setErrors((prev) => ({ ...prev, [setting.key]: t("notANumber") }));
+          continue;
+        }
+        value = parsed;
+      } else if (setting.type === "boolean") {
+        value = Boolean(draft);
+      } else {
+        value = String(draft);
+      }
       try {
-        const updated = await settingsApi.update(
-          setting.key,
-          String(drafts[setting.key] ?? "")
-        );
+        const updated = await settingsApi.update(setting.key, value);
         setItems(
           (prev) =>
             prev?.map((s) => (s.key === updated.key ? updated : s)) ?? prev
         );
         setErrors((prev) => ({ ...prev, [setting.key]: "" }));
-      } catch {
+      } catch (e) {
         allOk = false;
-        setErrors((prev) => ({ ...prev, [setting.key]: t("invalidValue") }));
+        if (e instanceof ApiError && e.code === "ER1001") {
+          const data = (e.data ?? {}) as { min?: number; max?: number };
+          setErrors((prev) => ({
+            ...prev,
+            [setting.key]:
+              data.min !== undefined || data.max !== undefined
+                ? t("outOfRange", { min: data.min ?? "—", max: data.max ?? "—" })
+                : t("invalidValue"),
+          }));
+        } else {
+          setErrors((prev) => ({ ...prev, [setting.key]: t("invalidValue") }));
+        }
       }
     }
     setSavingKey(null);
@@ -219,30 +248,42 @@ export function SettingsForm() {
               </Button>
             )}
           </div>
-          {group === "Organization" ? (
-            (() => {
-              const orgSettings = items.filter((s) => s.group === group);
-              const anyDirty = orgSettings.some(isDirty);
-              const fullWidth = new Set(["org.name", "org.address", "org.bankName"]);
-              return (
-                <div className="flex flex-col gap-4 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-2">
-                  <div className="grid gap-x-4 gap-y-3 sm:grid-cols-2">
-                    {orgSettings.map((setting) => (
-                      <div
-                        key={setting.key}
-                        className={cn(
-                          "flex min-w-0 flex-col gap-1.5",
-                          fullWidth.has(setting.key) && "sm:col-span-2"
-                        )}
+          {(() => {
+            const groupSettings = items.filter((s) => s.group === group);
+            const anyDirty = groupSettings.some(isDirty);
+            return (
+              <div className="flex flex-col gap-4 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-2">
+                <div className="grid gap-x-4 gap-y-3 sm:grid-cols-6">
+                  {orderGroup(groupSettings, group).map(({ setting, span }) => (
+                    <div
+                      key={setting.key}
+                      className={cn(
+                        "flex min-w-0 flex-col gap-1.5",
+                        SPAN_CLASS[span]
+                      )}
+                    >
+                      <Label
+                        htmlFor={`setting-${setting.key}`}
+                        title={setting.description}
+                        className="text-sm font-medium text-muted-foreground"
                       >
-                        <Label
-                          htmlFor={`setting-${setting.key}`}
-                          className="text-sm font-medium text-muted-foreground"
-                        >
-                          {setting.label}
-                        </Label>
+                        {setting.label}
+                      </Label>
+                      {setting.type === "boolean" ? (
+                        <Switch
+                          checked={Boolean(drafts[setting.key])}
+                          onCheckedChange={(v) =>
+                            setDrafts((prev) => ({ ...prev, [setting.key]: v }))
+                          }
+                          aria-label={setting.label}
+                        />
+                      ) : (
                         <Input
                           id={`setting-${setting.key}`}
+                          type={setting.secret ? "password" : "text"}
+                          inputMode={setting.type === "number" ? "decimal" : "text"}
+                          autoComplete={setting.secret ? "new-password" : undefined}
+                          title={setting.secret ? t("secretHint") : undefined}
                           value={String(drafts[setting.key] ?? "")}
                           onChange={(e) => {
                             setDrafts((prev) => ({
@@ -251,137 +292,67 @@ export function SettingsForm() {
                             }));
                             setErrors((prev) => ({ ...prev, [setting.key]: "" }));
                           }}
+                          className={cn(
+                            setting.type === "number" && "w-48 tabular-nums"
+                          )}
                         />
-                        {errors[setting.key] && (
-                          <p className="text-xs text-destructive">
-                            {errors[setting.key]}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-end">
-                    <Button
-                      size="sm"
-                      disabled={!anyDirty || savingKey === "__group__"}
-                      onClick={() => saveGroup(orgSettings)}
-                    >
-                      {savingKey === "__group__" ? (
-                        <Spinner className="size-4" />
-                      ) : (
-                        t("save")
                       )}
-                    </Button>
-                  </div>
+                      {setting.type === "number" &&
+                        (setting.min !== undefined || setting.max !== undefined) && (
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            {t("range", {
+                              min: setting.min?.toLocaleString("ru-RU") ?? "—",
+                              max: setting.max?.toLocaleString("ru-RU") ?? "—",
+                            })}
+                          </span>
+                        )}
+                      {errors[setting.key] && (
+                        <p className="text-xs text-destructive">
+                          {errors[setting.key]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              );
-            })()
-          ) : (
-            items
-            .filter((s) => s.group === group)
-            .map((setting, i) => (
-        <div
-          key={setting.key}
-          className="flex flex-col gap-3 rounded-lg border border-border p-4 duration-450 animate-in fade-in slide-in-from-bottom-2 [animation-fill-mode:backwards]"
-          style={{ animationDelay: `${Math.min(i * 50, 200)}ms` }}
-        >
-          <div className="flex flex-col gap-0.5">
-            <Label htmlFor={`setting-${setting.key}`} className="text-sm font-medium">
-              {setting.label}
-            </Label>
-            <span className="font-mono text-xs text-muted-foreground">
-              {setting.key}
-            </span>
-            {setting.description && (
-              <span className="text-xs text-muted-foreground">
-                {setting.description}
-              </span>
-            )}
-            {setting.secret && (
-              <span className="text-xs text-muted-foreground">
-                {t("secretHint")}
-              </span>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {setting.type === "boolean" ? (
-              <Switch
-                checked={Boolean(drafts[setting.key])}
-                onCheckedChange={(v) =>
-                  setDrafts((prev) => ({ ...prev, [setting.key]: v }))
-                }
-                aria-label={setting.label}
-              />
-            ) : (
-              <Input
-                id={`setting-${setting.key}`}
-                type={setting.secret ? "password" : "text"}
-                inputMode={setting.type === "number" ? "decimal" : "text"}
-                autoComplete={setting.secret ? "new-password" : undefined}
-                value={String(drafts[setting.key] ?? "")}
-                onChange={(e) => {
-                  setDrafts((prev) => ({ ...prev, [setting.key]: e.target.value }));
-                  setErrors((prev) => ({ ...prev, [setting.key]: "" }));
-                }}
-                className={
-                  setting.type === "number"
-                    ? "w-48 tabular-nums"
-                    : "min-w-0 flex-1 basis-64"
-                }
-              />
-            )}
-
-            {setting.type === "number" &&
-              (setting.min !== undefined || setting.max !== undefined) && (
-                <span className="text-xs text-muted-foreground tabular-nums">
-                  {t("range", {
-                    min: setting.min?.toLocaleString("ru-RU") ?? "—",
-                    max: setting.max?.toLocaleString("ru-RU") ?? "—",
-                  })}
-                </span>
-              )}
-
-            <div className="ms-auto flex items-center gap-1.5">
-              {isDirty(setting) && (
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t("reset")}
-                  onClick={() =>
-                    setDrafts((prev) => ({
-                      ...prev,
-                      [setting.key]:
-                        setting.type === "boolean"
-                          ? Boolean(setting.value)
-                          : String(setting.value),
-                    }))
-                  }
-                  className="text-muted-foreground"
-                >
-                  <RotateCcw className="size-4" />
-                </Button>
-              )}
-              <Button
-                size="sm"
-                disabled={!isDirty(setting) || savingKey === setting.key}
-                onClick={() => save(setting)}
-              >
-                {savingKey === setting.key ? (
-                  <Spinner className="size-4" />
-                ) : (
-                  t("save")
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {errors[setting.key] && (
-            <p className="text-xs text-destructive">{errors[setting.key]}</p>
-          )}
-        </div>
-            ))
-          )}
+                <div className="flex items-center justify-end gap-2">
+                  {anyDirty && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t("reset")}
+                      onClick={() =>
+                        setDrafts((prev) => ({
+                          ...prev,
+                          ...Object.fromEntries(
+                            groupSettings.map((setting) => [
+                              setting.key,
+                              setting.type === "boolean"
+                                ? Boolean(setting.value)
+                                : String(setting.value),
+                            ])
+                          ),
+                        }))
+                      }
+                      className="text-muted-foreground"
+                    >
+                      <RotateCcw className="size-4" />
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    disabled={!anyDirty || savingKey === "__group__"}
+                    onClick={() => saveGroup(groupSettings)}
+                  >
+                    {savingKey === "__group__" ? (
+                      <Spinner className="size-4" />
+                    ) : (
+                      t("save")
+                    )}
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
         </section>
       ))}
 
