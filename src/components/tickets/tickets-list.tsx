@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
@@ -236,10 +236,8 @@ export function TicketsList() {
   });
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
-  const activeCategories = useMemo(
-    () => categories.filter((c) => c.isActive),
-    [categories]
-  );
+  // Сервер отдаёт дерево по роли: клиенту только активные, staff — всё (включая «Архив»)
+  const activeCategories = categories;
 
   // Фильтры для модалки: чипы + сброс строятся из одного описания
   const activeFilters: ActiveFilter[] = [];
