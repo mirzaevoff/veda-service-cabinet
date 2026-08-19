@@ -93,10 +93,6 @@ export function CreateTicketFlow() {
       fail(t("subjectRequired"));
       return;
     }
-    if (!text.trim() && attachments.attachmentIds.length === 0) {
-      fail(te("ER405"));
-      return;
-    }
     setSubmitting(true);
     setError(null);
     try {

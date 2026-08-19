@@ -210,7 +210,7 @@
       "subjectRequired": "Write a subject",
       "entityLabel": "Organization",
       "entityNone": "No organization",
-      "textLabel": "Description",
+      "textLabel": "Description (optional)",
       "textPlaceholder": "Describe in detail — the more we know, the faster we solve it",
       "submit": "Create ticket",
       "noCategories": "Categories are not set up yet. Try again later"

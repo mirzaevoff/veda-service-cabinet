@@ -210,7 +210,7 @@
       "subjectRequired": "Murojaat mavzusini yozing",
       "entityLabel": "Tashkilot",
       "entityNone": "Tashkilotsiz",
-      "textLabel": "Tavsif",
+      "textLabel": "Tavsif (majburiy emas)",
       "textPlaceholder": "Batafsil yozing — qancha ko'p ma'lumot bo'lsa, shuncha tez hal qilamiz",
       "submit": "Murojaat yaratish",
       "noCategories": "Kategoriyalar hali sozlanmagan. Keyinroq urinib ko'ring"
