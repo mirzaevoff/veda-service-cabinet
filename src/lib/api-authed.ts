@@ -21,6 +21,9 @@ import {
   type EntityInvite,
   type IikoPartnerHealth,
   type IikoPartnerProfile,
+  type IikoInvoice,
+  type IikoInvoicesList,
+  type IikoInvoicesSyncResult,
   type IikoServerEvent,
   type IikoServersList,
   type IikoServersSyncResult,
@@ -647,6 +650,34 @@ export const iikoPartnerApi = {
       authedRequest<IikoServersSyncResult>("/iiko-partner/servers/sync", {
         method: "POST",
       }),
+  },
+  invoices: {
+    list: (params?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      kind?: string;
+      status?: string;
+      clientId?: string;
+      legalEntityTaxId?: string;
+      currency?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      all?: boolean;
+      sort?: string;
+    }) =>
+      authedRequest<IikoInvoicesList>(
+        `/iiko-partner/invoices${query({ ...params })}`
+      ),
+    get: (id: string, refresh = false) =>
+      authedRequest<IikoInvoice>(
+        `/iiko-partner/invoices/${id}${refresh ? "?refresh=true" : ""}`
+      ),
+    sync: (full = false) =>
+      authedRequest<IikoInvoicesSyncResult>(
+        `/iiko-partner/invoices/sync${full ? "?full=true" : ""}`,
+        { method: "POST" }
+      ),
   },
 };
 

@@ -802,6 +802,67 @@ export interface IikoServerEvent {
   at: string;
 }
 
+export type IikoInvoiceKind = "customer" | "partner";
+export type IikoInvoiceCurrency = "USD" | "RUB";
+
+/** Наше заведение, сматченное по clientId (read-only джойн, null если нет) */
+export interface IikoInvoiceVenue {
+  id: string;
+  iikoClientId: string;
+  uid: string;
+  name: string;
+  active: boolean;
+}
+
+export interface IikoInvoice {
+  id: string;
+  kind: IikoInvoiceKind;
+  invoiceNumber: string;
+  invoiceId: string | null;
+  clientId: string | null;
+  status: string;
+  issueDate: string | null;
+  dueDate: string | null;
+  partner: string;
+  endCustomer: string;
+  legalEntityTaxId: string;
+  legalEntityName: string;
+  description: string;
+  /** Целые минорные единицы (÷100) */
+  amountMinor: number;
+  currency: IikoInvoiceCurrency;
+  active: boolean;
+  removedAt: string | null;
+  firstSeenAt: string;
+  lastSeenAt: string;
+  /** Наше заведение по clientId (или null) */
+  venue: IikoInvoiceVenue | null;
+  /** Модалка invoice-info — только в детали */
+  card?: Record<string, unknown> | null;
+}
+
+export interface IikoInvoicesSummary {
+  total: number;
+  byStatus: Record<string, number>;
+  amountByCurrency: Record<string, number>;
+  lastSyncAt: string | null;
+  lastFullSyncAt: string | null;
+  lastSyncError: string | null;
+}
+
+export interface IikoInvoicesList extends Page<IikoInvoice> {
+  summary: IikoInvoicesSummary;
+}
+
+export interface IikoInvoicesSyncResult {
+  seen: number;
+  created: number;
+  updated: number;
+  deactivated: number;
+  partial: boolean;
+  full: boolean;
+}
+
 export interface IikoServersSyncResult {
   seen: number;
   created: number;

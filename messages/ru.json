@@ -975,7 +975,8 @@
     },
     "tabs": {
       "profile": "Профиль",
-      "servers": "Серверы клиентов"
+      "servers": "Серверы клиентов",
+      "invoices": "Счета"
     },
     "servers": {
       "summary": {
@@ -1012,6 +1013,47 @@
       "historyEmpty": "Переходов ещё не было",
       "firstAppeared": "Появился в списке",
       "loadMore": "Показать ещё"
+    },
+    "invoices": {
+      "kind": {
+        "customer": "Клиентам ($)",
+        "partner": "Нам от iiko (₽)"
+      },
+      "anyKind": "Все счета",
+      "summaryTotal": "Всего счетов",
+      "summaryAmount": "Сумма, {currency}",
+      "searchPlaceholder": "Номер, клиент, ИНН, описание",
+      "filterStatus": "Статус",
+      "anyStatus": "Любой статус",
+      "filterCurrency": "Валюта",
+      "anyCurrency": "Любая валюта",
+      "from": "С даты",
+      "to": "По дату",
+      "filterWithRemoved": "Включая удалённые",
+      "sync": "Синхронизировать",
+      "syncDone": "Готово: строк {seen}, новых {created}, обновлено {updated}",
+      "syncError": "Не получилось синхронизировать. Попробуйте ещё раз",
+      "lastSync": "Синк: {time}",
+      "lastSyncError": "Последний синк с ошибкой: {error}",
+      "empty": "Счетов не найдено — проверьте фильтры",
+      "colNumber": "Номер",
+      "colEntity": "Юр. лицо",
+      "colVenue": "Заведение",
+      "colStatus": "Статус",
+      "colIssueDate": "Выпущен",
+      "colAmount": "Сумма",
+      "taxId": "ИНН / ПИНФЛ",
+      "endCustomer": "Конечный клиент",
+      "partnerLabel": "Партнёр",
+      "dueDate": "Срок оплаты",
+      "removed": "Удалён",
+      "descriptionLabel": "Описание",
+      "cardLabel": "Детали счёта",
+      "cardEmpty": "Детали ещё не загружены",
+      "cardRefreshed": "Детали обновлены",
+      "refresh": "Обновить",
+      "payer": "Плательщик",
+      "openOnPortal": "Открыть на портале"
     }
   },
   "Venues": {

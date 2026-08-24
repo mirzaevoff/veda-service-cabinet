@@ -976,7 +976,8 @@
     },
     "tabs": {
       "profile": "Profile",
-      "servers": "Client servers"
+      "servers": "Client servers",
+      "invoices": "Invoices"
     },
     "servers": {
       "summary": {
@@ -1013,6 +1014,47 @@
       "historyEmpty": "No transitions yet",
       "firstAppeared": "Appeared in the list",
       "loadMore": "Show more"
+    },
+    "invoices": {
+      "kind": {
+        "customer": "To customers ($)",
+        "partner": "From iiko (₽)"
+      },
+      "anyKind": "All invoices",
+      "summaryTotal": "Invoices total",
+      "summaryAmount": "Amount, {currency}",
+      "searchPlaceholder": "Number, client, TIN, description",
+      "filterStatus": "Status",
+      "anyStatus": "Any status",
+      "filterCurrency": "Currency",
+      "anyCurrency": "Any currency",
+      "from": "From",
+      "to": "To",
+      "filterWithRemoved": "Include removed",
+      "sync": "Sync now",
+      "syncDone": "Done: {seen} rows, {created} new, {updated} updated",
+      "syncError": "Sync failed. Please try again",
+      "lastSync": "Sync: {time}",
+      "lastSyncError": "Last sync failed: {error}",
+      "empty": "No invoices found — check the filters",
+      "colNumber": "Number",
+      "colEntity": "Legal entity",
+      "colVenue": "Venue",
+      "colStatus": "Status",
+      "colIssueDate": "Issued",
+      "colAmount": "Amount",
+      "taxId": "TIN / PINFL",
+      "endCustomer": "End customer",
+      "partnerLabel": "Partner",
+      "dueDate": "Due date",
+      "removed": "Removed",
+      "descriptionLabel": "Description",
+      "cardLabel": "Invoice details",
+      "cardEmpty": "Details not fetched yet",
+      "cardRefreshed": "Details refreshed",
+      "refresh": "Refresh",
+      "payer": "Payer",
+      "openOnPortal": "Open on portal"
     }
   },
   "Venues": {

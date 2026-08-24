@@ -62,7 +62,12 @@ export const NAV_SECTIONS: NavSection[] = [
         key: "iikoPartner",
         href: "/iiko-partner",
         icon: Handshake,
-        permission: PERMISSIONS.iikoPartnerView,
+        anyPermission: [
+          PERMISSIONS.iikoPartnerView,
+          PERMISSIONS.iikoServersView,
+          PERMISSIONS.iikoInvoicesView,
+          PERMISSIONS.iikoPartnerInvoicesView,
+        ],
       },
     ],
   },

@@ -68,7 +68,7 @@ export function IikoServers() {
   const locale = useLocale();
   const router = useRouter();
   const { can } = useCurrentUser();
-  const canManage = can(PERMISSIONS.iikoPartnerManage);
+  const canManage = can(PERMISSIONS.iikoServersManage);
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);

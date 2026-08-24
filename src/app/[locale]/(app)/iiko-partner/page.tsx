@@ -6,14 +6,13 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PartnerProfile } from "@/components/iiko-partner/partner-profile";
 import { IikoServers } from "@/components/iiko-partner/iiko-servers";
+import { IikoInvoices } from "@/components/iiko-partner/iiko-invoices";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { PERMISSIONS } from "@/lib/permissions";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
-const TABS = ["profile", "servers"] as const;
-
-/** iiko Partner: профиль компании и мониторинг серверов клиентов */
+/** iiko Partner: профиль, серверы клиентов и счета — табы по правам */
 export default function IikoPartnerPage() {
   const t = useTranslations("IikoPartner");
   const { can, loading } = useCurrentUser();
@@ -21,13 +20,23 @@ export default function IikoPartnerPage() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const canInvoices =
+    can(PERMISSIONS.iikoInvoicesView) ||
+    can(PERMISSIONS.iikoPartnerInvoicesView);
+
+  const tabs = [
+    { key: "profile", visible: can(PERMISSIONS.iikoPartnerView) },
+    { key: "servers", visible: can(PERMISSIONS.iikoServersView) },
+    { key: "invoices", visible: canInvoices },
+  ].filter((tab) => tab.visible);
+
   if (loading) return null;
-  if (!can(PERMISSIONS.iikoPartnerView)) return <NoAccess />;
+  if (tabs.length === 0) return <NoAccess />;
 
   const requested = searchParams.get("tab") ?? "";
-  const active = (TABS as readonly string[]).includes(requested)
+  const active = tabs.some((tab) => tab.key === requested)
     ? requested
-    : "profile";
+    : tabs[0].key;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -41,19 +50,28 @@ export default function IikoPartnerPage() {
         className="flex flex-col gap-5"
       >
         <TabsList>
-          {TABS.map((tab) => (
-            <TabsTrigger key={tab} value={tab}>
-              {t(`tabs.${tab}`)}
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {t(`tabs.${tab.key}`)}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value="profile">
-          <PartnerProfile />
-        </TabsContent>
-        <TabsContent value="servers">
-          <IikoServers />
-        </TabsContent>
+        {tabs.some((tab) => tab.key === "profile") && (
+          <TabsContent value="profile">
+            <PartnerProfile />
+          </TabsContent>
+        )}
+        {tabs.some((tab) => tab.key === "servers") && (
+          <TabsContent value="servers">
+            <IikoServers />
+          </TabsContent>
+        )}
+        {canInvoices && (
+          <TabsContent value="invoices">
+            <IikoInvoices />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

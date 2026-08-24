@@ -975,7 +975,8 @@
     },
     "tabs": {
       "profile": "Profil",
-      "servers": "Mijoz serverlari"
+      "servers": "Mijoz serverlari",
+      "invoices": "Hisob-fakturalar"
     },
     "servers": {
       "summary": {
@@ -1012,6 +1013,47 @@
       "historyEmpty": "Hali o'tishlar bo'lmagan",
       "firstAppeared": "Ro'yxatda paydo bo'ldi",
       "loadMore": "Yana ko'rsatish"
+    },
+    "invoices": {
+      "kind": {
+        "customer": "Mijozlarga ($)",
+        "partner": "iiko dan bizga (₽)"
+      },
+      "anyKind": "Barcha hisob-fakturalar",
+      "summaryTotal": "Jami hisob-fakturalar",
+      "summaryAmount": "Summa, {currency}",
+      "searchPlaceholder": "Raqam, mijoz, STIR, tavsif",
+      "filterStatus": "Holat",
+      "anyStatus": "Har qanday holat",
+      "filterCurrency": "Valyuta",
+      "anyCurrency": "Har qanday valyuta",
+      "from": "Sanadan",
+      "to": "Sanagacha",
+      "filterWithRemoved": "O'chirilganlar bilan",
+      "sync": "Sinxronlash",
+      "syncDone": "Tayyor: {seen} qator, {created} yangi, {updated} yangilangan",
+      "syncError": "Sinxronlab bo'lmadi. Qayta urinib ko'ring",
+      "lastSync": "Sinx: {time}",
+      "lastSyncError": "Oxirgi sinx xato bilan: {error}",
+      "empty": "Hisob-fakturalar topilmadi — filtrlarni tekshiring",
+      "colNumber": "Raqam",
+      "colEntity": "Yuridik shaxs",
+      "colVenue": "Muassasa",
+      "colStatus": "Holat",
+      "colIssueDate": "Chiqarilgan",
+      "colAmount": "Summa",
+      "taxId": "STIR / JSHSHIR",
+      "endCustomer": "Yakuniy mijoz",
+      "partnerLabel": "Hamkor",
+      "dueDate": "To'lov muddati",
+      "removed": "O'chirilgan",
+      "descriptionLabel": "Tavsif",
+      "cardLabel": "Hisob-faktura tafsilotlari",
+      "cardEmpty": "Tafsilotlar hali yuklanmagan",
+      "cardRefreshed": "Tafsilotlar yangilandi",
+      "refresh": "Yangilash",
+      "payer": "To'lovchi",
+      "openOnPortal": "Portalda ochish"
     }
   },
   "Venues": {
