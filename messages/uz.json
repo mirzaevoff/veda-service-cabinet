@@ -340,7 +340,9 @@
     "title": "Bildirishnomalar",
     "readAll": "Hammasini o'qish",
     "empty": "Hozircha bildirishnomalar yo'q",
-    "loadMore": "Yana ko'rsatish"
+    "loadMore": "Yana ko'rsatish",
+    "all": "Barcha bildirishnomalar",
+    "pageDescription": "Sizga kelgan barcha bildirishnomalar"
   },
   "AdminNotifications": {
     "title": "Xabarnoma",

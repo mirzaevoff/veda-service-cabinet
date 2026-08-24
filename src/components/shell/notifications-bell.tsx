@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { Bell, CheckCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Bell, CheckCheck, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,44 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
+import { NotificationItem } from "@/components/notifications/notification-item";
 import type { AppNotification, NotificationsPage } from "@/lib/api";
 import { notificationsApi } from "@/lib/api-authed";
-import { formatRelativeTime } from "@/lib/format";
-import { cn } from "@/lib/utils";
-
-/** [текст](url) + переносы строк — без сырого HTML */
-function renderMarkdown(text: string): React.ReactNode[] {
-  const nodes: React.ReactNode[] = [];
-  const linkRe = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
-  let last = 0;
-  let match: RegExpExecArray | null;
-  let key = 0;
-  while ((match = linkRe.exec(text))) {
-    if (match.index > last) nodes.push(text.slice(last, match.index));
-    nodes.push(
-      <a
-        key={key++}
-        href={match[2]}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-primary underline hover:text-accent-bright"
-      >
-        {match[1]}
-      </a>
-    );
-    last = match.index + match[0].length;
-  }
-  if (last < text.length) nodes.push(text.slice(last));
-  return nodes;
-}
-
-function imageSrc(url: string) {
-  return url.startsWith("/files/") ? `/api${url}` : url;
-}
+import { Link } from "@/i18n/navigation";
 
 export function NotificationsBell() {
   const t = useTranslations("Notifications");
-  const locale = useLocale();
   const [page, setPage] = useState<NotificationsPage | null>(null);
   const [items, setItems] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -111,8 +80,6 @@ export function NotificationsBell() {
       .catch(() => {});
   }
 
-  const hasMore = page ? items.length < page.total : false;
-
   return (
     <DropdownMenu
       open={open}
@@ -171,60 +138,27 @@ export function NotificationsBell() {
           ) : (
             <div className="flex flex-col">
               {items.map((n) => (
-                <div
+                <NotificationItem
                   key={n.id}
-                  onMouseEnter={() => markRead(n)}
-                  className={cn(
-                    "flex flex-col gap-2 border-b border-border px-4 py-3 transition-colors last:border-b-0",
-                    !n.readAt && "bg-accent-light/40"
-                  )}
-                >
-                  {n.imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={imageSrc(n.imageUrl)}
-                      alt=""
-                      loading="lazy"
-                      className="max-h-40 w-full rounded-md object-contain"
-                    />
-                  )}
-                  {n.text && (
-                    <p className="whitespace-pre-wrap text-sm leading-5">
-                      {renderMarkdown(n.text)}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      {formatRelativeTime(n.createdAt, locale)}
-                    </span>
-                    {n.button && (
-                      <a
-                        href={n.button.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" size="xs">
-                          {n.button.text}
-                        </Button>
-                      </a>
-                    )}
-                  </div>
-                </div>
+                  notification={n}
+                  onSeen={markRead}
+                  className="border-b border-border px-4 py-3 last:border-b-0"
+                />
               ))}
-              {hasMore && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={loading}
-                  onClick={() => void load((page?.page ?? 1) + 1)}
-                  className="m-2 text-muted-foreground"
-                >
-                  {loading ? <Spinner className="size-4" /> : t("loadMore")}
-                </Button>
-              )}
             </div>
           )}
         </ScrollArea>
+
+        {items.length > 0 && (
+          <Link
+            href="/notifications"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-center gap-1 border-t border-border px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-accent-light/50"
+          >
+            {t("all")}
+            <ChevronRight className="size-4" />
+          </Link>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

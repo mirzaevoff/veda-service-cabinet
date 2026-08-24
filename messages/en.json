@@ -341,7 +341,9 @@
     "title": "Notifications",
     "readAll": "Mark all read",
     "empty": "No notifications yet",
-    "loadMore": "Show more"
+    "loadMore": "Show more",
+    "all": "All notifications",
+    "pageDescription": "Every notification you've received"
   },
   "AdminNotifications": {
     "title": "Broadcast",
