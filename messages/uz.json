@@ -556,7 +556,19 @@
       "title": "Muassasalar",
       "allVenues": "Barcha muassasalar →",
       "emptyTitle": "Hozircha muassasalar yo'q",
-      "emptyHint": "Muassasani «Muassasalar» bo'limida yuridik shaxsga bog'lash mumkin"
+      "emptyHint": "Muassasani ushbu yuridik shaxsga bogʻlang",
+      "attach": "Bogʻlash",
+      "attachTitle": "Muassasani bogʻlash",
+      "attachHint": "Muassasani toping va ushbu yuridik shaxsga bogʻlang",
+      "searchPlaceholder": "Nomi, UID yoki shahar",
+      "notFound": "Muassasa topilmadi",
+      "attached": "Muassasa bogʻlandi",
+      "detached": "Muassasa uzildi",
+      "detachAria": "Uzish",
+      "alreadyHere": "Allaqachon bogʻlangan",
+      "linkedTo": "«{name}»ga bogʻlangan",
+      "errorGeneric": "Xatolik yuz berdi. Qayta urinib koʻring",
+      "errorER1401": "Muassasa boshqa yuridik shaxsga bogʻlangan"
     },
     "pinfl": "JSHSHIR",
     "pinflHint": "Jismoniy shaxs JSHSHIR (YaTT uchun) — STIR bo'yicha avtomatik to'ldiriladi"

@@ -557,7 +557,19 @@
       "title": "Venues",
       "allVenues": "All venues →",
       "emptyTitle": "No venues yet",
-      "emptyHint": "Link a venue to this entity in the Venues section"
+      "emptyHint": "Attach a venue to this legal entity",
+      "attach": "Attach",
+      "attachTitle": "Attach a venue",
+      "attachHint": "Find a venue and attach it to this legal entity",
+      "searchPlaceholder": "Name, UID or city",
+      "notFound": "No venues found",
+      "attached": "Venue attached",
+      "detached": "Venue detached",
+      "detachAria": "Detach",
+      "alreadyHere": "Already attached",
+      "linkedTo": "linked to “{name}”",
+      "errorGeneric": "Something went wrong. Try again",
+      "errorER1401": "The venue is linked to another legal entity"
     },
     "pinfl": "PINFL",
     "pinflHint": "Individual's PINFL (for sole proprietors) — auto-filled from the TIN"

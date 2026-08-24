@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Building2, ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
+import {
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Search,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +34,8 @@ import {
   type SortValue,
 } from "@/components/common/sortable-table-head";
 import { EntityFormDialog } from "./entity-form-dialog";
-import { directorName } from "./entity-requisites";
+import { directorName, directorNameShort } from "./entity-requisites";
+import { cn } from "@/lib/utils";
 import type { LegalEntity, Page } from "@/lib/api";
 import { legalEntitiesApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -181,19 +189,37 @@ export function EntitiesTable() {
                   <TableCell className="max-w-64 text-muted-foreground">
                     <Tooltip>
                       <TooltipTrigger render={<span className="block truncate" />}>
-                        {directorName(entity.director)}
+                        {directorNameShort(entity.director)}
                       </TooltipTrigger>
                       <TooltipContent>{directorName(entity.director)}</TooltipContent>
                     </Tooltip>
                   </TableCell>
-                  {canBalance && (
-                    <TableCell className="text-right font-medium tabular-nums whitespace-nowrap">
-                      {(entity.balanceSum ?? 0).toLocaleString(locale)}{" "}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        {tb("soum")}
-                      </span>
-                    </TableCell>
-                  )}
+                  {canBalance &&
+                    (() => {
+                      const bal = entity.balanceSum ?? 0;
+                      const tone =
+                        bal > 0
+                          ? "text-success"
+                          : bal < 0
+                            ? "text-primary"
+                            : "text-warning";
+                      return (
+                        <TableCell className="text-right whitespace-nowrap">
+                          <span className="inline-flex items-center justify-end gap-1.5">
+                            <Wallet
+                              className={cn("size-3.5 shrink-0", tone)}
+                              strokeWidth={2}
+                            />
+                            <span className={cn("font-medium tabular-nums", tone)}>
+                              {bal.toLocaleString(locale)}
+                            </span>
+                            <span className="text-xs font-normal text-muted-foreground">
+                              {tb("soum")}
+                            </span>
+                          </span>
+                        </TableCell>
+                      );
+                    })()}
                   <TableCell className="text-right text-muted-foreground tabular-nums">
                     {formatRelativeTime(entity.createdAt, locale)}
                   </TableCell>

@@ -12,6 +12,34 @@ export function directorName(
     .join(" ");
 }
 
+/**
+ * Заглавная первая буква каждого слова, остальное — строчными (имена приходят КАПСОМ).
+ * Разделители — пробел и дефис; апостроф НЕ разделитель (в узбекском oʻ/gʻ это модификатор буквы,
+ * «BO'RIYEVA» → «Bo'riyeva», а не «Bo'Riyeva»).
+ */
+function titleCase(value: string): string {
+  return value
+    .toLocaleLowerCase()
+    .replace(/(^|[\s-])(\p{L})/gu, (_, sep: string, ch: string) => sep + ch.toLocaleUpperCase());
+}
+
+/**
+ * Короткое имя директора: фамилия с заглавной + инициалы.
+ * «NEMATJONOV MURODJON XIKMATOVICH» → «Nematjonov M. X.»
+ */
+export function directorNameShort(
+  director: LegalEntity["director"]
+): string {
+  if (!director) return "";
+  const last = titleCase((director.lastName ?? "").trim());
+  const initials = [director.firstName, director.middleName]
+    .map((n) => (n ?? "").trim())
+    .filter(Boolean)
+    .map((n) => `${n[0].toLocaleUpperCase()}.`)
+    .join(" ");
+  return [last, initials].filter(Boolean).join(" ").trim();
+}
+
 /** Сетка реквизитов ЮЛ — используется в карточках и drawer */
 export function EntityRequisites({ entity }: { entity: LegalEntity }) {
   const t = useTranslations("LegalEntities");

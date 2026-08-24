@@ -306,6 +306,17 @@ export const legalEntitiesApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/legal-entities/${id}`, { method: "DELETE" }),
+  /** Привязать заведение к этому ЮЛ (перезаписывает существующую привязку заведения) */
+  attachVenue: (id: string, venueId: string) =>
+    authedRequest<Venue>(`/legal-entities/${id}/venues`, {
+      method: "POST",
+      body: JSON.stringify({ venueId }),
+    }),
+  /** Отвязать заведение от этого ЮЛ (идемпотентно; ER1401 если привязано к другому ЮЛ) */
+  detachVenue: (id: string, venueId: string) =>
+    authedRequest<Venue>(`/legal-entities/${id}/venues/${venueId}`, {
+      method: "DELETE",
+    }),
   grantAccess: (id: string, userId: string, role?: EntityMemberRole) =>
     authedRequest<LegalEntity>(`/legal-entities/${id}/users`, {
       method: "POST",
