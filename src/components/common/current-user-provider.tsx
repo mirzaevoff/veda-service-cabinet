@@ -12,6 +12,7 @@ import type { UserProfile } from "@/lib/api";
 import { usersApi, SessionExpiredError } from "@/lib/api-authed";
 import { clearSession, logout } from "@/lib/auth";
 import { can as canCheck } from "@/lib/permissions";
+import { disablePush } from "@/lib/web-push";
 import { useRouter } from "@/i18n/navigation";
 
 interface CurrentUserContextValue {
@@ -61,6 +62,8 @@ export function CurrentUserProvider({
       can: (permission) => canCheck(user, permission),
       reload: load,
       signOut: async () => {
+        // снимаем FCM-токен, чтобы устройство перестало получать пуши
+        await disablePush().catch(() => {});
         await logout();
         router.replace("/login");
       },

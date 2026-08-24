@@ -1,6 +1,7 @@
 import { CurrentUserProvider } from "@/components/common/current-user-provider";
 import { AppHeader } from "@/components/shell/app-header";
 import { AppSidebar } from "@/components/shell/app-sidebar";
+import { WebPushManager } from "@/components/notifications/web-push-manager";
 
 export default function AppLayout({
   children,
@@ -9,6 +10,7 @@ export default function AppLayout({
 }) {
   return (
     <CurrentUserProvider>
+      <WebPushManager />
       <div className="flex h-dvh overflow-hidden">
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">

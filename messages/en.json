@@ -344,7 +344,13 @@
     "empty": "No notifications yet",
     "loadMore": "Show more",
     "all": "All notifications",
-    "pageDescription": "Every notification you've received"
+    "pageDescription": "Every notification you've received",
+    "enablePush": "Enable push notifications",
+    "enablePushHint": "Get notified even when the tab is closed",
+    "enable": "Enable",
+    "pushEnabled": "Push notifications enabled",
+    "pushBlocked": "Notifications are blocked in the browser — allow them in site settings",
+    "pushFailed": "Couldn't enable push"
   },
   "AdminNotifications": {
     "title": "Broadcast",

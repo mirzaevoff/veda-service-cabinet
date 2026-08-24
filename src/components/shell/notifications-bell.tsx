@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Bell, CheckCheck, ChevronRight } from "lucide-react";
+import { Bell, BellRing, CheckCheck, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { enablePush, isPushSupported, pushPermission } from "@/lib/web-push";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { NotificationItem } from "@/components/notifications/notification-item";
 import type { AppNotification, NotificationsPage } from "@/lib/api";
@@ -22,6 +23,37 @@ export function NotificationsBell() {
   const [items, setItems] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [canPrompt, setCanPrompt] = useState(false);
+  const [enabling, setEnabling] = useState(false);
+
+  // Показываем промо «включить пуши», только если поддерживается и разрешение ещё не запрошено
+  useEffect(() => {
+    let cancelled = false;
+    void isPushSupported().then((ok) => {
+      if (!cancelled) setCanPrompt(ok && pushPermission() === "default");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function turnOnPush() {
+    setEnabling(true);
+    try {
+      const ok = await enablePush(false);
+      if (ok) {
+        toast.success(t("pushEnabled"));
+        setCanPrompt(false);
+      } else if (pushPermission() === "denied") {
+        toast.error(t("pushBlocked"));
+        setCanPrompt(false);
+      } else {
+        toast.error(t("pushFailed"));
+      }
+    } finally {
+      setEnabling(false);
+    }
+  }
 
   const load = useCallback(async (pageNum = 1) => {
     setLoading(true);
@@ -121,7 +153,33 @@ export function NotificationsBell() {
           )}
         </div>
 
-        <ScrollArea className="max-h-96">
+        {canPrompt && (
+          <button
+            type="button"
+            onClick={turnOnPush}
+            disabled={enabling}
+            className="flex w-full items-center gap-3 border-b border-border bg-accent-light/40 px-4 py-3 text-left transition-colors hover:bg-accent-light/70"
+          >
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+              {enabling ? (
+                <Spinner className="size-4 text-primary" />
+              ) : (
+                <BellRing className="size-4 text-primary" />
+              )}
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="text-sm font-medium">{t("enablePush")}</span>
+              <span className="text-xs text-muted-foreground">
+                {t("enablePushHint")}
+              </span>
+            </div>
+            <span className="shrink-0 text-xs font-medium text-primary">
+              {t("enable")}
+            </span>
+          </button>
+        )}
+
+        <div className="max-h-96 overflow-y-auto overscroll-contain">
           {items.length === 0 ? (
             <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
               {loading ? (
@@ -147,7 +205,7 @@ export function NotificationsBell() {
               ))}
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {items.length > 0 && (
           <Link

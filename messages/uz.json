@@ -343,7 +343,13 @@
     "empty": "Hozircha bildirishnomalar yo'q",
     "loadMore": "Yana ko'rsatish",
     "all": "Barcha bildirishnomalar",
-    "pageDescription": "Sizga kelgan barcha bildirishnomalar"
+    "pageDescription": "Sizga kelgan barcha bildirishnomalar",
+    "enablePush": "Push-bildirishnomalarni yoqish",
+    "enablePushHint": "Ilova yopiq boʻlsa ham bildirishnoma oling",
+    "enable": "Yoqish",
+    "pushEnabled": "Push-bildirishnomalar yoqildi",
+    "pushBlocked": "Bildirishnomalar brauzerda bloklangan — sayt sozlamalarida ruxsat bering",
+    "pushFailed": "Push yoqilmadi"
   },
   "AdminNotifications": {
     "title": "Xabarnoma",

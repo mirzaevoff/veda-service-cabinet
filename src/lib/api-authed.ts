@@ -246,6 +246,17 @@ export const notificationsApi = {
     authedRequest<void>(`/notifications/${id}/read`, { method: "POST" }),
   readAll: () =>
     authedRequest<void>("/notifications/read-all", { method: "POST" }),
+  /** Регистрация FCM-токена устройства (повторная — переносит на текущего пользователя) */
+  registerDevice: (token: string, platform: "ios" | "android" | "web" = "web") =>
+    authedRequest<void>("/notifications/devices", {
+      method: "POST",
+      body: JSON.stringify({ token, platform }),
+    }),
+  /** Удаление FCM-токена (при logout / отключении пушей) */
+  unregisterDevice: (token: string) =>
+    authedRequest<void>(`/notifications/devices/${encodeURIComponent(token)}`, {
+      method: "DELETE",
+    }),
   send: (body: {
     userIds?: string[];
     broadcast?: boolean;
