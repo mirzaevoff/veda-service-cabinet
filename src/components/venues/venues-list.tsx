@@ -603,7 +603,7 @@ function VenueSheet({
     if (!picking) return;
     let cancelled = false;
     legalEntitiesApi
-      .list({ search: debouncedEntityQuery || undefined, limit: 8 })
+      .list({ search: debouncedEntityQuery || undefined, limit: 20 })
       .then((page) => {
         if (!cancelled) setEntityOptions(page.items);
       })
@@ -825,7 +825,7 @@ function VenueSheet({
                         {t("entityNotFound")}
                       </p>
                     ) : (
-                      <div className="flex flex-col gap-1">
+                      <div className="-mr-1 flex max-h-52 flex-col gap-1 overflow-y-auto pr-1">
                         {entityOptions.map((entity) => (
                           <button
                             key={entity.id}

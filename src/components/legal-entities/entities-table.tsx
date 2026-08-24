@@ -15,6 +15,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import {
   SortableTableHead,
@@ -126,18 +132,12 @@ export function EntitiesTable() {
         </div>
       ) : (
         <div className="overflow-hidden rounded-lg border border-border duration-450 animate-in fade-in slide-in-from-bottom-2">
+          <TooltipProvider delay={300}>
           <Table>
             <TableHeader>
               <TableRow>
                 <SortableTableHead field="name" sort={sort} onSort={setSort}>
                   {t("columnName")}
-                </SortableTableHead>
-                <SortableTableHead
-                  field="establishment"
-                  sort={sort}
-                  onSort={setSort}
-                >
-                  {t("establishment")}
                 </SortableTableHead>
                 <SortableTableHead field="taxId" sort={sort} onSort={setSort}>
                   {t("columnTaxId")}
@@ -160,17 +160,24 @@ export function EntitiesTable() {
                   onClick={() => router.push(`/legal-entities/${entity.id}`)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="max-w-72 truncate font-medium">
-                    {entity.name}
-                  </TableCell>
-                  <TableCell className="max-w-56 truncate text-muted-foreground">
-                    {entity.establishment || "—"}
+                  <TableCell className="max-w-80 font-medium">
+                    <Tooltip>
+                      <TooltipTrigger render={<span className="block truncate" />}>
+                        {entity.name}
+                      </TooltipTrigger>
+                      <TooltipContent>{entity.name}</TooltipContent>
+                    </Tooltip>
                   </TableCell>
                   <TableCell className="text-muted-foreground tabular-nums">
                     {entity.taxId}
                   </TableCell>
-                  <TableCell className="max-w-60 truncate text-muted-foreground">
-                    {directorName(entity.director)}
+                  <TableCell className="max-w-64 text-muted-foreground">
+                    <Tooltip>
+                      <TooltipTrigger render={<span className="block truncate" />}>
+                        {directorName(entity.director)}
+                      </TooltipTrigger>
+                      <TooltipContent>{directorName(entity.director)}</TooltipContent>
+                    </Tooltip>
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground tabular-nums">
                     {formatRelativeTime(entity.createdAt, locale)}
@@ -179,6 +186,7 @@ export function EntitiesTable() {
               ))}
             </TableBody>
           </Table>
+          </TooltipProvider>
         </div>
       )}
 

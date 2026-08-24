@@ -8,6 +8,7 @@ import {
   CalendarDays,
   Landmark,
   MapPin,
+  Network,
   Pencil,
   Store,
   Trash2,
@@ -26,14 +27,125 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { EntityFormDialog } from "./entity-form-dialog";
 import { MembersManager } from "./members-manager";
 import { directorName } from "./entity-requisites";
-import type { LegalEntity } from "@/lib/api";
-import { legalEntitiesApi } from "@/lib/api-authed";
+import type { LegalEntity, Venue, VenueStatus } from "@/lib/api";
+import { legalEntitiesApi, venuesApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
+
+const VENUE_STATUS_STYLES: Record<VenueStatus, string> = {
+  open: "bg-success-light text-success",
+  closed: "bg-secondary text-muted-foreground",
+  temporarily_closed: "bg-warning-light text-warning",
+};
+
+/** Заведения, привязанные к этому ЮЛ (видно при праве venues.view) */
+function EntityVenues({ entityId }: { entityId: string }) {
+  const t = useTranslations("LegalEntities.venues");
+  const tv = useTranslations("Venues");
+  const [venues, setVenues] = useState<Venue[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    venuesApi
+      .list({ legalEntityId: entityId, limit: 100 })
+      .then((page) => {
+        if (!cancelled) setVenues(page.items);
+      })
+      .catch(() => {
+        if (!cancelled) setVenues([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [entityId]);
+
+  return (
+    <section className="flex flex-col gap-3 rounded-lg border border-border p-5">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
+            <Store className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          </div>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("title")}
+          </h4>
+          {venues && venues.length > 0 && (
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {venues.length}
+            </span>
+          )}
+        </div>
+        <Link
+          href="/venues"
+          className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {t("allVenues")}
+        </Link>
+      </div>
+
+      {!venues ? (
+        <Skeleton className="h-16 rounded-lg" />
+      ) : venues.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border py-8 text-center duration-300 animate-in fade-in">
+          <div className="flex size-12 items-center justify-center rounded-lg bg-accent-light">
+            <Store className="size-6 text-primary" strokeWidth={1.75} />
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">{t("emptyTitle")}</span>
+            <span className="text-xs text-muted-foreground">{t("emptyHint")}</span>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {venues.map((venue) => (
+            <div
+              key={venue.id}
+              className="flex items-center gap-3 rounded-md border border-border px-3 py-2"
+            >
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="flex items-center gap-2 text-sm font-medium">
+                  <span className="truncate">{venue.name}</span>
+                  <Badge
+                    variant="secondary"
+                    className={cn(
+                      "shrink-0 gap-1",
+                      venue.kind === "chain" && "bg-accent-light text-primary"
+                    )}
+                  >
+                    {venue.kind === "chain" ? (
+                      <Network className="size-3" />
+                    ) : (
+                      <Store className="size-3" />
+                    )}
+                    {tv(`kind.${venue.kind}`)}
+                  </Badge>
+                </span>
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {venue.uid}
+                  {venue.city && ` · ${venue.city}`}
+                </span>
+              </div>
+              {venue.kind === "rms" && (
+                <Badge
+                  variant="secondary"
+                  className={cn("shrink-0", VENUE_STATUS_STYLES[venue.status])}
+                >
+                  {tv(`status.${venue.status}`)}
+                </Badge>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
 
 /** Страница юрлица: карточки с реквизитами и участниками */
 export function EntityPage({ entityId }: { entityId: string }) {
@@ -250,6 +362,9 @@ export function EntityPage({ entityId }: { entityId: string }) {
           </section>
         )}
       </div>
+
+      {/* Заведения этого ЮЛ */}
+      {can(PERMISSIONS.venuesView) && <EntityVenues entityId={entity.id} />}
 
       {/* Участники */}
       {canManage && (

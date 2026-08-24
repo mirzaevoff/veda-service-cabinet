@@ -258,19 +258,6 @@ export function EntityFormDialog({
             )}
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="le-establishment" className="text-sm font-medium text-muted-foreground">
-              {t("establishment")}
-            </Label>
-            <Input
-              id="le-establishment"
-              value={form.establishment}
-              maxLength={200}
-              placeholder={t("establishmentPlaceholder")}
-              onChange={(e) => set("establishment", e.target.value)}
-            />
-          </div>
-
           <div className="grid grid-cols-[8rem_minmax(0,1fr)] gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="le-mfo" className="text-sm font-medium text-muted-foreground">

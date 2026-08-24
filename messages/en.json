@@ -548,7 +548,13 @@
     },
     "bankName": "Bank",
     "bankNamePlaceholder": "Bank name",
-    "requisites": "Bank details"
+    "requisites": "Bank details",
+    "venues": {
+      "title": "Venues",
+      "allVenues": "All venues →",
+      "emptyTitle": "No venues yet",
+      "emptyHint": "Link a venue to this entity in the Venues section"
+    }
   },
   "Checklists": {
     "title": "Checklists",

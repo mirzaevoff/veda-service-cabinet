@@ -662,6 +662,8 @@ export const venuesApi = {
     kind?: string;
     chainId?: string;
     linked?: boolean;
+    /** Заведения конкретного юрлица */
+    legalEntityId?: string;
     active?: boolean;
     sort?: string;
   } = {}) => authedRequest<VenuesList>(`/venues${query({ ...params })}`),

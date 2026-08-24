@@ -547,7 +547,13 @@
     },
     "bankName": "Bank",
     "bankNamePlaceholder": "Bank nomi",
-    "requisites": "Rekvizitlar"
+    "requisites": "Rekvizitlar",
+    "venues": {
+      "title": "Muassasalar",
+      "allVenues": "Barcha muassasalar →",
+      "emptyTitle": "Hozircha muassasalar yo'q",
+      "emptyHint": "Muassasani «Muassasalar» bo'limida yuridik shaxsga bog'lash mumkin"
+    }
   },
   "Checklists": {
     "title": "Cheklistlar",
