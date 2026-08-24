@@ -39,10 +39,12 @@ import { useRouter } from "@/i18n/navigation";
 export function EntitiesTable() {
   const t = useTranslations("LegalEntities");
   const tc = useTranslations("Common");
+  const tb = useTranslations("Balances");
   const locale = useLocale();
   const router = useRouter();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.legalEntitiesManage);
+  const canBalance = can(PERMISSIONS.balancesView);
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);
@@ -143,6 +145,11 @@ export function EntitiesTable() {
                   {t("columnTaxId")}
                 </SortableTableHead>
                 <TableHead>{t("columnDirector")}</TableHead>
+                {canBalance && (
+                  <TableHead className="text-right">
+                    {t("columnBalance")}
+                  </TableHead>
+                )}
                 <SortableTableHead
                   field="createdAt"
                   sort={sort}
@@ -179,6 +186,14 @@ export function EntitiesTable() {
                       <TooltipContent>{directorName(entity.director)}</TooltipContent>
                     </Tooltip>
                   </TableCell>
+                  {canBalance && (
+                    <TableCell className="text-right font-medium tabular-nums whitespace-nowrap">
+                      {(entity.balanceSum ?? 0).toLocaleString(locale)}{" "}
+                      <span className="text-xs font-normal text-muted-foreground">
+                        {tb("soum")}
+                      </span>
+                    </TableCell>
+                  )}
                   <TableCell className="text-right text-muted-foreground tabular-nums">
                     {formatRelativeTime(entity.createdAt, locale)}
                   </TableCell>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
   ChevronLeft,
@@ -127,18 +127,67 @@ export function IikoInvoices() {
     void load();
   }, [load]);
 
+  // Фоновый синк листает тысячи строк портала — запускаем детачед и опрашиваем статус
+  const pollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (pollTimer.current) clearTimeout(pollTimer.current);
+    },
+    []
+  );
+
+  function pollSync() {
+    pollTimer.current = setTimeout(async () => {
+      try {
+        const st = await iikoPartnerApi.invoices.syncStatus();
+        if (st.syncing) {
+          pollSync();
+          return;
+        }
+        setSyncing(false);
+        if (st.lastSyncError) toast.error(t("syncError"));
+        else toast.success(t("syncDoneBg"));
+        void load();
+      } catch (e) {
+        if (e instanceof SessionExpiredError) {
+          router.replace("/login");
+          return;
+        }
+        setSyncing(false);
+        toast.error(t("syncError"));
+      }
+    }, 2000);
+  }
+
+  // Если синк уже идёт (крон/другая вкладка) — подхватываем опрос при загрузке
+  useEffect(() => {
+    if (!canManage) return;
+    const alive = { current: true };
+    iikoPartnerApi.invoices
+      .syncStatus()
+      .then((st) => {
+        if (alive.current && st.syncing) {
+          setSyncing(true);
+          pollSync();
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive.current = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- разовая проверка на маунте
+  }, []);
+
   async function sync() {
+    if (syncing) return;
     setSyncing(true);
     try {
-      const r = await iikoPartnerApi.invoices.sync(false);
-      toast.success(
-        t("syncDone", { seen: r.seen, created: r.created, updated: r.updated })
-      );
-      void load();
-    } catch {
-      toast.error(t("syncError"));
-    } finally {
+      await iikoPartnerApi.invoices.syncBackground();
+      pollSync();
+    } catch (e) {
       setSyncing(false);
+      if (e instanceof SessionExpiredError) router.replace("/login");
+      else toast.error(t("syncError"));
     }
   }
 

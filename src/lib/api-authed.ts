@@ -24,6 +24,8 @@ import {
   type IikoInvoice,
   type IikoInvoicesList,
   type IikoInvoicesSyncResult,
+  type IikoInvoicesSyncStart,
+  type IikoInvoicesSyncStatus,
   type IikoServerEvent,
   type IikoServersList,
   type IikoServersSyncResult,
@@ -682,6 +684,17 @@ export const iikoPartnerApi = {
       authedRequest<IikoInvoicesSyncResult>(
         `/iiko-partner/invoices/sync${full ? "?full=true" : ""}`,
         { method: "POST" }
+      ),
+    /** Запустить синк в фоне (не ждём завершения — полный проход листает тысячи строк) */
+    syncBackground: (full = false) =>
+      authedRequest<IikoInvoicesSyncStart>(
+        `/iiko-partner/invoices/sync?background=true${full ? "&full=true" : ""}`,
+        { method: "POST" }
+      ),
+    /** Прогресс фонового синка */
+    syncStatus: () =>
+      authedRequest<IikoInvoicesSyncStatus>(
+        "/iiko-partner/invoices/sync-status"
       ),
   },
 };

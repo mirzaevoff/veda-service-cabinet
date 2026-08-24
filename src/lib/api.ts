@@ -343,6 +343,10 @@ export interface LegalEntity {
   address: string;
   director: LegalEntityDirector | null;
   registrationDate: string | null;
+  /** Кэш баланса в тийинах (ведёт модуль balances) */
+  balanceTiyin: number;
+  /** balanceTiyin / 100 */
+  balanceSum: number;
   /** Только для staff и owner'ов в GET /legal-entities/:id */
   members?: LegalEntityMember[];
   createdAt: string;
@@ -899,6 +903,20 @@ export interface IikoInvoicesSyncResult {
   deactivated: number;
   partial: boolean;
   full: boolean;
+}
+
+/** Ответ фонового запуска синка счетов */
+export interface IikoInvoicesSyncStart {
+  started: boolean;
+  busy: boolean;
+}
+
+/** Прогресс синка счетов (опрос после фонового запуска) */
+export interface IikoInvoicesSyncStatus {
+  syncing: boolean;
+  lastSyncAt: string | null;
+  lastFullSyncAt: string | null;
+  lastSyncError: string | null;
 }
 
 export interface IikoServersSyncResult {
