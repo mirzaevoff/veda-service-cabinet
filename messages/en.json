@@ -1216,7 +1216,12 @@
     "errors": {
       "ER1501": "This top-up is already linked",
       "generic": "Something went wrong. Please try again"
-    }
+    },
+    "payerName": "Payer",
+    "payerInn": "Payer TIN",
+    "payerAccount": "Payer account",
+    "purpose": "Purpose",
+    "innMatch": "TIN match"
   },
   "Balances": {
     "balance": "Balance",

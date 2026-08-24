@@ -1215,7 +1215,12 @@
     "errors": {
       "ER1501": "Bu to'ldirish allaqachon bog'langan",
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
-    }
+    },
+    "payerName": "To'lovchi",
+    "payerInn": "To'lovchi STIR",
+    "payerAccount": "To'lovchi hisobi",
+    "purpose": "Maqsad",
+    "innMatch": "STIR mos"
   },
   "Balances": {
     "balance": "Balans",
