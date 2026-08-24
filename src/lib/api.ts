@@ -841,10 +841,48 @@ export interface IikoInvoice {
   card?: Record<string, unknown> | null;
 }
 
+export interface IikoInvoiceKindTotal {
+  currency: IikoInvoiceCurrency;
+  /** Сумма amountMinor (÷100) */
+  amount: number;
+  count: number;
+}
+
+export interface IikoInvoiceReceivableCustomer extends IikoInvoiceKindTotal {
+  /** Число должников (заведений/клиентов) */
+  debtors: number;
+}
+
+export interface IikoInvoiceMonthPoint {
+  /** YYYY-MM */
+  month: string;
+  /** Выставлено клиентам (USD minor) */
+  customer: number;
+  /** Выставлено партнёру (RUB minor) */
+  partner: number;
+}
+
 export interface IikoInvoicesSummary {
+  /** Период сводки (YTD, если без фильтра дат) */
+  scope: { from: string; to: string | null; ytd: boolean };
   total: number;
+  paid: number;
+  /** Не оплачено = статус ∉ {Paid, Cancelled} */
+  unpaid: number;
+  cancelled: number;
   byStatus: Record<string, number>;
-  amountByCurrency: Record<string, number>;
+  /** Суммы за период по видам */
+  totals: {
+    customer?: IikoInvoiceKindTotal;
+    partner?: IikoInvoiceKindTotal;
+  };
+  /** Долги (неоплаченные): customer — нам должны (+должники); partner — мы должны iiko */
+  receivable: {
+    customer?: IikoInvoiceReceivableCustomer;
+    partner?: IikoInvoiceKindTotal;
+  };
+  /** Помесячно выставлено (для графика) */
+  byMonth: IikoInvoiceMonthPoint[];
   lastSyncAt: string | null;
   lastFullSyncAt: string | null;
   lastSyncError: string | null;
@@ -1003,4 +1041,46 @@ export interface Dashboard {
   tickets: DashboardTicketsBlock | null;
   users: DashboardUsersBlock | null;
   generatedAt: string;
+}
+
+// ─── Баланс ЮЛ (леджер, тийины) ───
+
+export type LedgerType = "topup" | "correction" | "audit";
+export type LedgerSource = "bank" | "manual" | "audit";
+
+export interface EntityBalance {
+  legalEntityId: string;
+  balanceTiyin: number;
+  /** balanceTiyin / 100 */
+  balanceSum: number;
+  /** Σ леджера (источник истины) */
+  computedTiyin: number;
+  /** кэш == леджер */
+  inSync: boolean;
+}
+
+export interface LedgerEntry {
+  id: string;
+  legalEntityId: string | null;
+  /** Название ЮЛ — только в глобальном фиде */
+  legalEntityName?: string | null;
+  type: LedgerType;
+  amountTiyin: number;
+  /** amountTiyin / 100 */
+  amountSum: number;
+  currency: string;
+  source: LedgerSource;
+  bankTransactionId: string | null;
+  recognized: boolean;
+  payer: { inn: string; account: string; name: string } | null;
+  comment: string;
+  createdAt: string;
+}
+
+export type LedgerList = Page<LedgerEntry>;
+
+export interface BalanceAuditResult {
+  backfilled: number;
+  recognized: number;
+  entitiesHealed: number;
 }

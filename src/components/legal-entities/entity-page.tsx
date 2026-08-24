@@ -32,6 +32,8 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { EntityFormDialog } from "./entity-form-dialog";
 import { MembersManager } from "./members-manager";
 import { directorName } from "./entity-requisites";
+import { EntityBalanceSection } from "./entity-balance";
+import { EntityInvoices } from "./entity-invoices";
 import type { LegalEntity, Venue, VenueStatus } from "@/lib/api";
 import { legalEntitiesApi, venuesApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -350,8 +352,19 @@ export function EntityPage({ entityId }: { entityId: string }) {
 
       </div>
 
+      {/* Баланс и движения */}
+      {can(PERMISSIONS.balancesView) && (
+        <EntityBalanceSection entityId={entity.id} />
+      )}
+
       {/* Заведения этого ЮЛ */}
       {can(PERMISSIONS.venuesView) && <EntityVenues entityId={entity.id} />}
+
+      {/* Счета привязанных заведений */}
+      {(can(PERMISSIONS.iikoInvoicesView) ||
+        can(PERMISSIONS.iikoPartnerInvoicesView)) && (
+        <EntityInvoices entityId={entity.id} />
+      )}
 
       {/* Участники */}
       {canManage && (

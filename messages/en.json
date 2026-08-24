@@ -22,7 +22,8 @@
     "services": "Services",
     "finance": "Finance",
     "iikoPartner": "iiko Partner",
-    "venues": "Venues"
+    "venues": "Venues",
+    "transactions": "Transactions"
   },
   "Shell": {
     "logout": "Sign out",
@@ -1065,7 +1066,21 @@
       "itemDiscount": "Discount",
       "itemTotal": "Total",
       "venueInvoicesTitle": "Invoices",
-      "venueInvoicesEmpty": "No invoices for this venue"
+      "venueInvoicesEmpty": "No invoices for this venue",
+      "chartTitle": "Issued by month",
+      "scopeYtd": "For {year}",
+      "mTotal": "Invoices",
+      "mPaid": "Paid",
+      "mUnpaid": "Unpaid",
+      "mCancelled": "Cancelled",
+      "mTotalCustomer": "Issued to customers",
+      "mTotalPartner": "Issued by partner",
+      "ofCount": "across {count}",
+      "mDebtors": "Owed to us",
+      "mOweIiko": "We owe iiko",
+      "debtorsCount": "debtors: {count}",
+      "entityInvoicesTitle": "Venue invoices",
+      "entityInvoicesEmpty": "No invoices for this entity's venues"
     }
   },
   "Venues": {
@@ -1159,5 +1174,78 @@
     "copyUid": "Copy UID",
     "uidCopied": "UID copied",
     "serverRow": "Server"
+  },
+  "Transactions": {
+    "title": "Transactions",
+    "description": "Legal-entity balance movements: top-ups, corrections, audit",
+    "runAudit": "Run audit",
+    "auditDone": "Audit: {backfilled} backfilled, {recognized} recognized, {healed} entities healed",
+    "filterType": "Type",
+    "anyType": "Any type",
+    "filterSource": "Source",
+    "anySource": "Any source",
+    "filterRecognized": "Recognition",
+    "anyRecognized": "Any",
+    "recognizedYes": "Recognized",
+    "recognizedNo": "Unrecognized",
+    "from": "From",
+    "to": "To",
+    "empty": "No movements found",
+    "colDate": "Date",
+    "colEntity": "Legal entity",
+    "colType": "Type",
+    "colPayer": "Payer / comment",
+    "colAmount": "Amount",
+    "unrecognized": "Unrecognized",
+    "link": "Link",
+    "type": {
+      "topup": "Top-up",
+      "correction": "Correction",
+      "audit": "Audit"
+    },
+    "source": {
+      "bank": "Bank",
+      "manual": "Manual",
+      "audit": "Audit"
+    },
+    "linkTitle": "Link top-up",
+    "linkHint": "Choose the legal entity to attribute this top-up to",
+    "entitySearchPlaceholder": "Entity name or TIN",
+    "entityNotFound": "Nothing found",
+    "linked": "Top-up linked",
+    "errors": {
+      "ER1501": "This top-up is already linked",
+      "generic": "Something went wrong. Please try again"
+    }
+  },
+  "Balances": {
+    "balance": "Balance",
+    "soum": "sum",
+    "outOfSync": "Cache drift",
+    "correct": "Correction",
+    "corrected": "Balance corrected",
+    "correctTitle": "Balance correction",
+    "correctHint": "Signed amount in sum: negative to debit",
+    "amountLabel": "Amount, sum",
+    "amountHint": "e.g. 50000 or -50000; stored to the tiyin",
+    "amountRequired": "Enter a non-zero amount",
+    "commentLabel": "Comment",
+    "commentRequired": "Add a comment",
+    "ledgerEmpty": "No movements yet",
+    "colDate": "Date",
+    "colType": "Type",
+    "colComment": "Comment",
+    "colAmount": "Amount",
+    "type": {
+      "topup": "Top-up",
+      "correction": "Correction",
+      "audit": "Audit"
+    },
+    "cancel": "Cancel",
+    "save": "Save",
+    "errors": {
+      "ER1502": "Amount must be a non-zero integer",
+      "generic": "Something went wrong. Please try again"
+    }
   }
 }

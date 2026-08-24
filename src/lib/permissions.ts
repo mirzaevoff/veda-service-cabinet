@@ -18,6 +18,8 @@ export const PERMISSIONS = {
   productsManage: "products.manage",
   bankView: "bank.view",
   bankManage: "bank.manage",
+  balancesView: "balances.view",
+  balancesManage: "balances.manage",
   iikoPartnerView: "iikoPartner.view",
   iikoPartnerManage: "iikoPartner.manage",
   iikoServersView: "iikoServers.view",

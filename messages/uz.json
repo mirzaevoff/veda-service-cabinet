@@ -22,7 +22,8 @@
     "services": "Servislar",
     "finance": "Moliya",
     "iikoPartner": "iiko Partner",
-    "venues": "Muassasalar"
+    "venues": "Muassasalar",
+    "transactions": "Tranzaksiyalar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -1064,7 +1065,21 @@
       "itemDiscount": "Chegirma",
       "itemTotal": "Summa",
       "venueInvoicesTitle": "Hisob-fakturalar",
-      "venueInvoicesEmpty": "Bu muassasa bo'yicha hisob-fakturalar yo'q"
+      "venueInvoicesEmpty": "Bu muassasa bo'yicha hisob-fakturalar yo'q",
+      "chartTitle": "Oylar bo'yicha chiqarilgan",
+      "scopeYtd": "{year} yil uchun",
+      "mTotal": "Hisob-fakturalar",
+      "mPaid": "To'langan",
+      "mUnpaid": "To'lanmagan",
+      "mCancelled": "Bekor qilingan",
+      "mTotalCustomer": "Mijozlarga chiqarilgan",
+      "mTotalPartner": "Hamkor chiqargan",
+      "ofCount": "{count} ta bo'yicha",
+      "mDebtors": "Bizga qarzdor",
+      "mOweIiko": "Biz iiko ga qarzdormiz",
+      "debtorsCount": "qarzdorlar: {count}",
+      "entityInvoicesTitle": "Muassasa hisob-fakturalari",
+      "entityInvoicesEmpty": "Bu YuSh muassasalari bo'yicha hisob-fakturalar yo'q"
     }
   },
   "Venues": {
@@ -1158,5 +1173,78 @@
     "copyUid": "UID nusxalash",
     "uidCopied": "UID nusxalandi",
     "serverRow": "Server"
+  },
+  "Transactions": {
+    "title": "Tranzaksiyalar",
+    "description": "Yuridik shaxs balans harakatlari: to'ldirish, tuzatish, audit",
+    "runAudit": "Auditni ishga tushirish",
+    "auditDone": "Audit: {backfilled} to'ldirildi, {recognized} tanildi, {healed} YuSh tuzatildi",
+    "filterType": "Turi",
+    "anyType": "Har qanday turi",
+    "filterSource": "Manba",
+    "anySource": "Har qanday manba",
+    "filterRecognized": "Tanish",
+    "anyRecognized": "Farqi yo'q",
+    "recognizedYes": "Tanilgan",
+    "recognizedNo": "Tanilmagan",
+    "from": "Sanadan",
+    "to": "Sanagacha",
+    "empty": "Harakatlar topilmadi",
+    "colDate": "Sana",
+    "colEntity": "Yuridik shaxs",
+    "colType": "Turi",
+    "colPayer": "To'lovchi / izoh",
+    "colAmount": "Summa",
+    "unrecognized": "Tanilmagan",
+    "link": "Bog'lash",
+    "type": {
+      "topup": "To'ldirish",
+      "correction": "Tuzatish",
+      "audit": "Audit"
+    },
+    "source": {
+      "bank": "Bank",
+      "manual": "Qo'lda",
+      "audit": "Audit"
+    },
+    "linkTitle": "To'ldirishni bog'lash",
+    "linkHint": "Bu to'ldirish hisoblanadigan yuridik shaxsni tanlang",
+    "entitySearchPlaceholder": "YuSh nomi yoki STIR",
+    "entityNotFound": "Hech narsa topilmadi",
+    "linked": "To'ldirish bog'landi",
+    "errors": {
+      "ER1501": "Bu to'ldirish allaqachon bog'langan",
+      "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    }
+  },
+  "Balances": {
+    "balance": "Balans",
+    "soum": "so'm",
+    "outOfSync": "Kesh farq qilmoqda",
+    "correct": "Tuzatish",
+    "corrected": "Balans tuzatildi",
+    "correctTitle": "Balans tuzatish",
+    "correctHint": "So'mda, ishorali: minus — yechish",
+    "amountLabel": "Summa, so'm",
+    "amountHint": "Masalan 50000 yoki -50000; tiyingacha saqlanadi",
+    "amountRequired": "Nolga teng bo'lmagan summa kiriting",
+    "commentLabel": "Izoh",
+    "commentRequired": "Izoh qo'shing",
+    "ledgerEmpty": "Hozircha harakatlar yo'q",
+    "colDate": "Sana",
+    "colType": "Turi",
+    "colComment": "Izoh",
+    "colAmount": "Summa",
+    "type": {
+      "topup": "To'ldirish",
+      "correction": "Tuzatish",
+      "audit": "Audit"
+    },
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "errors": {
+      "ER1502": "Summa butun va noldan farqli bo'lishi kerak",
+      "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
+    }
   }
 }

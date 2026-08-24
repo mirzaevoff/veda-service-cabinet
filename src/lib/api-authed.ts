@@ -27,6 +27,10 @@ import {
   type IikoServerEvent,
   type IikoServersList,
   type IikoServersSyncResult,
+  type BalanceAuditResult,
+  type EntityBalance,
+  type LedgerEntry,
+  type LedgerList,
   type Venue,
   type VenuesList,
   type VenuesSyncResult,
@@ -659,6 +663,7 @@ export const iikoPartnerApi = {
       kind?: string;
       status?: string;
       clientId?: string;
+      legalEntityId?: string;
       legalEntityTaxId?: string;
       currency?: string;
       dateFrom?: string;
@@ -683,6 +688,46 @@ export const iikoPartnerApi = {
 
 export const dashboardApi = {
   get: () => authedRequest<Dashboard>("/dashboard"),
+};
+
+export const balancesApi = {
+  /** Глобальный фид «Финансы → Транзакции» */
+  ledger: (params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    source?: string;
+    legalEntityId?: string;
+    recognized?: boolean;
+    dateFrom?: string;
+    dateTo?: string;
+    sort?: string;
+  }) => authedRequest<LedgerList>(`/balances/ledger${query({ ...params })}`),
+  /** Баланс ЮЛ */
+  entityBalance: (entityId: string) =>
+    authedRequest<EntityBalance>(`/legal-entities/${entityId}/balance`),
+  /** Движения одного ЮЛ */
+  entityLedger: (
+    entityId: string,
+    params?: { page?: number; limit?: number; type?: string; source?: string }
+  ) =>
+    authedRequest<LedgerList>(
+      `/legal-entities/${entityId}/ledger${query({ ...params })}`
+    ),
+  /** Ручная корректировка (знаковые тийины) */
+  correct: (entityId: string, amountTiyin: number, comment: string) =>
+    authedRequest<{ id: string; balanceTiyin: number }>(
+      `/legal-entities/${entityId}/ledger`,
+      { method: "POST", body: JSON.stringify({ amountTiyin, comment }) }
+    ),
+  /** Привязать нераспознанное пополнение к ЮЛ */
+  link: (ledgerId: string, legalEntityId: string) =>
+    authedRequest<LedgerEntry>(`/balances/ledger/${ledgerId}/link`, {
+      method: "POST",
+      body: JSON.stringify({ legalEntityId }),
+    }),
+  audit: () =>
+    authedRequest<BalanceAuditResult>("/balances/audit", { method: "POST" }),
 };
 
 export const venuesApi = {

@@ -49,6 +49,7 @@ import { useDelayed } from "@/hooks/use-delayed";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { invoiceStatusStyle, formatAmount } from "./invoice-format";
+import { InvoicesSummary } from "./invoices-summary";
 
 /** Счета с портала iiko: под-табы «Клиентам» ($) / «Партнёру» (₽) */
 export function IikoInvoices() {
@@ -152,7 +153,6 @@ export function IikoInvoices() {
 
   const summary = data?.summary;
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
-  const currency = kind === "partner" ? "RUB" : "USD";
   const statusOptions = summary ? Object.keys(summary.byStatus) : [];
 
   const activeFilters: ActiveFilter[] = [];
@@ -204,25 +204,8 @@ export function IikoInvoices() {
         </div>
       )}
 
-      {/* Сводка */}
-      {summary && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-0.5 rounded-lg border border-border p-4 duration-300 animate-in fade-in">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {t("summaryTotal")}
-            </span>
-            <span className="text-2xl font-bold tabular-nums">{summary.total}</span>
-          </div>
-          <div className="flex flex-col gap-0.5 rounded-lg border border-border p-4 duration-300 animate-in fade-in">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {t("summaryAmount", { currency })}
-            </span>
-            <span className="text-2xl font-bold tabular-nums">
-              {formatAmount(summary.amountByCurrency[currency] ?? 0, currency, locale)}
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Богатая сводка (кросс-вид, YTD) */}
+      {summary && <InvoicesSummary summary={summary} kind={kind} />}
 
       {summary?.lastSyncError && (
         <div className="flex items-center gap-2.5 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-300 animate-in fade-in">

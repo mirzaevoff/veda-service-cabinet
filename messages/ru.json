@@ -22,7 +22,8 @@
     "services": "Сервисы",
     "finance": "Финансы",
     "iikoPartner": "iiko Partner",
-    "venues": "Заведения"
+    "venues": "Заведения",
+    "transactions": "Транзакции"
   },
   "Shell": {
     "logout": "Выйти",
@@ -1064,7 +1065,21 @@
       "itemDiscount": "Скидка",
       "itemTotal": "Сумма",
       "venueInvoicesTitle": "Счета",
-      "venueInvoicesEmpty": "Счетов по этому заведению нет"
+      "venueInvoicesEmpty": "Счетов по этому заведению нет",
+      "chartTitle": "Выставлено помесячно",
+      "scopeYtd": "За {year} год",
+      "mTotal": "Всего счетов",
+      "mPaid": "Оплачено",
+      "mUnpaid": "Не оплачено",
+      "mCancelled": "Отменено",
+      "mTotalCustomer": "Выставлено клиентам",
+      "mTotalPartner": "Выставлено партнёром",
+      "ofCount": "по {count} счетам",
+      "mDebtors": "Нам должны",
+      "mOweIiko": "Мы должны iiko",
+      "debtorsCount": "должников: {count}",
+      "entityInvoicesTitle": "Счета заведений",
+      "entityInvoicesEmpty": "Счетов по заведениям этого ЮЛ нет"
     }
   },
   "Venues": {
@@ -1158,5 +1173,78 @@
     "copyUid": "Скопировать UID",
     "uidCopied": "UID скопирован",
     "serverRow": "Сервер"
+  },
+  "Transactions": {
+    "title": "Транзакции",
+    "description": "Движения балансов юрлиц: пополнения, корректировки, аудит",
+    "runAudit": "Прогнать аудит",
+    "auditDone": "Аудит: доначислено {backfilled}, распознано {recognized}, выровнено ЮЛ {healed}",
+    "filterType": "Тип",
+    "anyType": "Любой тип",
+    "filterSource": "Источник",
+    "anySource": "Любой источник",
+    "filterRecognized": "Распознавание",
+    "anyRecognized": "Не важно",
+    "recognizedYes": "Распознанные",
+    "recognizedNo": "Нераспознанные",
+    "from": "С даты",
+    "to": "По дату",
+    "empty": "Движений не найдено",
+    "colDate": "Дата",
+    "colEntity": "Юр. лицо",
+    "colType": "Тип",
+    "colPayer": "Плательщик / комментарий",
+    "colAmount": "Сумма",
+    "unrecognized": "Не распознано",
+    "link": "Привязать",
+    "type": {
+      "topup": "Пополнение",
+      "correction": "Корректировка",
+      "audit": "Аудит"
+    },
+    "source": {
+      "bank": "Банк",
+      "manual": "Вручную",
+      "audit": "Аудит"
+    },
+    "linkTitle": "Привязать пополнение",
+    "linkHint": "Выберите юрлицо, которому засчитать это пополнение",
+    "entitySearchPlaceholder": "Название или ИНН юрлица",
+    "entityNotFound": "Ничего не нашлось",
+    "linked": "Пополнение привязано",
+    "errors": {
+      "ER1501": "Это пополнение уже привязано",
+      "generic": "Что-то пошло не так. Попробуйте ещё раз"
+    }
+  },
+  "Balances": {
+    "balance": "Баланс",
+    "soum": "сум",
+    "outOfSync": "Кэш расходится",
+    "correct": "Корректировка",
+    "corrected": "Баланс скорректирован",
+    "correctTitle": "Корректировка баланса",
+    "correctHint": "Сумма в сумах, со знаком: минус — списание",
+    "amountLabel": "Сумма, сум",
+    "amountHint": "Например 50000 или -50000; будет записано с точностью до тийина",
+    "amountRequired": "Введите ненулевую сумму",
+    "commentLabel": "Комментарий",
+    "commentRequired": "Добавьте комментарий",
+    "ledgerEmpty": "Движений пока нет",
+    "colDate": "Дата",
+    "colType": "Тип",
+    "colComment": "Комментарий",
+    "colAmount": "Сумма",
+    "type": {
+      "topup": "Пополнение",
+      "correction": "Корректировка",
+      "audit": "Аудит"
+    },
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "errors": {
+      "ER1502": "Сумма должна быть целой и не равной нулю",
+      "generic": "Что-то пошло не так. Попробуйте ещё раз"
+    }
   }
 }
