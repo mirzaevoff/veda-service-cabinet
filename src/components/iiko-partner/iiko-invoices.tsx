@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
-  ExternalLink,
   FileText,
   RefreshCw,
   Search,
@@ -24,13 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -49,41 +41,16 @@ import {
 import { SortableTableHead } from "@/components/common/sortable-table-head";
 import type { SortValue } from "@/components/common/sortable-table-head";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import type {
-  IikoInvoice,
-  IikoInvoiceKind,
-  IikoInvoicesList,
-} from "@/lib/api";
+import type { IikoInvoiceKind, IikoInvoicesList } from "@/lib/api";
 import { iikoPartnerApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { invoiceStatusStyle, formatAmount } from "./invoice-format";
 
-/** Цвет бейджа статуса счёта (портал даёт произвольные строки) */
-function statusStyle(status: string): string {
-  const s = status.toLowerCase();
-  if (s.includes("paid")) return "bg-success-light text-success";
-  if (s.includes("cancel")) return "bg-secondary text-muted-foreground";
-  if (s.includes("overdue")) return "bg-destructive/10 text-destructive";
-  return "bg-warning-light text-warning";
-}
-
-/** amountMinor (÷100) в формате валюты */
-function formatAmount(amountMinor: number, currency: string, locale: string) {
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 2,
-    }).format(amountMinor / 100);
-  } catch {
-    return `${(amountMinor / 100).toLocaleString(locale)} ${currency}`;
-  }
-}
-
-/** Счета с партнёрского портала iiko: клиентские ($) и входящие (₽) */
+/** Счета с портала iiko: под-табы «Клиентам» ($) / «Партнёру» (₽) */
 export function IikoInvoices() {
   const t = useTranslations("IikoPartner.invoices");
   const tc = useTranslations("Common");
@@ -96,13 +63,16 @@ export function IikoInvoices() {
   const canManage =
     can(PERMISSIONS.iikoInvoicesManage) ||
     can(PERMISSIONS.iikoPartnerInvoicesManage);
-  const bothKinds = canCustomer && canPartner;
 
+  const kinds: IikoInvoiceKind[] = [
+    ...(canCustomer ? (["customer"] as const) : []),
+    ...(canPartner ? (["partner"] as const) : []),
+  ];
+
+  const [kind, setKind] = useState<IikoInvoiceKind>(kinds[0] ?? "customer");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);
-  const [kind, setKind] = useState<"" | IikoInvoiceKind>("");
   const [status, setStatus] = useState("");
-  const [currency, setCurrency] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [showRemoved, setShowRemoved] = useState(false);
@@ -111,23 +81,27 @@ export function IikoInvoices() {
   const [data, setData] = useState<IikoInvoicesList | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
-  const [selected, setSelected] = useState<IikoInvoice | null>(null);
   const showSkeleton = useDelayed(loading && !data);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс при смене вида/фильтров
     setPage(1);
-  }, [debouncedSearch, kind, status, currency, dateFrom, dateTo, showRemoved, sort]);
+  }, [kind, debouncedSearch, status, dateFrom, dateTo, showRemoved, sort]);
+
+  // При смене вида сбрасываем статус-фильтр (у видов разные статусы)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс статуса при смене вида
+    setStatus("");
+  }, [kind]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const result = await iikoPartnerApi.invoices.list({
         page,
+        kind,
         search: debouncedSearch || undefined,
-        kind: kind || undefined,
         status: status || undefined,
-        currency: currency || undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
         all: showRemoved || undefined,
@@ -145,17 +119,17 @@ export function IikoInvoices() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны
-  }, [page, debouncedSearch, kind, status, currency, dateFrom, dateTo, showRemoved, sort]);
+  }, [page, kind, debouncedSearch, status, dateFrom, dateTo, showRemoved, sort]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await
     void load();
   }, [load]);
 
-  async function sync(full: boolean) {
+  async function sync() {
     setSyncing(true);
     try {
-      const r = await iikoPartnerApi.invoices.sync(full);
+      const r = await iikoPartnerApi.invoices.sync(false);
       toast.success(
         t("syncDone", { seen: r.seen, created: r.created, updated: r.updated })
       );
@@ -178,7 +152,7 @@ export function IikoInvoices() {
 
   const summary = data?.summary;
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
-
+  const currency = kind === "partner" ? "RUB" : "USD";
   const statusOptions = summary ? Object.keys(summary.byStatus) : [];
 
   const activeFilters: ActiveFilter[] = [];
@@ -187,13 +161,6 @@ export function IikoInvoices() {
       key: "status",
       label: `${t("filterStatus")}: ${status}`,
       onRemove: () => setStatus(""),
-    });
-  }
-  if (currency) {
-    activeFilters.push({
-      key: "currency",
-      label: currency,
-      onRemove: () => setCurrency(""),
     });
   }
   if (dateFrom || dateTo) {
@@ -216,28 +183,44 @@ export function IikoInvoices() {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Под-табы вида (только доступные) */}
+      {kinds.length > 1 && (
+        <div className="flex w-fit gap-1 rounded-lg bg-secondary p-1">
+          {kinds.map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setKind(k)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                kind === k
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t(`kind.${k}`)}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Сводка */}
       {summary && (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="flex flex-col gap-0.5 rounded-lg border border-border p-4 duration-300 animate-in fade-in">
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {t("summaryTotal")}
             </span>
             <span className="text-2xl font-bold tabular-nums">{summary.total}</span>
           </div>
-          {Object.entries(summary.amountByCurrency).map(([cur, amount]) => (
-            <div
-              key={cur}
-              className="flex flex-col gap-0.5 rounded-lg border border-border p-4 duration-300 animate-in fade-in"
-            >
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {t("summaryAmount", { currency: cur })}
-              </span>
-              <span className="text-2xl font-bold tabular-nums">
-                {formatAmount(amount, cur, locale)}
-              </span>
-            </div>
-          ))}
+          <div className="flex flex-col gap-0.5 rounded-lg border border-border p-4 duration-300 animate-in fade-in">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t("summaryAmount", { currency })}
+            </span>
+            <span className="text-2xl font-bold tabular-nums">
+              {formatAmount(summary.amountByCurrency[currency] ?? 0, currency, locale)}
+            </span>
+          </div>
         </div>
       )}
 
@@ -260,35 +243,10 @@ export function IikoInvoices() {
           />
         </div>
 
-        {/* Вид: только при обоих правах */}
-        {bothKinds && (
-          <Select
-            value={kind || "any"}
-            items={{
-              any: t("anyKind"),
-              customer: t("kind.customer"),
-              partner: t("kind.partner"),
-            }}
-            onValueChange={(v) =>
-              setKind(v === "any" ? "" : (v as IikoInvoiceKind))
-            }
-          >
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">{t("anyKind")}</SelectItem>
-              <SelectItem value="customer">{t("kind.customer")}</SelectItem>
-              <SelectItem value="partner">{t("kind.partner")}</SelectItem>
-            </SelectContent>
-          </Select>
-        )}
-
         <FiltersDialog
           active={activeFilters}
           onReset={() => {
             setStatus("");
-            setCurrency("");
             setDateFrom("");
             setDateTo("");
             setShowRemoved(false);
@@ -321,26 +279,6 @@ export function IikoInvoices() {
               </Select>
             </div>
           )}
-
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-sm font-medium text-muted-foreground">
-              {t("filterCurrency")}
-            </Label>
-            <Select
-              value={currency || "any"}
-              items={{ any: t("anyCurrency"), USD: "USD", RUB: "RUB" }}
-              onValueChange={(v) => setCurrency(v === "any" ? "" : (v as string))}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">{t("anyCurrency")}</SelectItem>
-                <SelectItem value="USD">USD</SelectItem>
-                <SelectItem value="RUB">RUB</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-1.5">
@@ -379,13 +317,15 @@ export function IikoInvoices() {
         <div className="ms-auto flex items-center gap-2">
           {summary?.lastSyncAt && (
             <span className="text-xs text-muted-foreground">
-              {t("lastSync", { time: formatDate(summary.lastSyncAt.slice(0, 10)) })}
+              {t("lastSync", {
+                time: formatDate(summary.lastSyncAt.slice(0, 10)),
+              })}
             </span>
           )}
           {canManage && (
             <Button
               variant="outline"
-              onClick={() => void sync(false)}
+              onClick={sync}
               disabled={syncing}
               className="gap-2"
             >
@@ -444,7 +384,9 @@ export function IikoInvoices() {
                 {data.items.map((inv) => (
                   <TableRow
                     key={inv.id}
-                    onClick={() => setSelected(inv)}
+                    onClick={() =>
+                      router.push(`/iiko-partner/invoices/${inv.id}`)
+                    }
                     className={cn("cursor-pointer", !inv.active && "opacity-55")}
                   >
                     <TableCell className="font-mono text-xs">
@@ -464,16 +406,26 @@ export function IikoInvoices() {
                     </TableCell>
                     <TableCell>
                       {inv.venue ? (
-                        <span className="flex items-center gap-1.5 text-sm">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/venues/${inv.venue!.id}`);
+                          }}
+                          className="flex items-center gap-1.5 text-sm transition-colors hover:text-primary"
+                        >
                           <Store className="size-3.5 shrink-0 text-muted-foreground" />
                           <span className="max-w-40 truncate">{inv.venue.name}</span>
-                        </span>
+                        </button>
                       ) : (
                         <span className="text-sm text-muted-foreground">—</span>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={statusStyle(inv.status)}>
+                      <Badge
+                        variant="secondary"
+                        className={invoiceStatusStyle(inv.status)}
+                      >
                         {inv.status}
                       </Badge>
                     </TableCell>
@@ -518,250 +470,6 @@ export function IikoInvoices() {
           )}
         </>
       )}
-
-      <InvoiceSheet
-        invoice={selected}
-        onClose={() => setSelected(null)}
-        onRefreshed={(updated) => setSelected(updated)}
-      />
     </div>
-  );
-}
-
-/** Деталь счёта: реквизиты + карточка invoice-info (плательщик/позиции) */
-function InvoiceSheet({
-  invoice,
-  onClose,
-  onRefreshed,
-}: {
-  invoice: IikoInvoice | null;
-  onClose: () => void;
-  onRefreshed: (inv: IikoInvoice) => void;
-}) {
-  const t = useTranslations("IikoPartner.invoices");
-  const locale = useLocale();
-  const [full, setFull] = useState<IikoInvoice | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс детали при смене счёта
-    setFull(null);
-    if (!invoice) return;
-    let cancelled = false;
-    iikoPartnerApi.invoices
-      .get(invoice.id)
-      .then((r) => {
-        if (!cancelled) setFull(r);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [invoice]);
-
-  async function refresh() {
-    if (!invoice) return;
-    setRefreshing(true);
-    try {
-      const r = await iikoPartnerApi.invoices.get(invoice.id, true);
-      setFull(r);
-      onRefreshed(r);
-      toast.success(t("cardRefreshed"));
-    } catch {
-      toast.error(t("syncError"));
-    } finally {
-      setRefreshing(false);
-    }
-  }
-
-  const inv = full ?? invoice;
-  const card = (full?.card ?? null) as {
-    payerName?: string;
-    payerUid?: string;
-    legalEntity?: string;
-    endCustomer?: string;
-    items?: Record<string, string>[];
-    subscription?: Record<string, string>;
-  } | null;
-
-  const formatDate = (iso: string | null) =>
-    iso
-      ? new Intl.DateTimeFormat(locale, {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }).format(new Date(`${iso}T00:00:00`))
-      : "—";
-
-  return (
-    <Sheet open={!!invoice} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
-        {inv && (
-          <>
-            <SheetHeader>
-              <SheetTitle className="pr-6 font-mono">{inv.invoiceNumber}</SheetTitle>
-              <SheetDescription className="flex flex-wrap items-center gap-1.5">
-                <Badge variant="secondary" className={statusStyle(inv.status)}>
-                  {inv.status}
-                </Badge>
-                <Badge variant="secondary" className="bg-secondary text-muted-foreground">
-                  {t(`kind.${inv.kind}`)}
-                </Badge>
-                {!inv.active && (
-                  <Badge variant="secondary" className="text-muted-foreground">
-                    {t("removed")}
-                  </Badge>
-                )}
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="flex flex-col gap-5 px-4 pb-6">
-              {/* Сумма */}
-              <div className="flex items-baseline justify-between gap-3 rounded-lg border border-border bg-secondary/40 p-4">
-                <span className="text-sm text-muted-foreground">{t("colAmount")}</span>
-                <span className="text-xl font-bold tabular-nums">
-                  {formatAmount(inv.amountMinor, inv.currency, locale)}
-                </span>
-              </div>
-
-              {/* Реквизиты */}
-              <dl className="flex flex-col gap-1.5 text-sm">
-                {(
-                  [
-                    [t("colEntity"), inv.legalEntityName],
-                    [t("taxId"), inv.legalEntityTaxId],
-                    [t("endCustomer"), inv.endCustomer],
-                    [t("partnerLabel"), inv.partner],
-                    [t("colIssueDate"), formatDate(inv.issueDate)],
-                    [t("dueDate"), formatDate(inv.dueDate)],
-                  ] as const
-                )
-                  .filter(([, v]) => v && v !== "—")
-                  .map(([label, value]) => (
-                    <div key={label} className="flex items-baseline justify-between gap-4">
-                      <dt className="shrink-0 text-muted-foreground">{label}</dt>
-                      <dd className="min-w-0 break-words text-right font-medium tabular-nums">
-                        {value}
-                      </dd>
-                    </div>
-                  ))}
-              </dl>
-
-              {/* Наше заведение */}
-              {inv.venue && (
-                <Link
-                  href="/venues"
-                  className="flex items-center gap-2.5 rounded-lg border border-border p-3 transition-colors hover:border-primary/40"
-                >
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-accent-light">
-                    <Store className="size-4 text-primary" strokeWidth={1.75} />
-                  </div>
-                  <div className="flex min-w-0 flex-col">
-                    <span className="truncate text-sm font-medium">
-                      {inv.venue.name}
-                    </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {inv.venue.uid}
-                    </span>
-                  </div>
-                  <ChevronRight className="ms-auto size-4 shrink-0 text-muted-foreground" />
-                </Link>
-              )}
-
-              {inv.description && (
-                <section className="flex flex-col gap-1.5">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {t("descriptionLabel")}
-                  </h4>
-                  <p className="text-sm leading-relaxed break-words text-muted-foreground">
-                    {inv.description}
-                  </p>
-                </section>
-              )}
-
-              {/* Карточка invoice-info */}
-              <section className="flex flex-col gap-2.5">
-                <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {t("cardLabel")}
-                  </h4>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={refreshing}
-                    onClick={() => void refresh()}
-                    className="gap-1.5"
-                  >
-                    {refreshing ? (
-                      <Spinner className="size-3.5" />
-                    ) : (
-                      <RefreshCw className="size-3.5" />
-                    )}
-                    {t("refresh")}
-                  </Button>
-                </div>
-
-                {!full ? (
-                  <Skeleton className="h-16 rounded-lg" />
-                ) : card && (card.payerName || card.items?.length) ? (
-                  <div className="flex flex-col gap-3">
-                    {card.payerName && (
-                      <div className="flex items-baseline justify-between gap-4 text-sm">
-                        <span className="text-muted-foreground">{t("payer")}</span>
-                        <span className="text-right font-medium">
-                          {card.payerName}
-                          {card.payerUid && (
-                            <span className="block text-xs text-muted-foreground tabular-nums">
-                              {card.payerUid}
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    )}
-                    {card.items && card.items.length > 0 && (
-                      <div className="flex flex-col gap-1">
-                        {card.items.map((item, i) => (
-                          <div
-                            key={i}
-                            className="flex items-baseline justify-between gap-3 rounded-md border border-border px-3 py-2 text-sm"
-                          >
-                            {Object.values(item).map((v, j) => (
-                              <span
-                                key={j}
-                                className={cn(
-                                  j === 0
-                                    ? "min-w-0 flex-1 truncate"
-                                    : "shrink-0 text-muted-foreground tabular-nums"
-                                )}
-                              >
-                                {v}
-                              </span>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">{t("cardEmpty")}</p>
-                )}
-              </section>
-
-              {inv.invoiceId && (
-                <a
-                  href={`https://pp.iiko.ru/en/invoices/edit/${inv.invoiceId}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 self-start rounded-md border border-border px-2.5 py-1.5 text-xs transition-colors hover:border-primary/40 hover:text-primary"
-                >
-                  <ExternalLink className="size-3" />
-                  {t("openOnPortal")}
-                </a>
-              )}
-            </div>
-          </>
-        )}
-      </SheetContent>
-    </Sheet>
   );
 }

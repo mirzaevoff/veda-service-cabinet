@@ -1053,7 +1053,18 @@
       "cardRefreshed": "Детали обновлены",
       "refresh": "Обновить",
       "payer": "Плательщик",
-      "openOnPortal": "Открыть на портале"
+      "openOnPortal": "Открыть на портале",
+      "backToList": "Все счета",
+      "requisites": "Реквизиты",
+      "notFound": "Счёт не найден",
+      "itemsLabel": "Позиции",
+      "itemName": "Наименование",
+      "itemPrice": "Цена",
+      "itemQty": "Кол-во",
+      "itemDiscount": "Скидка",
+      "itemTotal": "Сумма",
+      "venueInvoicesTitle": "Счета",
+      "venueInvoicesEmpty": "Счетов по этому заведению нет"
     }
   },
   "Venues": {

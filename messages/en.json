@@ -1054,7 +1054,18 @@
       "cardRefreshed": "Details refreshed",
       "refresh": "Refresh",
       "payer": "Payer",
-      "openOnPortal": "Open on portal"
+      "openOnPortal": "Open on portal",
+      "backToList": "All invoices",
+      "requisites": "Details",
+      "notFound": "Invoice not found",
+      "itemsLabel": "Items",
+      "itemName": "Name",
+      "itemPrice": "Price",
+      "itemQty": "Qty",
+      "itemDiscount": "Discount",
+      "itemTotal": "Total",
+      "venueInvoicesTitle": "Invoices",
+      "venueInvoicesEmpty": "No invoices for this venue"
     }
   },
   "Venues": {

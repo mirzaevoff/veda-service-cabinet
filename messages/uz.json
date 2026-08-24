@@ -1053,7 +1053,18 @@
       "cardRefreshed": "Tafsilotlar yangilandi",
       "refresh": "Yangilash",
       "payer": "To'lovchi",
-      "openOnPortal": "Portalda ochish"
+      "openOnPortal": "Portalda ochish",
+      "backToList": "Barcha hisob-fakturalar",
+      "requisites": "Rekvizitlar",
+      "notFound": "Hisob-faktura topilmadi",
+      "itemsLabel": "Pozitsiyalar",
+      "itemName": "Nomi",
+      "itemPrice": "Narx",
+      "itemQty": "Soni",
+      "itemDiscount": "Chegirma",
+      "itemTotal": "Summa",
+      "venueInvoicesTitle": "Hisob-fakturalar",
+      "venueInvoicesEmpty": "Bu muassasa bo'yicha hisob-fakturalar yo'q"
     }
   },
   "Venues": {
