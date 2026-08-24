@@ -24,7 +24,7 @@ interface FormState {
   taxId: string;
   name: string;
   rawName: string;
-  establishment: string;
+  pinfl: string;
   bankCode: string;
   bank: string;
   bankAccount: string;
@@ -39,7 +39,7 @@ const EMPTY: FormState = {
   taxId: "",
   name: "",
   rawName: "",
-  establishment: "",
+  pinfl: "",
   bankCode: "",
   bank: "",
   bankAccount: "",
@@ -55,7 +55,7 @@ function fromEntity(entity: LegalEntity): FormState {
     taxId: entity.taxId,
     name: entity.name,
     rawName: entity.rawName,
-    establishment: entity.establishment,
+    pinfl: entity.pinfl,
     bankCode: entity.bankCode,
     bank: entity.bank,
     bankAccount: entity.bankAccount,
@@ -122,6 +122,7 @@ export function EntityFormDialog({
         ...prev,
         name: found.name,
         rawName: found.rawName,
+        pinfl: found.pinfl,
         bankCode: found.bankCode,
         bank: found.bank,
         bankAccount: found.bankAccount,
@@ -166,7 +167,7 @@ export function EntityFormDialog({
     const common = {
       name: form.name.trim(),
       rawName: form.rawName.trim() || undefined,
-      establishment: form.establishment.trim(),
+      pinfl: form.pinfl.trim() || undefined,
       bankCode: form.bankCode.trim() || undefined,
       bank: form.bank.trim() || undefined,
       bankAccount: form.bankAccount.trim() || undefined,
@@ -239,6 +240,22 @@ export function EntityFormDialog({
             {isNew && (
               <span className="text-xs text-muted-foreground">{t("taxIdHint")}</span>
             )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="le-pinfl" className="text-sm font-medium text-muted-foreground">
+              {t("pinfl")}
+            </Label>
+            <Input
+              id="le-pinfl"
+              value={form.pinfl}
+              inputMode="numeric"
+              maxLength={14}
+              placeholder="43101851050057"
+              onChange={(e) => set("pinfl", e.target.value.replace(/\D/g, ""))}
+              className="tabular-nums"
+            />
+            <span className="text-xs text-muted-foreground">{t("pinflHint")}</span>
           </div>
 
           <div className="flex flex-col gap-1.5">

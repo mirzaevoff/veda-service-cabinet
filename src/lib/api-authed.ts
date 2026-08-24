@@ -265,7 +265,7 @@ export const legalEntitiesApi = {
     taxId: string;
     name: string;
     rawName?: string;
-    establishment?: string;
+    pinfl?: string;
     bankCode?: string;
     bank?: string;
     bankAccount?: string;
@@ -282,7 +282,7 @@ export const legalEntitiesApi = {
     body: Partial<{
       name: string;
       rawName: string;
-      establishment: string;
+      pinfl: string;
       bankCode: string;
       bank: string;
       bankAccount: string;

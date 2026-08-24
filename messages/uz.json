@@ -553,7 +553,9 @@
       "allVenues": "Barcha muassasalar →",
       "emptyTitle": "Hozircha muassasalar yo'q",
       "emptyHint": "Muassasani «Muassasalar» bo'limida yuridik shaxsga bog'lash mumkin"
-    }
+    },
+    "pinfl": "JSHSHIR",
+    "pinflHint": "Jismoniy shaxs JSHSHIR (YaTT uchun) — STIR bo'yicha avtomatik to'ldiriladi"
   },
   "Checklists": {
     "title": "Cheklistlar",

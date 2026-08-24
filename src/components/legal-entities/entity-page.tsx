@@ -228,8 +228,8 @@ export function EntityPage({ entityId }: { entityId: string }) {
           <div className="flex min-w-0 flex-col">
             <h1 className="break-words text-2xl font-bold">{entity.name}</h1>
             <span className="text-sm text-muted-foreground tabular-nums">
-              {entity.establishment && `${entity.establishment} · `}
               {t("taxId")}: {entity.taxId}
+              {entity.pinfl && ` · ${t("pinfl")}: ${entity.pinfl}`}
             </span>
           </div>
         </div>
@@ -348,19 +348,6 @@ export function EntityPage({ entityId }: { entityId: string }) {
           </section>
         )}
 
-        {entity.establishment && (
-          <section className="flex flex-col gap-3 rounded-lg border border-border p-5">
-            <div className="flex items-center gap-2">
-              <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-secondary">
-                <Store className="size-4 text-muted-foreground" strokeWidth={1.75} />
-              </div>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {t("establishment")}
-              </h4>
-            </div>
-            <span className="font-medium">{entity.establishment}</span>
-          </section>
-        )}
       </div>
 
       {/* Заведения этого ЮЛ */}

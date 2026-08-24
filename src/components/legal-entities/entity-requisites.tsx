@@ -18,8 +18,8 @@ export function EntityRequisites({ entity }: { entity: LegalEntity }) {
   const locale = useLocale();
 
   const rows: [string, string][] = [
-    [t("establishment"), entity.establishment],
     [t("taxId"), entity.taxId],
+    [t("pinfl"), entity.pinfl],
     [
       t("bank"),
       [entity.bank, entity.bankCode, entity.bankAccount]

@@ -554,7 +554,9 @@
       "allVenues": "All venues →",
       "emptyTitle": "No venues yet",
       "emptyHint": "Link a venue to this entity in the Venues section"
-    }
+    },
+    "pinfl": "PINFL",
+    "pinflHint": "Individual's PINFL (for sole proprietors) — auto-filled from the TIN"
   },
   "Checklists": {
     "title": "Checklists",

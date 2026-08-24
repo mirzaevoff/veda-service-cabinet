@@ -332,8 +332,10 @@ export interface LegalEntity {
   taxId: string;
   name: string;
   rawName: string;
-  /** Название заведения («Ресторан „У Бабушки"»), пустая строка если не задано */
+  /** Название заведения — legacy, из создания/правки убрано; пусто у новых */
   establishment: string;
+  /** ПИНФЛ физлица (ИП, найденного по ИНН); у компаний пусто */
+  pinfl: string;
   bankCode: string;
   /** Название банка (из собственного справочника, по МФО) */
   bank: string;
@@ -350,6 +352,8 @@ export interface LegalEntityLookup {
   name: string;
   taxId: string;
   rawName: string;
+  /** ПИНФЛ физлица (ИП); у компаний пусто */
+  pinfl: string;
   bankCode: string;
   /** Название банка из нашего справочника (по МФО) */
   bank: string;
