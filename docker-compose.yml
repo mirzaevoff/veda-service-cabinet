@@ -1,9 +1,22 @@
 # Production compose. The app listens on port 4900; the container uses host
 # networking (same convention as veda-service-api). Extra env vars, if ever
 # needed, go into .env next to this file on the server.
+#
+# Web push (FCM): значения NEXT_PUBLIC_FIREBASE_* кладутся в .env рядом с этим
+# файлом. Docker Compose подставляет их в build.args (${...} читается из того же
+# .env), а Dockerfile инлайнит их в клиентский бандл на этапе сборки. Без них
+# push-слой тихо выключен, in-app лента работает как есть.
 services:
   cabinet:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-}
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-}
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+        NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-}
+        NEXT_PUBLIC_FIREBASE_VAPID_KEY: ${NEXT_PUBLIC_FIREBASE_VAPID_KEY:-}
     image: veda-service-cabinet
     container_name: veda-service-cabinet
     restart: unless-stopped
