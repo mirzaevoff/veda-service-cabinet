@@ -36,6 +36,9 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
+          # Сборка образа на сервере (pnpm install ~680 пакетов + next build)
+          # дольше дефолтных 10м SSH-таймаута — иначе Run Command Timeout
+          command_timeout: 40m
           script: |
             set -e
             cd "${{ secrets.DEPLOY_PATH }}"
