@@ -1,8 +1,12 @@
 import {
   ApiError,
+  API_URL,
   request,
   type AccessRequest,
   type AccessRequestStatus,
+  type CreateInvoiceInput,
+  type Invoice,
+  type InvoicesPage,
   type AuthSession,
   type Bank,
   type BankAccount,
@@ -86,6 +90,40 @@ export async function authedRequest<T>(
       ...init,
       headers: { ...init?.headers, Authorization: `Bearer ${token}` },
     });
+  };
+
+  try {
+    return await attempt();
+  } catch (e) {
+    if (!(e instanceof ApiError) || e.status !== 401) throw e;
+    try {
+      await refreshSession();
+    } catch {
+      clearSession();
+      throw new SessionExpiredError();
+    }
+    return attempt();
+  }
+}
+
+/**
+ * Авторизованное скачивание бинарного ответа (PDF) как Blob.
+ * Тот же паттерн refresh на 401, что и у authedRequest.
+ */
+export async function authedBlob(path: string): Promise<Blob> {
+  const attempt = async (): Promise<Blob> => {
+    const token = getAccessToken();
+    if (!token) throw new SessionExpiredError();
+    const res = await fetch(`${API_URL}${path}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      throw new ApiError(res.status, {
+        code: `HTTP_${res.status}`,
+        message: res.statusText,
+      });
+    }
+    return res.blob();
   };
 
   try {
@@ -643,6 +681,24 @@ export const settingsApi = {
       method: "POST",
       body: JSON.stringify({ taxId }),
     }),
+};
+
+export const invoicesApi = {
+  /** Сгенерировать сводный счёт (dryRun — предпросмотр без сохранения) */
+  create: (body: CreateInvoiceInput, dryRun = false) =>
+    authedRequest<Invoice>(`/invoices${dryRun ? "?dryRun=true" : ""}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  list: (params: {
+    page?: number;
+    limit?: number;
+    legalEntityId?: string;
+    sort?: string;
+  } = {}) => authedRequest<InvoicesPage>(`/invoices${query({ ...params })}`),
+  get: (id: string) => authedRequest<Invoice>(`/invoices/${id}`),
+  /** Скачать PDF (Bearer) как Blob — для кнопки «Скачать» */
+  pdfBlob: (id: string) => authedBlob(`/invoices/${id}/pdf`),
 };
 
 export const iikoPartnerApi = {

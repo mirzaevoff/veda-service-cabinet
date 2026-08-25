@@ -23,7 +23,8 @@
     "finance": "Finance",
     "iikoPartner": "iiko Partner",
     "venues": "Venues",
-    "transactions": "Transactions"
+    "transactions": "Transactions",
+    "invoices": "Invoices"
   },
   "Shell": {
     "logout": "Sign out",
@@ -166,7 +167,8 @@
       "hint": "Changes apply immediately",
       "reset": "Reset all",
       "done": "Done"
-    }
+    },
+    "change": "Change"
   },
   "Tickets": {
     "list": {
@@ -1281,5 +1283,50 @@
       "ER1502": "Amount must be a non-zero integer",
       "generic": "Something went wrong. Please try again"
     }
+  },
+  "Invoices": {
+    "title": "Invoices",
+    "description": "Consolidated invoices for legal entities (PDF)",
+    "total": "Total: {count}",
+    "generate": "Generate invoice",
+    "generateTitle": "New invoice",
+    "generateHint": "We'll bundle the client's unpaid iiko invoices into one PDF",
+    "entitySearchPlaceholder": "Name or TIN",
+    "entityNotFound": "Legal entity not found",
+    "previewTitle": "Preview",
+    "noUnpaid": "This legal entity has no unpaid iiko invoices",
+    "advanced": "Advanced",
+    "fields": {
+      "didoxWarning": "Header note (e.g. Didox)",
+      "partialMonthNote": "Partial-month note",
+      "paymentLkBlock": "\"Pay in cabinet\" block"
+    },
+    "create": "Generate",
+    "created": "Invoice created",
+    "genericError": "Something went wrong. Try again",
+    "pdfNotReady": "PDF isn't generated yet",
+    "colNumber": "No.",
+    "colClient": "Legal entity",
+    "colDate": "Date",
+    "colDue": "Due",
+    "colStatus": "Status",
+    "colTotal": "Amount",
+    "colService": "Service",
+    "colQty": "Qty",
+    "colPrice": "Price/mo",
+    "colAmount": "Amount",
+    "empty": "No invoices yet",
+    "emptyEntity": "No invoices yet",
+    "status": {
+      "issued": "Issued",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "openOnline": "Open online",
+    "downloadPdf": "Download PDF",
+    "period": "Period",
+    "sourceInvoices": "Source invoices",
+    "sectionTitle": "Invoices",
+    "totalLabel": "Total"
   }
 }

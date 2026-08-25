@@ -1,4 +1,4 @@
-const API_URL =
+export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "https://api.vedavector.com";
 
 /** Единый формат ошибок API: {code, message, data?} — см. md_docs/errors.md */
@@ -917,6 +917,62 @@ export interface IikoInvoicesSyncStatus {
   lastSyncAt: string | null;
   lastFullSyncAt: string | null;
   lastSyncError: string | null;
+}
+
+// --- Счета на оплату (модуль invoices, PDF; API 0.34) -----------------------
+
+/** Строка сводного счёта (исходный iiko-счёт → услуга + период) */
+export interface InvoiceItem {
+  name: string;
+  qty: number;
+  /** Месячная цена, тийины */
+  priceTiyin: number;
+  priceSum: number;
+  discountPercent: number;
+  /** Сумма строки, тийины */
+  amountTiyin: number;
+  amountSum: number;
+  sourceInvoiceNumber: string;
+  periodFrom: string | null;
+  periodTo: string | null;
+}
+
+/** Сводный счёт на оплату */
+export interface Invoice {
+  id: string;
+  /** VV-2026-000123 (в dryRun — «ПРЕДПРОСМОТР») */
+  number: string;
+  status: string;
+  legalEntityId: string;
+  clientName: string;
+  /** Вмороженный курс USD→UZS (на счёте не показывается) */
+  usdRate: number;
+  totalTiyin: number;
+  totalSum: number;
+  items: InvoiceItem[];
+  sourceInvoiceNumbers: string[];
+  date: string;
+  periodFrom: string | null;
+  periodTo: string | null;
+  dueDate: string;
+  /** Публичный онлайн-просмотр (цель QR); null если PUBLIC_BASE_URL не задан на API */
+  publicUrl: string | null;
+  /** Публичное скачивание PDF; null если PUBLIC_BASE_URL не задан */
+  pdfUrl: string | null;
+  createdAt: string;
+}
+
+export type InvoicesPage = Page<Invoice>;
+
+/** Тело генерации счёта */
+export interface CreateInvoiceInput {
+  legalEntityId: string;
+  /** Блок-предупреждение у шапки (напр. про Didox) */
+  didoxWarning?: string;
+  /** Примечание про неполный месяц */
+  partialMonthNote?: string;
+  /** Блок «оплата в кабинете» под назначением платежа */
+  paymentLkBlock?: string;
 }
 
 export interface IikoServersSyncResult {

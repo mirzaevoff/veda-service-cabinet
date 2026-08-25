@@ -30,6 +30,8 @@ export const PERMISSIONS = {
   iikoPartnerInvoicesManage: "iikoPartnerInvoices.manage",
   venuesView: "venues.view",
   venuesManage: "venues.manage",
+  invoicesView: "invoices.view",
+  invoicesManage: "invoices.manage",
 } as const;
 
 export function can(

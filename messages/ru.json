@@ -23,7 +23,8 @@
     "finance": "Финансы",
     "iikoPartner": "iiko Partner",
     "venues": "Заведения",
-    "transactions": "Транзакции"
+    "transactions": "Транзакции",
+    "invoices": "Счета"
   },
   "Shell": {
     "logout": "Выйти",
@@ -166,7 +167,8 @@
       "hint": "Изменения применяются сразу",
       "reset": "Сбросить всё",
       "done": "Готово"
-    }
+    },
+    "change": "Изменить"
   },
   "Tickets": {
     "list": {
@@ -1280,5 +1282,50 @@
       "ER1502": "Сумма должна быть целой и не равной нулю",
       "generic": "Что-то пошло не так. Попробуйте ещё раз"
     }
+  },
+  "Invoices": {
+    "title": "Счета на оплату",
+    "description": "Сводные счета для юрлиц (PDF)",
+    "total": "Всего: {count}",
+    "generate": "Сгенерировать счёт",
+    "generateTitle": "Новый счёт на оплату",
+    "generateHint": "Соберём неоплаченные iiko-счета клиента в один PDF",
+    "entitySearchPlaceholder": "Название или ИНН",
+    "entityNotFound": "Юрлицо не найдено",
+    "previewTitle": "Предпросмотр",
+    "noUnpaid": "У этого юрлица нет неоплаченных iiko-счетов",
+    "advanced": "Дополнительно",
+    "fields": {
+      "didoxWarning": "Примечание у шапки (напр. Didox)",
+      "partialMonthNote": "Примечание про неполный месяц",
+      "paymentLkBlock": "Блок «оплата в кабинете»"
+    },
+    "create": "Сгенерировать",
+    "created": "Счёт создан",
+    "genericError": "Не получилось. Попробуйте ещё раз",
+    "pdfNotReady": "PDF ещё не сгенерирован",
+    "colNumber": "Номер",
+    "colClient": "Юрлицо",
+    "colDate": "Дата",
+    "colDue": "Оплатить до",
+    "colStatus": "Статус",
+    "colTotal": "Сумма",
+    "colService": "Услуга",
+    "colQty": "Кол-во",
+    "colPrice": "Цена/мес",
+    "colAmount": "Сумма",
+    "empty": "Счетов пока нет",
+    "emptyEntity": "Счетов на оплату пока нет",
+    "status": {
+      "issued": "Выставлен",
+      "paid": "Оплачен",
+      "cancelled": "Отменён"
+    },
+    "openOnline": "Открыть онлайн",
+    "downloadPdf": "Скачать PDF",
+    "period": "Период",
+    "sourceInvoices": "Исходные счета",
+    "sectionTitle": "Счета на оплату",
+    "totalLabel": "Итого"
   }
 }

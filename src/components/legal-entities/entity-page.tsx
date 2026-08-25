@@ -32,6 +32,7 @@ import { directorName } from "./entity-requisites";
 import { EntityBalanceSection } from "./entity-balance";
 import { EntityInvoices } from "./entity-invoices";
 import { EntityVenues } from "./entity-venues";
+import { EntityBills } from "./entity-bills";
 import type { LegalEntity } from "@/lib/api";
 import { legalEntitiesApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -252,6 +253,11 @@ export function EntityPage({ entityId }: { entityId: string }) {
       {(can(PERMISSIONS.iikoInvoicesView) ||
         can(PERMISSIONS.iikoPartnerInvoicesView)) && (
         <EntityInvoices entityId={entity.id} />
+      )}
+
+      {/* Счета на оплату (PDF) */}
+      {can(PERMISSIONS.invoicesView) && (
+        <EntityBills entityId={entity.id} entityName={entity.name} />
       )}
 
       {/* Участники */}

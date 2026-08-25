@@ -23,7 +23,8 @@
     "finance": "Moliya",
     "iikoPartner": "iiko Partner",
     "venues": "Muassasalar",
-    "transactions": "Tranzaksiyalar"
+    "transactions": "Tranzaksiyalar",
+    "invoices": "Hisob-fakturalar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -166,7 +167,8 @@
       "hint": "O'zgarishlar darhol qo'llanadi",
       "reset": "Hammasini tozalash",
       "done": "Tayyor"
-    }
+    },
+    "change": "Oʻzgartirish"
   },
   "Tickets": {
     "list": {
@@ -1280,5 +1282,50 @@
       "ER1502": "Summa butun va noldan farqli bo'lishi kerak",
       "generic": "Nimadir xato ketdi. Qayta urinib ko'ring"
     }
+  },
+  "Invoices": {
+    "title": "Toʻlov hisoblari",
+    "description": "Yuridik shaxslar uchun jamlangan hisoblar (PDF)",
+    "total": "Jami: {count}",
+    "generate": "Hisob yaratish",
+    "generateTitle": "Yangi toʻlov hisobi",
+    "generateHint": "Mijozning toʻlanmagan iiko hisoblarini bitta PDFga jamlaymiz",
+    "entitySearchPlaceholder": "Nomi yoki STIR",
+    "entityNotFound": "Yuridik shaxs topilmadi",
+    "previewTitle": "Oldindan koʻrish",
+    "noUnpaid": "Bu yuridik shaxsda toʻlanmagan iiko hisoblari yoʻq",
+    "advanced": "Qoʻshimcha",
+    "fields": {
+      "didoxWarning": "Sarlavha izohi (masalan, Didox)",
+      "partialMonthNote": "Toʻliq boʻlmagan oy izohi",
+      "paymentLkBlock": "«Kabinetda toʻlash» bloki"
+    },
+    "create": "Yaratish",
+    "created": "Hisob yaratildi",
+    "genericError": "Xatolik yuz berdi. Qayta urinib koʻring",
+    "pdfNotReady": "PDF hali yaratilmagan",
+    "colNumber": "Raqam",
+    "colClient": "Yuridik shaxs",
+    "colDate": "Sana",
+    "colDue": "Toʻlash muddati",
+    "colStatus": "Holat",
+    "colTotal": "Summa",
+    "colService": "Xizmat",
+    "colQty": "Soni",
+    "colPrice": "Narx/oy",
+    "colAmount": "Summa",
+    "empty": "Hozircha hisoblar yoʻq",
+    "emptyEntity": "Hozircha hisoblar yoʻq",
+    "status": {
+      "issued": "Chiqarilgan",
+      "paid": "Toʻlangan",
+      "cancelled": "Bekor qilingan"
+    },
+    "openOnline": "Onlayn ochish",
+    "downloadPdf": "PDF yuklab olish",
+    "period": "Davr",
+    "sourceInvoices": "Manba hisoblar",
+    "sectionTitle": "Toʻlov hisoblari",
+    "totalLabel": "Jami"
   }
 }
