@@ -1334,6 +1334,7 @@
     "deleted": "Hisob oʻchirildi",
     "deleteConfirmTitle": "Hisob oʻchirilsinmi?",
     "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi.",
-    "periodMonth": "Oy (ixtiyoriy)"
+    "periodMonth": "Oy (ixtiyoriy)",
+    "periodAll": "Barcha toʻlanmagan"
   }
 }

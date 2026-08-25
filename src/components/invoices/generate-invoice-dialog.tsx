@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { ApiError, type Invoice, type LegalEntity } from "@/lib/api";
 import { invoicesApi, legalEntitiesApi } from "@/lib/api-authed";
+import { MonthPicker } from "@/components/common/month-picker";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 import { formatSum } from "./invoice-format";
@@ -214,12 +215,11 @@ export function GenerateInvoiceDialog({
               <Label htmlFor="invoice-period" className="text-sm text-muted-foreground">
                 {t("periodMonth")}
               </Label>
-              <input
+              <MonthPicker
                 id="invoice-period"
-                type="month"
                 value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                className="rounded-md border border-border bg-transparent px-3 py-1.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                onChange={setPeriod}
+                placeholder={t("periodAll")}
               />
             </div>
           )}

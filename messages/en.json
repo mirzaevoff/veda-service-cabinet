@@ -1335,6 +1335,7 @@
     "deleted": "Invoice deleted",
     "deleteConfirmTitle": "Delete invoice?",
     "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone.",
-    "periodMonth": "Month (optional)"
+    "periodMonth": "Month (optional)",
+    "periodAll": "All unpaid"
   }
 }
