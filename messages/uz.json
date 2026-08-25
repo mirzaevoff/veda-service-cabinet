@@ -1110,7 +1110,10 @@
       "mOweIiko": "Biz iiko ga qarzdormiz",
       "debtorsCount": "qarzdorlar: {count}",
       "entityInvoicesTitle": "Muassasa hisob-fakturalari",
-      "entityInvoicesEmpty": "Bu YuSh muassasalari bo'yicha hisob-fakturalar yo'q"
+      "entityInvoicesEmpty": "Bu YuSh muassasalari bo'yicha hisob-fakturalar yo'q",
+      "processingSync": "Processingni sverka",
+      "processingSyncHint": "Portalning Invoice-processing roʻyxatini tekshirish: u yerda yoʻq ochiq hisoblar bekor qilingan deb belgilanadi",
+      "processingSyncDone": "Tayyor: {voided} bekor qilindi"
     }
   },
   "Venues": {
@@ -1330,6 +1333,7 @@
     "delete": "Oʻchirish",
     "deleted": "Hisob oʻchirildi",
     "deleteConfirmTitle": "Hisob oʻchirilsinmi?",
-    "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi."
+    "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi.",
+    "periodMonth": "Oy (ixtiyoriy)"
   }
 }

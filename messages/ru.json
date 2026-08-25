@@ -1110,7 +1110,10 @@
       "mOweIiko": "Мы должны iiko",
       "debtorsCount": "должников: {count}",
       "entityInvoicesTitle": "Счета заведений",
-      "entityInvoicesEmpty": "Счетов по заведениям этого ЮЛ нет"
+      "entityInvoicesEmpty": "Счетов по заведениям этого ЮЛ нет",
+      "processingSync": "Сверить процессинг",
+      "processingSyncHint": "Проверить список Invoice-processing портала: открытые счета, которых там нет, помечаются как аннулированные",
+      "processingSyncDone": "Готово: аннулировано {voided}"
     }
   },
   "Venues": {
@@ -1330,6 +1333,7 @@
     "delete": "Удалить",
     "deleted": "Счёт удалён",
     "deleteConfirmTitle": "Удалить счёт?",
-    "deleteConfirmText": "Счёт и его PDF будут удалены, а исходные iiko-счета снова станут доступны для выставления. Действие необратимо."
+    "deleteConfirmText": "Счёт и его PDF будут удалены, а исходные iiko-счета снова станут доступны для выставления. Действие необратимо.",
+    "periodMonth": "Месяц (необязательно)"
   }
 }

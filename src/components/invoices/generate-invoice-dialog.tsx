@@ -46,6 +46,7 @@ export function GenerateInvoiceDialog({
   const debounced = useDebouncedValue(q, 350);
   const [options, setOptions] = useState<LegalEntity[] | null>(null);
 
+  const [period, setPeriod] = useState("");
   const [preview, setPreview] = useState<Invoice | null>(null);
   const [previewErr, setPreviewErr] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -64,6 +65,7 @@ export function GenerateInvoiceDialog({
     setSelected(legalEntity ?? null);
     setQ("");
     setOptions(null);
+    setPeriod("");
     setPreview(null);
     setPreviewErr(null);
     setShowAdvanced(false);
@@ -94,7 +96,7 @@ export function GenerateInvoiceDialog({
     setPreview(null);
     setPreviewErr(null);
     invoicesApi
-      .create({ legalEntityId: selected.id }, true)
+      .create({ legalEntityId: selected.id, period: period || undefined }, true)
       .then((inv) => {
         if (!cancelled) setPreview(inv);
       })
@@ -110,7 +112,7 @@ export function GenerateInvoiceDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, selected, t]);
+  }, [open, selected, period, t]);
 
   async function create() {
     if (!selected || !preview) return;
@@ -119,6 +121,7 @@ export function GenerateInvoiceDialog({
       const inv = await invoicesApi.create(
         {
           legalEntityId: selected.id,
+          period: period || undefined,
           didoxWarning: didoxWarning.trim() || undefined,
           partialMonthNote: partialMonthNote.trim() || undefined,
           paymentLkBlock: paymentLkBlock.trim() || undefined,
@@ -202,6 +205,22 @@ export function GenerateInvoiceDialog({
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Месяц (необязательно) */}
+          {selected && (
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="invoice-period" className="text-sm text-muted-foreground">
+                {t("periodMonth")}
+              </Label>
+              <input
+                id="invoice-period"
+                type="month"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="rounded-md border border-border bg-transparent px-3 py-1.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              />
             </div>
           )}
 

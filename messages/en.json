@@ -1111,7 +1111,10 @@
       "mOweIiko": "We owe iiko",
       "debtorsCount": "debtors: {count}",
       "entityInvoicesTitle": "Venue invoices",
-      "entityInvoicesEmpty": "No invoices for this entity's venues"
+      "entityInvoicesEmpty": "No invoices for this entity's venues",
+      "processingSync": "Sync processing",
+      "processingSyncHint": "Check the portal's Invoice-processing list: open invoices missing there are marked cancelled",
+      "processingSyncDone": "Done: {voided} cancelled"
     }
   },
   "Venues": {
@@ -1331,6 +1334,7 @@
     "delete": "Delete",
     "deleted": "Invoice deleted",
     "deleteConfirmTitle": "Delete invoice?",
-    "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone."
+    "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone.",
+    "periodMonth": "Month (optional)"
   }
 }

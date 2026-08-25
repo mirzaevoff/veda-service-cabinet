@@ -137,8 +137,11 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
               {invoice.invoiceNumber}
             </h1>
             <div className="flex flex-wrap items-center gap-1.5">
-              <Badge variant="secondary" className={invoiceStatusStyle(invoice.status)}>
-                {invoice.status}
+              <Badge
+                variant="secondary"
+                className={invoiceStatusStyle(invoice.effectiveStatus)}
+              >
+                {invoice.effectiveStatus}
               </Badge>
               <Badge
                 variant="secondary"

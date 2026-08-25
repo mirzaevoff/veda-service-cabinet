@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleAlert,
+  ClipboardCheck,
   FileText,
   RefreshCw,
   Search,
@@ -82,6 +83,7 @@ export function IikoInvoices() {
   const [data, setData] = useState<IikoInvoicesList | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [processingSyncing, setProcessingSyncing] = useState(false);
   const showSkeleton = useDelayed(loading && !data);
 
   useEffect(() => {
@@ -188,6 +190,21 @@ export function IikoInvoices() {
       setSyncing(false);
       if (e instanceof SessionExpiredError) router.replace("/login");
       else toast.error(t("syncError"));
+    }
+  }
+
+  async function processingSync() {
+    if (processingSyncing) return;
+    setProcessingSyncing(true);
+    try {
+      const r = await iikoPartnerApi.invoices.processingSync();
+      toast.success(t("processingSyncDone", { voided: r.voided }));
+      void load();
+    } catch (e) {
+      if (e instanceof SessionExpiredError) router.replace("/login");
+      else toast.error(t("syncError"));
+    } finally {
+      setProcessingSyncing(false);
     }
   }
 
@@ -354,6 +371,22 @@ export function IikoInvoices() {
               })}
             </span>
           )}
+          {canManage && kind === "customer" && (
+            <Button
+              variant="outline"
+              onClick={processingSync}
+              disabled={processingSyncing}
+              className="gap-2"
+              title={t("processingSyncHint")}
+            >
+              {processingSyncing ? (
+                <Spinner className="size-4" />
+              ) : (
+                <ClipboardCheck className="size-4" />
+              )}
+              {t("processingSync")}
+            </Button>
+          )}
           {canManage && (
             <Button
               variant="outline"
@@ -456,9 +489,9 @@ export function IikoInvoices() {
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className={invoiceStatusStyle(inv.status)}
+                        className={invoiceStatusStyle(inv.effectiveStatus)}
                       >
-                        {inv.status}
+                        {inv.effectiveStatus}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground tabular-nums">

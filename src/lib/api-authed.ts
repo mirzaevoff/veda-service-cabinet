@@ -30,6 +30,7 @@ import {
   type IikoInvoicesSyncResult,
   type IikoInvoicesSyncStart,
   type IikoInvoicesSyncStatus,
+  type IikoProcessingSyncResult,
   type IikoServerEvent,
   type IikoServersList,
   type IikoServersSyncResult,
@@ -776,6 +777,12 @@ export const iikoPartnerApi = {
     syncStatus: () =>
       authedRequest<IikoInvoicesSyncStatus>(
         "/iiko-partner/invoices/sync-status"
+      ),
+    /** Синк списка Invoice-processing → аннулирует отсутствующие открытые счета */
+    processingSync: () =>
+      authedRequest<IikoProcessingSyncResult>(
+        "/iiko-partner/invoices/processing-sync",
+        { method: "POST" }
       ),
   },
 };

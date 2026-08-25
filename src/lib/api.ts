@@ -825,6 +825,10 @@ export interface IikoInvoice {
   invoiceId: string | null;
   clientId: string | null;
   status: string;
+  /** Эффективный статус: 'Cancelled', если счёт открыт, но отсутствует в списке processing портала */
+  effectiveStatus: string;
+  /** В списке Invoice-processing; null — ещё не проверяли */
+  inProcessing: boolean | null;
   issueDate: string | null;
   dueDate: string | null;
   partner: string;
@@ -911,6 +915,13 @@ export interface IikoInvoicesSyncStart {
   busy: boolean;
 }
 
+/** Результат синка списка Invoice-processing */
+export interface IikoProcessingSyncResult {
+  clients: number;
+  inProcessing: number;
+  voided: number;
+}
+
 /** Прогресс синка счетов (опрос после фонового запуска) */
 export interface IikoInvoicesSyncStatus {
   syncing: boolean;
@@ -967,6 +978,8 @@ export type InvoicesPage = Page<Invoice>;
 /** Тело генерации счёта */
 export interface CreateInvoiceInput {
   legalEntityId: string;
+  /** Только счета этого месяца (YYYY-MM); без него — все неоплаченные разом */
+  period?: string;
   /** Блок-предупреждение у шапки (напр. про Didox) */
   didoxWarning?: string;
   /** Примечание про неполный месяц */
