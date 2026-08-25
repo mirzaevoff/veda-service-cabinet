@@ -349,7 +349,16 @@
     "enable": "Yoqish",
     "pushEnabled": "Push-bildirishnomalar yoqildi",
     "pushBlocked": "Bildirishnomalar brauzerda bloklangan — sayt sozlamalarida ruxsat bering",
-    "pushFailed": "Push yoqilmadi"
+    "pushFailed": "Push yoqilmadi",
+    "settingsTitle": "Push-bildirishnomalar",
+    "settingsHint": "Ilova yopiq boʻlsa ham brauzerga keladi",
+    "statusOn": "Yoqilgan",
+    "disable": "Oʻchirish",
+    "pushDisabled": "Push-bildirishnomalar oʻchirildi",
+    "statusBlocked": "Bloklangan",
+    "statusNotConfigured": "Sozlanmagan",
+    "statusUnsupported": "Qoʻllab-quvvatlanmaydi",
+    "notConfiguredHint": "Push hali serverda sozlanmagan — administratorga murojaat qiling"
   },
   "AdminNotifications": {
     "title": "Xabarnoma",

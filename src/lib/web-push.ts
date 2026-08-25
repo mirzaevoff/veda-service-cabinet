@@ -14,10 +14,9 @@ const SW_URL = `/firebase-messaging-sw.js?${firebaseConfigQuery()}`;
 
 let messagingPromise: Promise<Messaging | null> | null = null;
 
-/** Поддерживается ли web-push в этом окружении (браузер + SW + FCM + конфиг) */
-export async function isPushSupported(): Promise<boolean> {
+/** Поддерживает ли сам браузер web-push (без учёта конфига Firebase) */
+export async function isBrowserPushSupported(): Promise<boolean> {
   if (typeof window === "undefined") return false;
-  if (!hasFirebaseConfig()) return false;
   if (!("serviceWorker" in navigator) || !("Notification" in window))
     return false;
   try {
@@ -28,11 +27,31 @@ export async function isPushSupported(): Promise<boolean> {
   }
 }
 
+/** Настроен ли Firebase на этой сборке (проброшены NEXT_PUBLIC_FIREBASE_*) */
+export function isPushConfigured(): boolean {
+  return hasFirebaseConfig();
+}
+
+/** Поддерживается ли web-push в этом окружении (браузер + SW + FCM + конфиг) */
+export async function isPushSupported(): Promise<boolean> {
+  if (!hasFirebaseConfig()) return false;
+  return isBrowserPushSupported();
+}
+
 /** Текущее состояние разрешения на уведомления */
 export function pushPermission(): NotificationPermission | "unsupported" {
   if (typeof window === "undefined" || !("Notification" in window))
     return "unsupported";
   return Notification.permission;
+}
+
+/** Включены ли пуши на этом устройстве (разрешение выдано и токен зарегистрирован) */
+export function isPushEnabled(): boolean {
+  if (typeof window === "undefined" || !("Notification" in window)) return false;
+  return (
+    Notification.permission === "granted" &&
+    !!localStorage.getItem(TOKEN_STORAGE_KEY)
+  );
 }
 
 async function getMessagingInstance(): Promise<Messaging | null> {

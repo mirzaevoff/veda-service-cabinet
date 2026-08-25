@@ -349,7 +349,16 @@
     "enable": "Включить",
     "pushEnabled": "Пуш-уведомления включены",
     "pushBlocked": "Уведомления заблокированы в браузере — разрешите их в настройках сайта",
-    "pushFailed": "Не удалось включить пуши"
+    "pushFailed": "Не удалось включить пуши",
+    "settingsTitle": "Пуш-уведомления",
+    "settingsHint": "Приходят в браузер, даже когда вкладка закрыта",
+    "statusOn": "Включены",
+    "disable": "Отключить",
+    "pushDisabled": "Пуш-уведомления отключены",
+    "statusBlocked": "Заблокированы",
+    "statusNotConfigured": "Не настроены",
+    "statusUnsupported": "Не поддерживается",
+    "notConfiguredHint": "Push пока не настроен на сервере — обратитесь к администратору"
   },
   "AdminNotifications": {
     "title": "Рассылка",

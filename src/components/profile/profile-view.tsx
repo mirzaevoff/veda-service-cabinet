@@ -39,6 +39,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { PhoneInput } from "@/components/auth/phone-input";
+import { PushSettings } from "@/components/profile/push-settings";
 import { DatePicker } from "@/components/common/date-picker";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import type { AuthSession } from "@/lib/api";
@@ -282,6 +283,9 @@ export function ProfileView() {
           </Button>
         </div>
       </section>
+
+      {/* Пуш-уведомления */}
+      <PushSettings />
 
       {/* Сессии */}
       <section className="flex flex-col gap-3 rounded-lg border border-border p-5 duration-450 animate-in fade-in slide-in-from-bottom-4 [animation-delay:160ms] [animation-fill-mode:backwards]">
