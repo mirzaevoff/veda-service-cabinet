@@ -1113,7 +1113,12 @@
       "entityInvoicesEmpty": "Bu YuSh muassasalari bo'yicha hisob-fakturalar yo'q",
       "processingSync": "Processingni sverka",
       "processingSyncHint": "Portalning Invoice-processing roʻyxatini tekshirish: u yerda yoʻq ochiq hisoblar bekor qilingan deb belgilanadi",
-      "processingSyncDone": "Tayyor: {voided} bekor qilindi"
+      "processingSyncDone": "Tayyor: {voided} bekor qilindi",
+      "closeInvoice": "Hisobni yopish",
+      "closed": "Hisob toʻlangan deb belgilandi",
+      "closeNotAllowed": "Bu hisobni yopib boʻlmaydi (mijoz hisobi emas yoki portal IDsi yoʻq)",
+      "closeConfirmTitle": "Hisob toʻlangan deb belgilansinmi?",
+      "closeConfirmText": "Hisob pp.iiko.ru portalida toʻlangan deb belgilanadi (Mark as paid). Amal portal tomonida bajariladi."
     }
   },
   "Venues": {

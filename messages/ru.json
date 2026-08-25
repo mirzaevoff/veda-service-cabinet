@@ -1113,7 +1113,12 @@
       "entityInvoicesEmpty": "Счетов по заведениям этого ЮЛ нет",
       "processingSync": "Сверить процессинг",
       "processingSyncHint": "Проверить список Invoice-processing портала: открытые счета, которых там нет, помечаются как аннулированные",
-      "processingSyncDone": "Готово: аннулировано {voided}"
+      "processingSyncDone": "Готово: аннулировано {voided}",
+      "closeInvoice": "Закрыть счёт",
+      "closed": "Счёт отмечен оплаченным",
+      "closeNotAllowed": "Счёт нельзя закрыть (не клиентский или без ID на портале)",
+      "closeConfirmTitle": "Отметить счёт оплаченным?",
+      "closeConfirmText": "На портале pp.iiko.ru счёт будет отмечен как оплаченный (Mark as paid). Действие выполняется на стороне портала."
     }
   },
   "Venues": {

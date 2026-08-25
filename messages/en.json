@@ -1114,7 +1114,12 @@
       "entityInvoicesEmpty": "No invoices for this entity's venues",
       "processingSync": "Sync processing",
       "processingSyncHint": "Check the portal's Invoice-processing list: open invoices missing there are marked cancelled",
-      "processingSyncDone": "Done: {voided} cancelled"
+      "processingSyncDone": "Done: {voided} cancelled",
+      "closeInvoice": "Close invoice",
+      "closed": "Invoice marked as paid",
+      "closeNotAllowed": "This invoice can't be closed (not a customer invoice or no portal ID)",
+      "closeConfirmTitle": "Mark invoice as paid?",
+      "closeConfirmText": "The invoice will be marked as paid on pp.iiko.ru (Mark as paid). The action is performed on the portal side."
     }
   },
   "Venues": {

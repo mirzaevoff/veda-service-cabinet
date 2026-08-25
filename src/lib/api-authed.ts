@@ -762,6 +762,11 @@ export const iikoPartnerApi = {
       authedRequest<IikoInvoice>(
         `/iiko-partner/invoices/${id}${refresh ? "?refresh=true" : ""}`
       ),
+    /** Закрыть счёт (Mark as paid на портале) → отмечает Paid и пересинкивает */
+    close: (id: string) =>
+      authedRequest<IikoInvoice>(`/iiko-partner/invoices/${id}/close`, {
+        method: "POST",
+      }),
     sync: (full = false) =>
       authedRequest<IikoInvoicesSyncResult>(
         `/iiko-partner/invoices/sync${full ? "?full=true" : ""}`,

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
   Building2,
+  Check,
   ChevronRight,
   ExternalLink,
   FileText,
@@ -12,6 +13,16 @@ import {
   Store,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,7 +36,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import type { IikoInvoice } from "@/lib/api";
+import { ApiError, type IikoInvoice } from "@/lib/api";
 import { iikoPartnerApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -45,15 +56,19 @@ interface InvoiceItem {
 /** Страница счёта: реквизиты, привязанное заведение, позиции */
 export function InvoicePage({ invoiceId }: { invoiceId: string }) {
   const t = useTranslations("IikoPartner.invoices");
+  const tc = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
   const { can } = useCurrentUser();
   const canManage =
     can(PERMISSIONS.iikoInvoicesManage) ||
     can(PERMISSIONS.iikoPartnerInvoicesManage);
+  const canClose = can(PERMISSIONS.iikoInvoicesManage);
 
   const [invoice, setInvoice] = useState<IikoInvoice | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [confirmClose, setConfirmClose] = useState(false);
+  const [closing, setClosing] = useState(false);
 
   const load = useCallback(
     (refresh = false) => {
@@ -86,6 +101,22 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
       toast.error(t("syncError"));
     } finally {
       setRefreshing(false);
+    }
+  }
+
+  async function close() {
+    setClosing(true);
+    try {
+      const r = await iikoPartnerApi.invoices.close(invoiceId);
+      setInvoice(r);
+      setConfirmClose(false);
+      toast.success(t("closed"));
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER1306")
+        toast.error(t("closeNotAllowed"));
+      else toast.error(t("syncError"));
+    } finally {
+      setClosing(false);
     }
   }
 
@@ -172,6 +203,25 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
               {t("openOnPortal")}
             </a>
           )}
+          {canClose &&
+            invoice.kind === "customer" &&
+            invoice.invoiceId &&
+            invoice.effectiveStatus !== "Paid" &&
+            invoice.effectiveStatus !== "Cancelled" && (
+              <Button
+                size="sm"
+                className="mt-1 gap-1.5"
+                disabled={closing}
+                onClick={() => setConfirmClose(true)}
+              >
+                {closing ? (
+                  <Spinner className="size-4" />
+                ) : (
+                  <Check className="size-4" />
+                )}
+                {t("closeInvoice")}
+              </Button>
+            )}
         </div>
       </div>
 
@@ -331,6 +381,28 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
         )}
         {!canManage && null}
       </section>
+
+      <AlertDialog open={confirmClose} onOpenChange={setConfirmClose}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("closeConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("closeConfirmText")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tc("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                void close();
+              }}
+            >
+              {closing ? <Spinner className="size-4" /> : t("closeInvoice")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
