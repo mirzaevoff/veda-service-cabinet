@@ -63,7 +63,7 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
   const canManage =
     can(PERMISSIONS.iikoInvoicesManage) ||
     can(PERMISSIONS.iikoPartnerInvoicesManage);
-  const canClose = can(PERMISSIONS.iikoInvoicesManage);
+  const canClose = can(PERMISSIONS.iikoInvoicesClose);
 
   const [invoice, setInvoice] = useState<IikoInvoice | null>(null);
   const [refreshing, setRefreshing] = useState(false);

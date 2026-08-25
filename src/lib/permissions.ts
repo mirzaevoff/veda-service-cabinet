@@ -26,6 +26,7 @@ export const PERMISSIONS = {
   iikoServersManage: "iikoServers.manage",
   iikoInvoicesView: "iikoInvoices.view",
   iikoInvoicesManage: "iikoInvoices.manage",
+  iikoInvoicesClose: "iikoInvoices.close",
   iikoPartnerInvoicesView: "iikoPartnerInvoices.view",
   iikoPartnerInvoicesManage: "iikoPartnerInvoices.manage",
   venuesView: "venues.view",
