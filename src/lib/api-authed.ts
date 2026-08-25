@@ -697,6 +697,9 @@ export const invoicesApi = {
     sort?: string;
   } = {}) => authedRequest<InvoicesPage>(`/invoices${query({ ...params })}`),
   get: (id: string) => authedRequest<Invoice>(`/invoices/${id}`),
+  /** Удалить счёт: освобождает iiko-источники для перегенерации + удаляет PDF */
+  remove: (id: string) =>
+    authedRequest<void>(`/invoices/${id}`, { method: "DELETE" }),
   /** Скачать PDF (Bearer) как Blob — для кнопки «Скачать» */
   pdfBlob: (id: string) => authedBlob(`/invoices/${id}/pdf`),
 };

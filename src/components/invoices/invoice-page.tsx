@@ -2,12 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, Download, ExternalLink, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { useCurrentUser } from "@/components/common/current-user-provider";
+import { PERMISSIONS } from "@/lib/permissions";
 import {
   Table,
   TableBody,
@@ -29,9 +41,13 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
   const tc = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
+  const { can } = useCurrentUser();
+  const canManage = can(PERMISSIONS.invoicesManage);
 
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(() => {
     invoicesApi
@@ -67,6 +83,19 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
       else toast.error(t("genericError"));
     } finally {
       setDownloading(false);
+    }
+  }
+
+  async function remove() {
+    if (!invoice) return;
+    setDeleting(true);
+    try {
+      await invoicesApi.remove(invoice.id);
+      toast.success(t("deleted"));
+      router.replace("/invoices");
+    } catch {
+      toast.error(t("genericError"));
+      setDeleting(false);
     }
   }
 
@@ -138,6 +167,22 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
             )}
             {t("downloadPdf")}
           </Button>
+          {canManage && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              aria-label={t("delete")}
+              disabled={deleting}
+              onClick={() => setConfirmDelete(true)}
+            >
+              {deleting ? (
+                <Spinner className="size-4" />
+              ) : (
+                <Trash2 className="size-4" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -198,6 +243,26 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
           <span className="tabular-nums">{formatSum(invoice.totalSum, locale)}</span>
         </div>
       </section>
+
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("deleteConfirmText")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tc("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => void remove()}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {t("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

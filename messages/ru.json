@@ -1326,6 +1326,10 @@
     "period": "Период",
     "sourceInvoices": "Исходные счета",
     "sectionTitle": "Счета на оплату",
-    "totalLabel": "Итого"
+    "totalLabel": "Итого",
+    "delete": "Удалить",
+    "deleted": "Счёт удалён",
+    "deleteConfirmTitle": "Удалить счёт?",
+    "deleteConfirmText": "Счёт и его PDF будут удалены, а исходные iiko-счета снова станут доступны для выставления. Действие необратимо."
   }
 }

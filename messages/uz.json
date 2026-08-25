@@ -1326,6 +1326,10 @@
     "period": "Davr",
     "sourceInvoices": "Manba hisoblar",
     "sectionTitle": "Toʻlov hisoblari",
-    "totalLabel": "Jami"
+    "totalLabel": "Jami",
+    "delete": "Oʻchirish",
+    "deleted": "Hisob oʻchirildi",
+    "deleteConfirmTitle": "Hisob oʻchirilsinmi?",
+    "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi."
   }
 }

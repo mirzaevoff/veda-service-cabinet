@@ -1327,6 +1327,10 @@
     "period": "Period",
     "sourceInvoices": "Source invoices",
     "sectionTitle": "Invoices",
-    "totalLabel": "Total"
+    "totalLabel": "Total",
+    "delete": "Delete",
+    "deleted": "Invoice deleted",
+    "deleteConfirmTitle": "Delete invoice?",
+    "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone."
   }
 }
