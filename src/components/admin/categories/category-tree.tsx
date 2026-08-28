@@ -108,13 +108,24 @@ export function CategoryTree({ embedded = false }: { embedded?: boolean }) {
     index: number,
     direction: -1 | 1
   ) {
-    const a = siblings[index];
-    const b = siblings[index + direction];
-    if (!a || !b) return;
+    const target = index + direction;
+    if (target < 0 || target >= siblings.length) return;
+
+    // Переставляем элемент и нормализуем order = позиция в списке.
+    // Своп двух order не работал, когда у категорий одинаковый order (напр. все 0
+    // у подкатегорий — API создаёт их с order:0) → своп нулей был no-op.
+    const reordered = [...siblings];
+    const [item] = reordered.splice(index, 1);
+    reordered.splice(target, 0, item);
+
     try {
-      // Своп order двумя PATCH (не атомарно — при ошибке перечитываем)
-      await adminApi.categories.update(a.id, { order: b.order });
-      await adminApi.categories.update(b.id, { order: a.order });
+      await Promise.all(
+        reordered.flatMap((category, i) =>
+          category.order === i
+            ? []
+            : [adminApi.categories.update(category.id, { order: i })]
+        )
+      );
     } catch {
       toast.error(t("errors.generic"));
     } finally {
