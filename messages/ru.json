@@ -27,7 +27,8 @@
     "invoices": "Счета",
     "knowledgeBase": "База знаний",
     "inDevelopment": "в разработке",
-    "equipment": "Оборудование"
+    "equipment": "Оборудование",
+    "inventory": "Инвентаризация"
   },
   "Shell": {
     "logout": "Выйти",
@@ -171,7 +172,10 @@
       "reset": "Сбросить всё",
       "done": "Готово"
     },
-    "change": "Изменить"
+    "change": "Изменить",
+    "search": "Поиск",
+    "nothingFound": "Ничего не найдено",
+    "clear": "Очистить"
   },
   "Tickets": {
     "list": {
@@ -1413,5 +1417,63 @@
     "categoryInUse": "Категория используется — сначала снимите её с оборудования",
     "statusInUse": "Статус используется или он по умолчанию",
     "genericError": "Не получилось. Попробуйте ещё раз"
+  },
+  "Inventory": {
+    "title": "Инвентаризация",
+    "description": "Акты инвентаризации оборудования",
+    "total": "Всего: {count}",
+    "newAudit": "Новый акт",
+    "empty": "Актов пока нет",
+    "colLocation": "Локация",
+    "colStatus": "Статус",
+    "colProgress": "Проверено",
+    "colDiscrepancies": "Расхождения",
+    "colCreated": "Создан",
+    "status": {
+      "draft": "Черновик",
+      "completed": "Завершён",
+      "approved": "Утверждён"
+    },
+    "createTitle": "Новый акт инвентаризации",
+    "createHint": "Сделаем снимок оборудования выбранной локации",
+    "office": "Офис",
+    "officePlaceholder": "Выберите офис",
+    "departmentOptional": "Отдел (необязательно)",
+    "wholeOffice": "Весь офис",
+    "note": "Заметка",
+    "createAct": "Создать акт",
+    "officeRequired": "Выберите офис",
+    "created": "Акт создан",
+    "genericError": "Не получилось. Попробуйте ещё раз",
+    "createdBy": "Создал: {name}",
+    "approvedBy": "Утвердил {name} · {date}",
+    "markCompleted": "Завершить",
+    "backToDraft": "Вернуть в черновик",
+    "approve": "Утвердить",
+    "approved": "Акт утверждён",
+    "deleted": "Акт удалён",
+    "lockedError": "Акт утверждён — изменения недоступны",
+    "count": {
+      "total": "Всего",
+      "checked": "Проверено",
+      "present": "На месте",
+      "missing": "Отсутствует",
+      "discrepancies": "Расхождения"
+    },
+    "noItems": "В этой локации нет оборудования",
+    "deleteConfirmTitle": "Удалить акт?",
+    "deleteConfirmText": "Акт инвентаризации будет удалён без возможности восстановления.",
+    "approveConfirmTitle": "Утвердить акт?",
+    "approveConfirmText": "После утверждения акт блокируется и его нельзя изменить.",
+    "discrepancy": "Расхождение",
+    "expected": "Ожидалось",
+    "notChecked": "Не пров.",
+    "present": "На месте",
+    "missing": "Нет",
+    "actualStatus": "Факт. статус",
+    "actualDepartment": "Факт. отдел",
+    "actualResponsible": "Факт. ответственный",
+    "asExpected": "Как ожидалось",
+    "itemNote": "Заметка по позиции"
   }
 }

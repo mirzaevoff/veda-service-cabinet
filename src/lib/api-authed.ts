@@ -14,6 +14,11 @@ import {
   type EquipmentPage,
   type CreateEquipmentInput,
   type UpdateEquipmentInput,
+  type InventoryAudit,
+  type InventoryPage,
+  type CreateInventoryInput,
+  type UpdateInventoryItemInput,
+  type InventoryAuditStatus,
   type AuthSession,
   type Bank,
   type BankAccount,
@@ -1120,4 +1125,36 @@ export const equipmentApi = {
     }),
   removeStatus: (id: string) =>
     authedRequest<void>(`/equipment-statuses/${id}`, { method: "DELETE" }),
+};
+
+export const inventoryApi = {
+  list: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: string;
+    officeId?: string;
+    departmentId?: string;
+    status?: InventoryAuditStatus;
+  } = {}) => authedRequest<InventoryPage>(`/inventory${query({ ...params })}`),
+  get: (id: string) => authedRequest<InventoryAudit>(`/inventory/${id}`),
+  create: (body: CreateInventoryInput) =>
+    authedRequest<InventoryAudit>("/inventory", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: { note?: string; status?: "draft" | "completed" }) =>
+    authedRequest<InventoryAudit>(`/inventory/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  updateItem: (id: string, itemId: string, body: UpdateInventoryItemInput) =>
+    authedRequest<InventoryAudit>(`/inventory/${id}/items/${itemId}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  approve: (id: string) =>
+    authedRequest<InventoryAudit>(`/inventory/${id}/approve`, { method: "POST" }),
+  remove: (id: string) =>
+    authedRequest<void>(`/inventory/${id}`, { method: "DELETE" }),
 };

@@ -1244,3 +1244,66 @@ export interface UpdateEquipmentInput {
   statusId?: string;
   note?: string;
 }
+
+// --- Тех. отдел: Инвентаризация (API 0.42) ----------------------------------
+
+export type InventoryAuditStatus = "draft" | "completed" | "approved";
+
+export interface InventoryCounts {
+  total: number;
+  checked: number;
+  present: number;
+  missing: number;
+  discrepancies: number;
+}
+
+/** Позиция акта: ожидаемое (снимок) vs фактическое */
+export interface InventoryItem {
+  id: string;
+  equipmentId: string | null;
+  name: string;
+  serialNumber: string;
+  inventoryNumber: string;
+  expectedStatus: NamedRef | null;
+  expectedResponsible: NamedRef | null;
+  expectedDepartment: NamedRef | null;
+  /** null — не проверяли, true — на месте, false — отсутствует */
+  present: boolean | null;
+  actualStatus: NamedRef | null;
+  actualResponsible: NamedRef | null;
+  actualDepartment: NamedRef | null;
+  note: string;
+  discrepancy: boolean;
+}
+
+export interface InventoryAudit {
+  id: string;
+  office: NamedRef;
+  department: NamedRef | null;
+  status: InventoryAuditStatus;
+  createdBy: { id: string; name: string } | null;
+  approvedBy: { id: string; name: string } | null;
+  approvedAt: string | null;
+  note: string;
+  counts: InventoryCounts;
+  createdAt: string;
+  /** Только в GET /inventory/:id */
+  items?: InventoryItem[];
+}
+
+export type InventoryPage = Page<InventoryAudit>;
+
+export interface CreateInventoryInput {
+  officeId: string;
+  departmentId?: string;
+  note?: string;
+}
+
+/** null очищает actual*; present=null — не проверено */
+export interface UpdateInventoryItemInput {
+  present?: boolean | null;
+  actualStatusId?: string | null;
+  actualResponsibleId?: string | null;
+  actualDepartmentId?: string | null;
+  note?: string;
+}

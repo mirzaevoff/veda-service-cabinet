@@ -27,7 +27,8 @@
     "invoices": "Hisob-fakturalar",
     "knowledgeBase": "Bilimlar bazasi",
     "inDevelopment": "ishlab chiqilmoqda",
-    "equipment": "Jihozlar"
+    "equipment": "Jihozlar",
+    "inventory": "Inventarizatsiya"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -171,7 +172,10 @@
       "reset": "Hammasini tozalash",
       "done": "Tayyor"
     },
-    "change": "Oʻzgartirish"
+    "change": "Oʻzgartirish",
+    "search": "Qidirish",
+    "nothingFound": "Hech narsa topilmadi",
+    "clear": "Tozalash"
   },
   "Tickets": {
     "list": {
@@ -1413,5 +1417,63 @@
     "categoryInUse": "Turkum ishlatilmoqda — avval jihozdan uzing",
     "statusInUse": "Holat ishlatilmoqda yoki standart",
     "genericError": "Xatolik yuz berdi. Qayta urinib koʻring"
+  },
+  "Inventory": {
+    "title": "Inventarizatsiya",
+    "description": "Jihozlar inventarizatsiya dalolatnomalari",
+    "total": "Jami: {count}",
+    "newAudit": "Yangi dalolatnoma",
+    "empty": "Hozircha dalolatnoma yoʻq",
+    "colLocation": "Lokatsiya",
+    "colStatus": "Holat",
+    "colProgress": "Tekshirilgan",
+    "colDiscrepancies": "Nomuvofiqliklar",
+    "colCreated": "Yaratilgan",
+    "status": {
+      "draft": "Qoralama",
+      "completed": "Yakunlangan",
+      "approved": "Tasdiqlangan"
+    },
+    "createTitle": "Yangi inventarizatsiya dalolatnomasi",
+    "createHint": "Tanlangan lokatsiya jihozlarining suratini olamiz",
+    "office": "Ofis",
+    "officePlaceholder": "Ofisni tanlang",
+    "departmentOptional": "Boʻlim (ixtiyoriy)",
+    "wholeOffice": "Butun ofis",
+    "note": "Izoh",
+    "createAct": "Dalolatnoma yaratish",
+    "officeRequired": "Ofisni tanlang",
+    "created": "Dalolatnoma yaratildi",
+    "genericError": "Xatolik yuz berdi. Qayta urinib koʻring",
+    "createdBy": "Yaratdi: {name}",
+    "approvedBy": "Tasdiqladi {name} · {date}",
+    "markCompleted": "Yakunlash",
+    "backToDraft": "Qoralamaga qaytarish",
+    "approve": "Tasdiqlash",
+    "approved": "Dalolatnoma tasdiqlandi",
+    "deleted": "Dalolatnoma oʻchirildi",
+    "lockedError": "Dalolatnoma tasdiqlangan — tahrirlab boʻlmaydi",
+    "count": {
+      "total": "Jami",
+      "checked": "Tekshirilgan",
+      "present": "Joyida",
+      "missing": "Yoʻq",
+      "discrepancies": "Nomuvofiqliklar"
+    },
+    "noItems": "Bu lokatsiyada jihoz yoʻq",
+    "deleteConfirmTitle": "Dalolatnoma oʻchirilsinmi?",
+    "deleteConfirmText": "Dalolatnoma butunlay oʻchiriladi.",
+    "approveConfirmTitle": "Dalolatnoma tasdiqlansinmi?",
+    "approveConfirmText": "Tasdiqlangach dalolatnoma bloklanadi va tahrirlab boʻlmaydi.",
+    "discrepancy": "Nomuvofiqlik",
+    "expected": "Kutilgan",
+    "notChecked": "Tekshirilmagan",
+    "present": "Joyida",
+    "missing": "Yoʻq",
+    "actualStatus": "Fakt holat",
+    "actualDepartment": "Fakt boʻlim",
+    "actualResponsible": "Fakt masʼul",
+    "asExpected": "Kutilganidek",
+    "itemNote": "Pozitsiya izohi"
   }
 }

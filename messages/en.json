@@ -27,7 +27,8 @@
     "invoices": "Invoices",
     "knowledgeBase": "Knowledge base",
     "inDevelopment": "in development",
-    "equipment": "Equipment"
+    "equipment": "Equipment",
+    "inventory": "Inventory"
   },
   "Shell": {
     "logout": "Sign out",
@@ -171,7 +172,10 @@
       "reset": "Reset all",
       "done": "Done"
     },
-    "change": "Change"
+    "change": "Change",
+    "search": "Search",
+    "nothingFound": "Nothing found",
+    "clear": "Clear"
   },
   "Tickets": {
     "list": {
@@ -1414,5 +1418,63 @@
     "categoryInUse": "Category is in use — detach it from equipment first",
     "statusInUse": "Status is in use or is the default",
     "genericError": "Something went wrong. Try again"
+  },
+  "Inventory": {
+    "title": "Inventory",
+    "description": "Equipment inventory audits",
+    "total": "Total: {count}",
+    "newAudit": "New audit",
+    "empty": "No audits yet",
+    "colLocation": "Location",
+    "colStatus": "Status",
+    "colProgress": "Checked",
+    "colDiscrepancies": "Discrepancies",
+    "colCreated": "Created",
+    "status": {
+      "draft": "Draft",
+      "completed": "Completed",
+      "approved": "Approved"
+    },
+    "createTitle": "New inventory audit",
+    "createHint": "We'll snapshot the equipment of the chosen location",
+    "office": "Office",
+    "officePlaceholder": "Select office",
+    "departmentOptional": "Department (optional)",
+    "wholeOffice": "Whole office",
+    "note": "Note",
+    "createAct": "Create audit",
+    "officeRequired": "Select an office",
+    "created": "Audit created",
+    "genericError": "Something went wrong. Try again",
+    "createdBy": "Created by {name}",
+    "approvedBy": "Approved by {name} · {date}",
+    "markCompleted": "Complete",
+    "backToDraft": "Back to draft",
+    "approve": "Approve",
+    "approved": "Audit approved",
+    "deleted": "Audit deleted",
+    "lockedError": "Audit is approved — editing is disabled",
+    "count": {
+      "total": "Total",
+      "checked": "Checked",
+      "present": "Present",
+      "missing": "Missing",
+      "discrepancies": "Discrepancies"
+    },
+    "noItems": "No equipment in this location",
+    "deleteConfirmTitle": "Delete audit?",
+    "deleteConfirmText": "The audit will be permanently removed.",
+    "approveConfirmTitle": "Approve audit?",
+    "approveConfirmText": "After approval the audit is locked and cannot be edited.",
+    "discrepancy": "Discrepancy",
+    "expected": "Expected",
+    "notChecked": "Not checked",
+    "present": "Present",
+    "missing": "Missing",
+    "actualStatus": "Actual status",
+    "actualDepartment": "Actual dept",
+    "actualResponsible": "Actual responsible",
+    "asExpected": "As expected",
+    "itemNote": "Item note"
   }
 }

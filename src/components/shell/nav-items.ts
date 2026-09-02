@@ -1,5 +1,6 @@
 import {
   BookOpen,
+  ClipboardList,
   Building2,
   Handshake,
   Store,
@@ -145,6 +146,12 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/equipment",
         icon: Package,
         permission: PERMISSIONS.equipmentView,
+      },
+      {
+        key: "inventory",
+        href: "/inventory",
+        icon: ClipboardList,
+        permission: PERMISSIONS.inventoryView,
       },
       {
         key: "knowledgeBase",
