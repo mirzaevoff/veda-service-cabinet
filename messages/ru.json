@@ -72,7 +72,13 @@
     "filterRoleLabel": "Роль",
     "online": "Онлайн",
     "lastSeen": "Был(а) в сети {time}",
-    "neverSeen": "Ещё не заходил(а)"
+    "neverSeen": "Ещё не заходил(а)",
+    "profileSection": "Анкета",
+    "nameLabel": "Имя",
+    "lastNameLabel": "Фамилия",
+    "birthDateLabel": "Дата рождения",
+    "nameRequired": "Укажите имя",
+    "profileSaved": "Анкета сохранена"
   },
   "AdminRoles": {
     "title": "Роли и Доступы",
@@ -313,7 +319,8 @@
       "ticketsClosed": "Закрытых всего",
       "users": "Пользователи",
       "usersOnline": "онлайн сейчас",
-      "usersTotal": "Всего активных"
+      "usersTotal": "Всего активных",
+      "venuesUnknown": "Нет данных"
     }
   },
   "Home": {
@@ -1207,7 +1214,8 @@
     "status": {
       "open": "Работает",
       "closed": "Не работает",
-      "temporarily_closed": "Временно не работает"
+      "temporarily_closed": "Временно не работает",
+      "unknown": "Нет данных"
     },
     "serverBadge": "Сервер: {status}",
     "statusAutoHint": "Статус определяется автоматически по серверу",

@@ -175,6 +175,9 @@ export function DashboardBlocks() {
               tone="warning"
             />
           )}
+          {venues.unknown > 0 && (
+            <StatRow label={t("venuesUnknown")} value={venues.unknown} />
+          )}
           <StatRow label={t("venuesLinked")} value={venues.linked} />
         </BlockCard>
       )}

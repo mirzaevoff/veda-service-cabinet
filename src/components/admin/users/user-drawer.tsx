@@ -16,7 +16,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DatePicker } from "@/components/common/date-picker";
 import {
   Select,
   SelectContent,
@@ -54,12 +56,19 @@ export function UserDrawer({
   const locale = useLocale();
   const { user: me, can } = useCurrentUser();
   const [roleId, setRoleId] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [busy, setBusy] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
   const [confirmBlock, setConfirmBlock] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс формы при смене пользователя
     setRoleId(user?.role.id ?? "");
+    setName(user?.name ?? "");
+    setLastName(user?.lastName ?? "");
+    setBirthDate(user?.birthDate ?? "");
   }, [user]);
 
   if (!user) return null;
@@ -73,6 +82,32 @@ export function UserDrawer({
     if (e instanceof ApiError && e.code === "NETWORK")
       return t("errors.network");
     return t("errors.generic");
+  }
+
+  const profileChanged =
+    name.trim() !== user.name ||
+    lastName.trim() !== user.lastName ||
+    (birthDate || null) !== user.birthDate;
+
+  async function saveProfile() {
+    if (!name.trim()) {
+      toast.error(t("nameRequired"));
+      return;
+    }
+    setSavingProfile(true);
+    try {
+      const updated = await adminApi.users.update(user!.id, {
+        name: name.trim(),
+        lastName: lastName.trim(),
+        birthDate: birthDate || null,
+      });
+      onChanged(updated);
+      toast.success(t("profileSaved"));
+    } catch (e) {
+      toast.error(errorText(e));
+    } finally {
+      setSavingProfile(false);
+    }
   }
 
   async function saveRole() {
@@ -147,6 +182,41 @@ export function UserDrawer({
 
           {canManage && (
             <>
+              <Separator />
+
+              <div className="flex flex-col gap-3">
+                <Label className="text-sm font-medium text-muted-foreground">
+                  {t("profileSection")}
+                </Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    value={name}
+                    maxLength={100}
+                    placeholder={t("nameLabel")}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Input
+                    value={lastName}
+                    maxLength={100}
+                    placeholder={t("lastNameLabel")}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+                <DatePicker
+                  value={birthDate}
+                  onChange={setBirthDate}
+                  placeholder={t("birthDateLabel")}
+                />
+                <Button
+                  size="sm"
+                  className="self-start"
+                  disabled={savingProfile || !name.trim() || !profileChanged}
+                  onClick={saveProfile}
+                >
+                  {savingProfile ? <Spinner className="size-4" /> : t("save")}
+                </Button>
+              </div>
+
               <Separator />
 
               <div className="flex flex-col gap-2">

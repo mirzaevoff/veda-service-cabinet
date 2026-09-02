@@ -72,7 +72,13 @@
     "filterRoleLabel": "Rol",
     "online": "Onlayn",
     "lastSeen": "Oxirgi faollik: {time}",
-    "neverSeen": "Hali kirmagan"
+    "neverSeen": "Hali kirmagan",
+    "profileSection": "Anketa",
+    "nameLabel": "Ism",
+    "lastNameLabel": "Familiya",
+    "birthDateLabel": "Tugʻilgan sana",
+    "nameRequired": "Ismni kiriting",
+    "profileSaved": "Anketa saqlandi"
   },
   "AdminRoles": {
     "title": "Rollar va ruxsatlar",
@@ -313,7 +319,8 @@
       "ticketsClosed": "Jami yopilgan",
       "users": "Foydalanuvchilar",
       "usersOnline": "hozir onlayn",
-      "usersTotal": "Jami faol"
+      "usersTotal": "Jami faol",
+      "venuesUnknown": "Maʼlumot yoʻq"
     }
   },
   "Home": {
@@ -1207,7 +1214,8 @@
     "status": {
       "open": "Ishlayapti",
       "closed": "Ishlamayapti",
-      "temporarily_closed": "Vaqtincha ishlamaydi"
+      "temporarily_closed": "Vaqtincha ishlamaydi",
+      "unknown": "Nomaʼlum"
     },
     "serverBadge": "Server: {status}",
     "statusAutoHint": "Holat server bo'yicha avtomatik aniqlanadi",

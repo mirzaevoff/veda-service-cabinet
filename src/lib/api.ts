@@ -1012,7 +1012,7 @@ export interface IikoServersSyncResult {
 export type VenueKind = "rms" | "chain";
 
 /** Эффективный статус: ручной temporarily_closed перекрывает авто open/closed по серверу */
-export type VenueStatus = "open" | "closed" | "temporarily_closed";
+export type VenueStatus = "open" | "closed" | "temporarily_closed" | "unknown";
 
 export interface VenueRef {
   id: string;
@@ -1115,6 +1115,8 @@ export interface DashboardVenuesBlock {
   open: number;
   closed: number;
   temporarilyClosed: number;
+  /** Сервера нет в мониторинге (данных нет) */
+  unknown: number;
 }
 
 export interface DashboardTicketsBlock {

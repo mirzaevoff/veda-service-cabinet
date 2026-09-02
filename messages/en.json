@@ -72,7 +72,13 @@
     "filterRoleLabel": "Role",
     "online": "Online",
     "lastSeen": "Last seen {time}",
-    "neverSeen": "Never signed in"
+    "neverSeen": "Never signed in",
+    "profileSection": "Profile",
+    "nameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "birthDateLabel": "Birth date",
+    "nameRequired": "Enter a name",
+    "profileSaved": "Profile saved"
   },
   "AdminRoles": {
     "title": "Roles & Access",
@@ -314,7 +320,8 @@
       "ticketsClosed": "Closed total",
       "users": "Users",
       "usersOnline": "online now",
-      "usersTotal": "Total active"
+      "usersTotal": "Total active",
+      "venuesUnknown": "No data"
     }
   },
   "Home": {
@@ -1208,7 +1215,8 @@
     "status": {
       "open": "Open",
       "closed": "Closed",
-      "temporarily_closed": "Temporarily closed"
+      "temporarily_closed": "Temporarily closed",
+      "unknown": "Unknown"
     },
     "serverBadge": "Server: {status}",
     "statusAutoHint": "Status is derived automatically from the server",

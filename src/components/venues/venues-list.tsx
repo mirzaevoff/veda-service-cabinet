@@ -56,6 +56,7 @@ const VENUE_STATUS_STYLES: Record<VenueStatus, string> = {
   open: "bg-success-light text-success",
   closed: "bg-secondary text-muted-foreground",
   temporarily_closed: "bg-warning-light text-warning",
+  unknown: "bg-secondary text-muted-foreground",
 };
 
 /** Заведения клиентов: зеркало Customers портала iiko + привязка к нашим ЮЛ */

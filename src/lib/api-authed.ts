@@ -638,7 +638,13 @@ export const adminApi = {
     get: (id: string) => authedRequest<UserProfile>(`/users/${id}`),
     update: (
       id: string,
-      body: { status?: "active" | "blocked"; roleId?: string }
+      body: {
+        status?: "active" | "blocked";
+        roleId?: string;
+        name?: string;
+        lastName?: string;
+        birthDate?: string | null;
+      }
     ) =>
       authedRequest<UserProfile>(`/users/${id}`, {
         method: "PATCH",
