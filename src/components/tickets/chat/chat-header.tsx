@@ -47,6 +47,8 @@ export function ChatHeader({
   const { user, can } = useCurrentUser();
   const connected = useSocketConnected();
   const [busy, setBusy] = useState(false);
+  const [closeOpen, setCloseOpen] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
 
   const isAuthor = user?.id === ticket.author.id;
   const isManager = can(PERMISSIONS.ticketsManage);
@@ -55,6 +57,8 @@ export function ChatHeader({
   const isParticipant = !!ticket.participants?.some(
     (p) => p.user.id === user?.id
   );
+  // Закрытие просроченной заявки сотрудником (не автором) требует причину (ER414)
+  const needSlaReason = !!ticket.slaBreached && !isAuthor;
 
   const [severities, setSeverities] = useState<TicketSeverity[]>(
     () => getCached<TicketSeverity[]>("ticket-severities") ?? []
@@ -70,12 +74,19 @@ export function ChatHeader({
       .catch(() => {});
   }, [canAnswer]);
 
-  async function update(patch: { status?: "open" | "closed" }) {
+  async function update(patch: {
+    status?: "open" | "closed";
+    slaBreachReason?: string;
+  }) {
     setBusy(true);
     try {
       onUpdated(await ticketsApi.update(ticket.id, patch));
+      setCloseOpen(false);
+      setCloseReason("");
     } catch (e) {
       if (e instanceof ApiError && e.code === "ER408") toast.error(te("ER408"));
+      else if (e instanceof ApiError && e.code === "ER414")
+        toast.error(t("slaReasonRequired"));
       else toast.error(te("generic"));
     } finally {
       setBusy(false);
@@ -229,7 +240,7 @@ export function ChatHeader({
             </Button>
           )}
           {(isAuthor || isParticipant || isManager) && ticket.status === "open" && (
-            <AlertDialog>
+            <AlertDialog open={closeOpen} onOpenChange={setCloseOpen}>
               <AlertDialogTrigger
                 render={
                   <Button variant="ghost" size="sm" disabled={busy} className="text-muted-foreground">
@@ -241,12 +252,33 @@ export function ChatHeader({
                 <AlertDialogHeader>
                   <AlertDialogTitle>{t("closeConfirmTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t("closeConfirmText")}
+                    {needSlaReason ? t("slaReasonHint") : t("closeConfirmText")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
+                {needSlaReason && (
+                  <textarea
+                    autoFocus
+                    value={closeReason}
+                    maxLength={500}
+                    rows={3}
+                    placeholder={t("slaReasonPlaceholder")}
+                    onChange={(e) => setCloseReason(e.target.value)}
+                    className="w-full resize-none rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  />
+                )}
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => update({ status: "closed" })}>
+                  <AlertDialogAction
+                    disabled={busy || (needSlaReason && !closeReason.trim())}
+                    onClick={(e) => {
+                      // не закрывать диалог автоматически — ждём ответа API
+                      e.preventDefault();
+                      void update({
+                        status: "closed",
+                        slaBreachReason: needSlaReason ? closeReason.trim() : undefined,
+                      });
+                    }}
+                  >
                     {t("closeTicket")}
                   </AlertDialogAction>
                 </AlertDialogFooter>

@@ -262,7 +262,10 @@
       "noParticipants": "Никто не взял в работу",
       "systemClaimed": "{name} вошёл в чат",
       "systemLeft": "{name} вышел из чата",
-      "systemSeverityChanged": "{name} изменил тип обращения"
+      "systemSeverityChanged": "{name} изменил тип обращения",
+      "slaReasonHint": "Заявка просрочена по SLA. Укажите причину нарушения — это обязательно при закрытии.",
+      "slaReasonPlaceholder": "Напр.: ожидание ответа от стороннего поставщика",
+      "slaReasonRequired": "Укажите причину нарушения SLA"
     },
     "attachments": {
       "add": "Прикрепить файл",

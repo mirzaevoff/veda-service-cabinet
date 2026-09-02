@@ -262,7 +262,10 @@
       "noParticipants": "Nobody has claimed it",
       "systemClaimed": "{name} joined the chat",
       "systemLeft": "{name} left the chat",
-      "systemSeverityChanged": "{name} changed the request type"
+      "systemSeverityChanged": "{name} changed the request type",
+      "slaReasonHint": "The ticket breached its SLA. A breach reason is required to close it.",
+      "slaReasonPlaceholder": "e.g. waiting for a third-party vendor",
+      "slaReasonRequired": "Enter the SLA breach reason"
     },
     "attachments": {
       "add": "Attach file",

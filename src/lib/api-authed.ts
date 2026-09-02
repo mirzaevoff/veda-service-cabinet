@@ -210,7 +210,10 @@ export const ticketsApi = {
       body: JSON.stringify(body),
     }),
 
-  update: (id: string, body: { status?: TicketStatus; assigneeId?: string }) =>
+  update: (
+    id: string,
+    body: { status?: TicketStatus; assigneeId?: string; slaBreachReason?: string }
+  ) =>
     authedRequest<Ticket>(`/tickets/${id}`, {
       method: "PATCH",
       body: JSON.stringify(body),

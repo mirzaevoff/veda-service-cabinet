@@ -262,7 +262,10 @@
       "noParticipants": "Hech kim ishga olmagan",
       "systemClaimed": "{name} chatga kirdi",
       "systemLeft": "{name} chatdan chiqdi",
-      "systemSeverityChanged": "{name} murojaat turini o'zgartirdi"
+      "systemSeverityChanged": "{name} murojaat turini o'zgartirdi",
+      "slaReasonHint": "Murojaat SLA muddatini buzgan. Yopish uchun buzilish sababini koʻrsating.",
+      "slaReasonPlaceholder": "masalan: uchinchi tomon yetkazib beruvchidan javob kutish",
+      "slaReasonRequired": "SLA buzilishi sababini kiriting"
     },
     "attachments": {
       "add": "Fayl biriktirish",
