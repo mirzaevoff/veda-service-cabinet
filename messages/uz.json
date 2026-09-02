@@ -28,7 +28,8 @@
     "knowledgeBase": "Bilimlar bazasi",
     "inDevelopment": "ishlab chiqilmoqda",
     "equipment": "Jihozlar",
-    "inventory": "Inventarizatsiya"
+    "inventory": "Inventarizatsiya",
+    "techStats": "Statistika"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -1508,5 +1509,41 @@
     "titleRequired": "Sarlavhani kiriting",
     "saved": "Saqlandi",
     "createdArticle": "Maqola yaratildi"
+  },
+  "TechDashboard": {
+    "title": "Texnik boʻlim dashboardi",
+    "description": "Murojaatlar va xodimlar samaradorligi statistikasi",
+    "period": {
+      "day": "Kun",
+      "week": "Hafta",
+      "month": "Oy",
+      "custom": "Davr"
+    },
+    "from": "Dan",
+    "to": "Gacha",
+    "m": {
+      "total": "Jami murojaat",
+      "new": "Yangi",
+      "inWork": "Ishda",
+      "closed": "Yopilgan",
+      "avgFirstResponse": "Oʻrt. 1-javob",
+      "avgHandling": "Oʻrt. ishlov",
+      "slaBreaches": "SLA buzilishi",
+      "slaCompliance": "SLA bajarilishi"
+    },
+    "agentsTitle": "Xodimlar boʻyicha",
+    "noAgents": "Davr uchun maʼlumot yoʻq",
+    "a": {
+      "agent": "Xodim",
+      "accepted": "Qabul",
+      "closed": "Yopilgan",
+      "active": "Ishda",
+      "firstResponse": "1-javob",
+      "handling": "Ishlov",
+      "totalHandling": "Jami",
+      "slaBreaches": "SLA buz.",
+      "slaPct": "SLA %",
+      "rating": "Baho"
+    }
   }
 }

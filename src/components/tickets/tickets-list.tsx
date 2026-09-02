@@ -82,12 +82,16 @@ export function TicketsList() {
   const severityId = searchParams.get("severity") ?? "";
   const breached = searchParams.get("breached") === "1";
   const unclaimed = searchParams.get("unclaimed") === "1";
+  // Детализация с дашборда тех-отдела
+  const closedById = searchParams.get("closedById") ?? "";
+  const from = searchParams.get("from") ?? "";
+  const to = searchParams.get("to") ?? "";
   const urlSearch = searchParams.get("q") ?? "";
   // Дефолт: очередь суппорта — по дедлайну, свои обращения — по активности
   const sort = searchParams.get("sort") ?? (scope === "all" ? "deadline:asc" : "lastMessageAt:desc");
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
-  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${sort}:${urlSearch}:${page}`;
+  const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${closedById}:${from}:${to}:${sort}:${urlSearch}:${page}`;
   const [data, setData] = useState<Page<Ticket> | null>(
     () => getCached<Page<Ticket>>(cacheKey) ?? null
   );
@@ -134,6 +138,9 @@ export function TicketsList() {
         severityId: (scope === "all" && severityId) || undefined,
         breached: (scope === "all" && breached) || undefined,
         unclaimed: (scope === "all" && unclaimed) || undefined,
+        closedById: (scope === "all" && closedById) || undefined,
+        from: (scope === "all" && from) || undefined,
+        to: (scope === "all" && to) || undefined,
         sort,
       });
       // Страница опустела (фильтр/удаление) — откат на первую
@@ -150,7 +157,7 @@ export function TicketsList() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, status, categoryId, entityId, scope, severityId, breached, unclaimed, sort, urlSearch]);
+  }, [page, status, categoryId, entityId, scope, severityId, breached, unclaimed, closedById, from, to, sort, urlSearch]);
 
   useEffect(() => {
     const cached = getCached<Page<Ticket>>(cacheKey);

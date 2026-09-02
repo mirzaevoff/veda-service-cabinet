@@ -5,6 +5,16 @@ export function fullName(user: { name: string; lastName?: string }): string {
   return [user.name, user.lastName].filter(Boolean).join(" ");
 }
 
+/** Длительность из минут: «—» / «N мин» / «Hч Mмин» / «Hч» */
+export function formatMinutes(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "—";
+  const total = Math.round(value);
+  if (total < 60) return `${total} мин`;
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  return m ? `${h} ч ${m} мин` : `${h} ч`;
+}
+
 /** Выбор перевода локализованной строки API (фолбэк на ru) */
 export function pickLocalized(
   value: LocalizedString | null | undefined,

@@ -1,5 +1,6 @@
 import {
   BookOpen,
+  ChartColumn,
   ClipboardList,
   Building2,
   Handshake,
@@ -141,6 +142,12 @@ export const NAV_SECTIONS: NavSection[] = [
     key: "help",
     items: [
       { key: "tickets", href: "/tickets", icon: Ticket },
+      {
+        key: "techStats",
+        href: "/tech-stats",
+        icon: ChartColumn,
+        permission: PERMISSIONS.ticketsList,
+      },
       {
         key: "equipment",
         href: "/equipment",

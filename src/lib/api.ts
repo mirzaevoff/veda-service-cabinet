@@ -216,6 +216,17 @@ export interface Ticket {
   firstSupportReplyAt?: string | null;
   /** Кто сейчас в чате (staff) */
   participants?: TicketParticipant[];
+  // --- Staff-only closure stamp (для дашборда тех-отдела) ---
+  closedAt?: string | null;
+  closedBy?: { id: string; name: string; phone: string } | null;
+  /** Причина нарушения SLA (вписывается при закрытии просроченного) */
+  slaBreachReason?: string;
+  /** createdAt→firstSupportReplyAt, мин */
+  firstResponseMinutes?: number | null;
+  /** claimedAt→closedAt, мин */
+  handlingMinutes?: number | null;
+  /** createdAt→closedAt, мин */
+  factMinutes?: number | null;
 }
 
 export type TicketMessageType = "user" | "system";
@@ -1335,4 +1346,52 @@ export interface CreateArticleInput {
   category?: string;
   tags?: string[];
   attachmentIds?: string[];
+}
+
+// --- Тех. отдел: Дашборд (статистика заявок, API 0.42) ----------------------
+
+export type StatsPreset = "day" | "week" | "month";
+
+export interface OverviewStats {
+  from: string | null;
+  to: string | null;
+  total: number;
+  new: number;
+  inWork: number;
+  closed: number;
+  avgFirstResponseMinutes: number | null;
+  avgHandlingMinutes: number | null;
+  slaBreaches: number;
+  slaCompliancePct: number | null;
+}
+
+export type AgentSortField =
+  | "accepted"
+  | "closed"
+  | "active"
+  | "firstResponseMinutes"
+  | "handlingMinutes"
+  | "totalHandlingMinutes"
+  | "slaBreaches"
+  | "slaCompliancePct"
+  | "avgRating";
+
+export interface AgentStats {
+  agentId: string;
+  name: string;
+  accepted: number;
+  closed: number;
+  active: number;
+  firstResponseMinutes: number | null;
+  handlingMinutes: number | null;
+  totalHandlingMinutes: number;
+  slaBreaches: number;
+  slaCompliancePct: number | null;
+  avgRating: number | null;
+}
+
+export interface AgentsStats {
+  from: string | null;
+  to: string | null;
+  agents: AgentStats[];
 }

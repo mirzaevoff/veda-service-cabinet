@@ -28,7 +28,8 @@
     "knowledgeBase": "База знаний",
     "inDevelopment": "в разработке",
     "equipment": "Оборудование",
-    "inventory": "Инвентаризация"
+    "inventory": "Инвентаризация",
+    "techStats": "Статистика"
   },
   "Shell": {
     "logout": "Выйти",
@@ -1508,5 +1509,41 @@
     "titleRequired": "Укажите заголовок",
     "saved": "Сохранено",
     "createdArticle": "Статья создана"
+  },
+  "TechDashboard": {
+    "title": "Дашборд тех-отдела",
+    "description": "Статистика заявок и работы сотрудников",
+    "period": {
+      "day": "День",
+      "week": "Неделя",
+      "month": "Месяц",
+      "custom": "Период"
+    },
+    "from": "С",
+    "to": "По",
+    "m": {
+      "total": "Всего заявок",
+      "new": "Новых",
+      "inWork": "В работе",
+      "closed": "Закрыто",
+      "avgFirstResponse": "Ср. 1-й ответ",
+      "avgHandling": "Ср. обработка",
+      "slaBreaches": "Нарушений SLA",
+      "slaCompliance": "Соблюдение SLA"
+    },
+    "agentsTitle": "По сотрудникам",
+    "noAgents": "Нет данных за период",
+    "a": {
+      "agent": "Сотрудник",
+      "accepted": "Принято",
+      "closed": "Закрыто",
+      "active": "В работе",
+      "firstResponse": "1-й ответ",
+      "handling": "Обработка",
+      "totalHandling": "Общее",
+      "slaBreaches": "SLA наруш.",
+      "slaPct": "SLA %",
+      "rating": "Оценка"
+    }
   }
 }

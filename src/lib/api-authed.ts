@@ -22,6 +22,8 @@ import {
   type Article,
   type ArticlesPage,
   type CreateArticleInput,
+  type OverviewStats,
+  type AgentsStats,
   type AuthSession,
   type Bank,
   type BankAccount,
@@ -180,6 +182,11 @@ export interface TicketListParams {
   breached?: boolean;
   /** Staff: только невзятые */
   unclaimed?: boolean;
+  /** Staff: закрытые этим сотрудником (детализация дашборда) */
+  closedById?: string;
+  /** Staff: период по createdAt (ISO) */
+  from?: string;
+  to?: string;
   /** Например deadline:asc — красные сверху, exempt в конце */
   sort?: string;
 }
@@ -247,6 +254,18 @@ export const ticketsApi = {
 
   unreadCount: () =>
     authedRequest<{ total: number }>("/tickets/unread-count"),
+
+  /** Дашборд тех-отдела: сводная статистика */
+  statsOverview: (params: { preset?: string; from?: string; to?: string } = {}) =>
+    authedRequest<OverviewStats>(`/tickets/stats/overview${query({ ...params })}`),
+  /** Дашборд тех-отдела: метрики по сотрудникам */
+  statsAgents: (params: {
+    preset?: string;
+    from?: string;
+    to?: string;
+    sort?: string;
+    order?: "asc" | "desc";
+  } = {}) => authedRequest<AgentsStats>(`/tickets/stats/agents${query({ ...params })}`),
 };
 
 export const usersApi = {

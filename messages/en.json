@@ -28,7 +28,8 @@
     "knowledgeBase": "Knowledge base",
     "inDevelopment": "in development",
     "equipment": "Equipment",
-    "inventory": "Inventory"
+    "inventory": "Inventory",
+    "techStats": "Statistics"
   },
   "Shell": {
     "logout": "Sign out",
@@ -1509,5 +1510,41 @@
     "titleRequired": "Enter a title",
     "saved": "Saved",
     "createdArticle": "Article created"
+  },
+  "TechDashboard": {
+    "title": "Tech-dept dashboard",
+    "description": "Ticket and staff performance stats",
+    "period": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "custom": "Range"
+    },
+    "from": "From",
+    "to": "To",
+    "m": {
+      "total": "Total tickets",
+      "new": "New",
+      "inWork": "In work",
+      "closed": "Closed",
+      "avgFirstResponse": "Avg 1st reply",
+      "avgHandling": "Avg handling",
+      "slaBreaches": "SLA breaches",
+      "slaCompliance": "SLA compliance"
+    },
+    "agentsTitle": "By agent",
+    "noAgents": "No data for the period",
+    "a": {
+      "agent": "Agent",
+      "accepted": "Accepted",
+      "closed": "Closed",
+      "active": "Active",
+      "firstResponse": "1st reply",
+      "handling": "Handling",
+      "totalHandling": "Total",
+      "slaBreaches": "SLA br.",
+      "slaPct": "SLA %",
+      "rating": "Rating"
+    }
   }
 }
