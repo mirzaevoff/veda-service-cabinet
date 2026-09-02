@@ -75,7 +75,9 @@ export function LoginFlow() {
         case "ER200":
           return t("errors.ER200");
         case "ER202":
-          return t("errors.ER202");
+          return e.data?.reason === "inactivity"
+            ? t("errors.ER202inactivity")
+            : t("errors.ER202");
         case "ER203":
           return t("errors.ER203");
         case "ER204":

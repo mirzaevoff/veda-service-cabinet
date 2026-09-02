@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { ApiError, type Invoice, type LegalEntity } from "@/lib/api";
 import { invoicesApi, legalEntitiesApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { MonthPicker } from "@/components/common/month-picker";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
@@ -129,6 +130,12 @@ export function GenerateInvoiceDialog({
         },
         false
       );
+      logActivity({
+        type: "invoice.generate",
+        targetType: "invoice",
+        targetId: inv.id,
+        meta: { legalEntityId: selected.id },
+      });
       toast.success(t("created"));
       onCreated(inv);
       onClose();

@@ -29,7 +29,8 @@
     "inDevelopment": "ishlab chiqilmoqda",
     "equipment": "Jihozlar",
     "inventory": "Inventarizatsiya",
-    "techStats": "Statistika"
+    "techStats": "Statistika",
+    "logs": "Amallar jurnali"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -78,7 +79,14 @@
     "lastNameLabel": "Familiya",
     "birthDateLabel": "Tugʻilgan sana",
     "nameRequired": "Ismni kiriting",
-    "profileSaved": "Anketa saqlandi"
+    "profileSaved": "Anketa saqlandi",
+    "blockReasonManual": "Administrator tomonidan bloklangan",
+    "blockReasonInactivity": "Faolsizlik uchun avtomatik bloklangan",
+    "sessions": {
+      "title": "Faollik davrlari",
+      "empty": "Faollik qayd etilmagan",
+      "more": "Yana ko'rsatish"
+    }
   },
   "AdminRoles": {
     "title": "Rollar va ruxsatlar",
@@ -354,7 +362,8 @@
       "ER205": "Bugungi SMS limiti tugadi. Ertaga urinib ko'ring",
       "ER206": "SMS yuborib bo'lmadi. Yana urinib ko'ring",
       "network": "Aloqa yo'q. Internetni tekshiring",
-      "generic": "Nimadir xato ketdi. Yana urinib ko'ring"
+      "generic": "Nimadir xato ketdi. Yana urinib ko'ring",
+      "ER202inactivity": "Hisob faolsizlik uchun bloklangan. Ma'muriyatga murojaat qiling"
     }
   },
   "Notifications": {
@@ -825,7 +834,8 @@
       "Currency": "Valyuta",
       "Organization": "Tashkilot",
       "Kapitalbank": "Kapitalbank",
-      "iiko Partner Portal": "iiko hamkorlik portali"
+      "iiko Partner Portal": "iiko hamkorlik portali",
+      "Security": "Xavfsizlik"
     },
     "autofill": "STIR bo'yicha to'ldirish",
     "autofillTitle": "Reyestrdan rekvizitlar",
@@ -1562,5 +1572,26 @@
     "title": "Tez oʻtish",
     "placeholder": "Qayerga?",
     "empty": "Hech narsa topilmadi"
+  },
+  "AdminLogs": {
+    "title": "Amallar jurnali",
+    "description": "Kim, nima va qachon qilgani",
+    "allUsers": "Barcha foydalanuvchilar",
+    "allSources": "Barcha manbalar",
+    "sourceFrontend": "Interfeys",
+    "sourceBackend": "Server",
+    "allCategories": "Barcha toifalar",
+    "allTypes": "Barcha turlar",
+    "from": "Sanadan",
+    "to": "Sanagacha",
+    "reset": "Tozalash",
+    "empty": "Hozircha yozuvlar yo'q",
+    "emptyFiltered": "Filtrlar bo'yicha hech narsa topilmadi",
+    "colWhen": "Qachon",
+    "colWho": "Foydalanuvchi",
+    "colAction": "Amal",
+    "colSource": "Manba",
+    "colIp": "IP",
+    "system": "Tizim"
   }
 }

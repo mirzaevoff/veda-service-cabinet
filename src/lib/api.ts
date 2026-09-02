@@ -84,11 +84,63 @@ export interface UserProfile {
     permissions: string[];
   };
   status: "active" | "blocked";
+  /** Причина блокировки (виден админу): вручную / авто за неактивность */
+  blockReason?: "manual" | "inactivity" | null;
   /** Последняя авторизованная активность (ISO) или null */
   lastSeenAt?: string | null;
   /** Активность за последние 5 минут (вычисляется сервером) */
   online?: boolean;
   createdAt: string;
+}
+
+/** Период активности пользователя — GET /users/:id/sessions */
+export interface UserActivitySession {
+  id: string;
+  startedAt: string;
+  lastActivityAt: string;
+  durationMinutes: number;
+  ip: string;
+  userAgent: string;
+}
+
+/** Источник записи лога действий */
+export type ActivityLogSource = "frontend" | "backend";
+
+/** Запись журнала действий — GET /activity-logs */
+export interface ActivityLog {
+  id: string;
+  user: { id: string; name: string } | null;
+  source: ActivityLogSource;
+  category: string;
+  type: string;
+  action: string;
+  description: string;
+  targetType: string;
+  targetId: string;
+  meta: Record<string, unknown> | null;
+  method: string;
+  path: string;
+  statusCode: number | null;
+  ip: string;
+  createdAt: string;
+}
+
+/** Тип из реестра — GET /activity-logs/types */
+export interface ActivityLogTypeDef {
+  type: string;
+  category: string;
+  description: string;
+}
+
+/** Событие фронта для POST /activity-logs */
+export interface ActivityLogEvent {
+  type: string;
+  category?: string;
+  description?: string;
+  action?: string;
+  targetType?: string;
+  targetId?: string;
+  meta?: Record<string, unknown>;
 }
 
 export interface AuthTokens {

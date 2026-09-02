@@ -42,6 +42,7 @@ import {
   locationsApi,
   SessionExpiredError,
 } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -115,6 +116,11 @@ export function InventoryAuditPage({ auditId }: { auditId: string }) {
     setBusy(true);
     try {
       setAudit(await inventoryApi.approve(auditId));
+      logActivity({
+        type: "inventory.approve",
+        targetType: "inventory",
+        targetId: auditId,
+      });
       setConfirmApprove(false);
       toast.success(t("approved"));
     } catch (e) {

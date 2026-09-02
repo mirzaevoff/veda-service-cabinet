@@ -77,6 +77,11 @@ import {
   type TicketSeverity,
   type TicketStatus,
   type UserProfile,
+  type UserActivitySession,
+  type ActivityLog,
+  type ActivityLogSource,
+  type ActivityLogTypeDef,
+  type ActivityLogEvent,
 } from "./api";
 import {
   clearSession,
@@ -650,6 +655,11 @@ export const adminApi = {
         method: "PATCH",
         body: JSON.stringify(body),
       }),
+    /** Периоды активности пользователя (для карточки), свежие сверху */
+    sessions: (id: string, params: { page?: number; limit?: number } = {}) =>
+      authedRequest<Page<UserActivitySession>>(
+        `/users/${id}/sessions${query({ ...params })}`
+      ),
   },
   roles: {
     /** С 0.8.0 — страница; для UI берём items (ролей немного) */
@@ -724,6 +734,32 @@ export const settingsApi = {
     authedRequest<Setting[]>("/settings/organization/autofill", {
       method: "POST",
       body: JSON.stringify({ taxId }),
+    }),
+};
+
+export interface ActivityLogsListParams {
+  page?: number;
+  limit?: number;
+  userId?: string;
+  category?: string;
+  type?: string;
+  source?: ActivityLogSource;
+  /** ISO */
+  from?: string;
+  /** ISO */
+  to?: string;
+}
+
+/** Журнал действий (аудит) — право logs.view для чтения */
+export const activityLogsApi = {
+  list: (params: ActivityLogsListParams = {}) =>
+    authedRequest<Page<ActivityLog>>(`/activity-logs${query({ ...params })}`),
+  types: () => authedRequest<ActivityLogTypeDef[]>("/activity-logs/types"),
+  /** Запись событий фронта (батч 1–100), fire-and-forget у вызывающего */
+  write: (events: ActivityLogEvent[]) =>
+    authedRequest<{ written: number }>("/activity-logs", {
+      method: "POST",
+      body: JSON.stringify({ events }),
     }),
 };
 

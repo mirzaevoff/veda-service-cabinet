@@ -38,8 +38,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type Role, type UserProfile } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { fullName, pickLocalized } from "@/lib/format";
+import { UserSessions } from "./user-sessions";
 
 export function UserDrawer({
   user,
@@ -129,6 +131,11 @@ export function UserDrawer({
       const updated = await adminApi.users.update(user!.id, {
         status: blocked ? "active" : "blocked",
       });
+      logActivity({
+        type: blocked ? "user.unblock" : "user.block",
+        targetType: "user",
+        targetId: user!.id,
+      });
       onChanged(updated);
       toast.success(t(blocked ? "unblocked" : "blockedToast"));
     } catch (e) {
@@ -169,6 +176,16 @@ export function UserDrawer({
               <Badge variant="outline">{t("you")}</Badge>
             )}
           </div>
+
+          {blocked && user.blockReason && (
+            <p className="-mt-2 text-xs text-muted-foreground">
+              {t(
+                user.blockReason === "inactivity"
+                  ? "blockReasonInactivity"
+                  : "blockReasonManual"
+              )}
+            </p>
+          )}
 
           <div className="text-sm text-muted-foreground">
             {t("registered", {
@@ -281,6 +298,10 @@ export function UserDrawer({
           {isSelf && (
             <p className="text-xs text-muted-foreground">{t("cantEditSelf")}</p>
           )}
+
+          <Separator />
+
+          <UserSessions userId={user.id} />
         </div>
 
         <AlertDialog open={confirmBlock} onOpenChange={setConfirmBlock}>

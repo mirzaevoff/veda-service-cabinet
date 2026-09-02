@@ -42,6 +42,7 @@ export const PERMISSIONS = {
   inventoryApprove: "inventory.approve",
   knowledgeView: "knowledge.view",
   knowledgeManage: "knowledge.manage",
+  logsView: "logs.view",
 } as const;
 
 export function can(

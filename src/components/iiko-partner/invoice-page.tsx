@@ -38,6 +38,7 @@ import {
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type IikoInvoice } from "@/lib/api";
 import { iikoPartnerApi, SessionExpiredError } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
 import { invoiceStatusStyle, formatAmount } from "./invoice-format";
@@ -108,6 +109,11 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
     setClosing(true);
     try {
       const r = await iikoPartnerApi.invoices.close(invoiceId);
+      logActivity({
+        type: "iikoInvoice.close",
+        targetType: "iikoInvoice",
+        targetId: invoiceId,
+      });
       setInvoice(r);
       setConfirmClose(false);
       toast.success(t("closed"));

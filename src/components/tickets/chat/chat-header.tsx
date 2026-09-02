@@ -29,6 +29,7 @@ import { useSocketConnected } from "@/hooks/use-ticket-socket";
 import type { Ticket, TicketSeverity } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { severitiesApi, ticketsApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link } from "@/i18n/navigation";
 import { fullName, pickLocalized } from "@/lib/format";
@@ -81,6 +82,12 @@ export function ChatHeader({
     setBusy(true);
     try {
       onUpdated(await ticketsApi.update(ticket.id, patch));
+      if (patch.status === "closed")
+        logActivity({
+          type: "ticket.close",
+          targetType: "ticket",
+          targetId: ticket.id,
+        });
       setCloseOpen(false);
       setCloseReason("");
     } catch (e) {

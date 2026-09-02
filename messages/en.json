@@ -29,7 +29,8 @@
     "inDevelopment": "in development",
     "equipment": "Equipment",
     "inventory": "Inventory",
-    "techStats": "Statistics"
+    "techStats": "Statistics",
+    "logs": "Activity log"
   },
   "Shell": {
     "logout": "Sign out",
@@ -78,7 +79,14 @@
     "lastNameLabel": "Last name",
     "birthDateLabel": "Birth date",
     "nameRequired": "Enter a name",
-    "profileSaved": "Profile saved"
+    "profileSaved": "Profile saved",
+    "blockReasonManual": "Blocked by an administrator",
+    "blockReasonInactivity": "Blocked automatically for inactivity",
+    "sessions": {
+      "title": "Activity periods",
+      "empty": "No activity recorded",
+      "more": "Show more"
+    }
   },
   "AdminRoles": {
     "title": "Roles & Access",
@@ -355,7 +363,8 @@
       "ER205": "Daily SMS limit reached. Try again tomorrow",
       "ER206": "Couldn't send the SMS. Please try again",
       "network": "No connection. Check your internet",
-      "generic": "Something went wrong. Please try again"
+      "generic": "Something went wrong. Please try again",
+      "ER202inactivity": "Account blocked for inactivity. Contact the administration"
     }
   },
   "Notifications": {
@@ -826,7 +835,8 @@
       "Currency": "Currency",
       "Organization": "Organization",
       "Kapitalbank": "Kapitalbank",
-      "iiko Partner Portal": "iiko Partner Portal"
+      "iiko Partner Portal": "iiko Partner Portal",
+      "Security": "Security"
     },
     "autofill": "Fill by TIN",
     "autofillTitle": "Requisites from the registry",
@@ -1563,5 +1573,26 @@
     "title": "Quick navigation",
     "placeholder": "Where to?",
     "empty": "Nothing found"
+  },
+  "AdminLogs": {
+    "title": "Activity log",
+    "description": "Who did what and when",
+    "allUsers": "All users",
+    "allSources": "All sources",
+    "sourceFrontend": "Interface",
+    "sourceBackend": "Server",
+    "allCategories": "All categories",
+    "allTypes": "All types",
+    "from": "From",
+    "to": "To",
+    "reset": "Reset",
+    "empty": "No records yet",
+    "emptyFiltered": "Nothing matches the filters",
+    "colWhen": "When",
+    "colWho": "User",
+    "colAction": "Action",
+    "colSource": "Source",
+    "colIp": "IP",
+    "system": "System"
   }
 }
