@@ -19,6 +19,9 @@ import {
   type CreateInventoryInput,
   type UpdateInventoryItemInput,
   type InventoryAuditStatus,
+  type Article,
+  type ArticlesPage,
+  type CreateArticleInput,
   type AuthSession,
   type Bank,
   type BankAccount,
@@ -1157,4 +1160,29 @@ export const inventoryApi = {
     authedRequest<InventoryAudit>(`/inventory/${id}/approve`, { method: "POST" }),
   remove: (id: string) =>
     authedRequest<void>(`/inventory/${id}`, { method: "DELETE" }),
+};
+
+export const knowledgeApi = {
+  list: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: string;
+    tag?: string;
+    category?: string;
+  } = {}) => authedRequest<ArticlesPage>(`/knowledge${query({ ...params })}`),
+  tags: () => authedRequest<string[]>("/knowledge/tags"),
+  get: (id: string) => authedRequest<Article>(`/knowledge/${id}`),
+  create: (body: CreateArticleInput) =>
+    authedRequest<Article>("/knowledge", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: Partial<CreateArticleInput>) =>
+    authedRequest<Article>(`/knowledge/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/knowledge/${id}`, { method: "DELETE" }),
 };

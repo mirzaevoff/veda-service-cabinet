@@ -1307,3 +1307,32 @@ export interface UpdateInventoryItemInput {
   actualDepartmentId?: string | null;
   note?: string;
 }
+
+// --- Тех. отдел: База знаний (API 0.42) -------------------------------------
+
+export interface ArticleListItem {
+  id: string;
+  title: string;
+  category: string;
+  tags: string[];
+  author: { id: string; name: string } | null;
+  updatedBy: { id: string; name: string } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Article extends ArticleListItem {
+  /** Markdown (GFM) */
+  body: string;
+  attachments: FileAttachment[];
+}
+
+export type ArticlesPage = Page<ArticleListItem>;
+
+export interface CreateArticleInput {
+  title: string;
+  body?: string;
+  category?: string;
+  tags?: string[];
+  attachmentIds?: string[];
+}

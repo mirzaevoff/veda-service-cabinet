@@ -155,9 +155,9 @@ export const NAV_SECTIONS: NavSection[] = [
       },
       {
         key: "knowledgeBase",
-        href: "/knowledge-base",
+        href: "/knowledge",
         icon: BookOpen,
-        disabled: true,
+        permission: PERMISSIONS.knowledgeView,
       },
     ],
   },
