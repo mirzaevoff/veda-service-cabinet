@@ -26,7 +26,8 @@
     "transactions": "Транзакции",
     "invoices": "Счета",
     "knowledgeBase": "База знаний",
-    "inDevelopment": "в разработке"
+    "inDevelopment": "в разработке",
+    "equipment": "Оборудование"
   },
   "Shell": {
     "logout": "Выйти",
@@ -782,7 +783,9 @@
     "description": "Управление справочниками системы",
     "tabs": {
       "categories": "Категории",
-      "severities": "Типы обращений"
+      "severities": "Типы обращений",
+      "locations": "Локации",
+      "equipmentDicts": "Оборудование"
     }
   },
   "AdminPanel": {
@@ -1343,5 +1346,72 @@
     "deleteConfirmText": "Счёт и его PDF будут удалены, а исходные iiko-счета снова станут доступны для выставления. Действие необратимо.",
     "periodMonth": "Месяц (необязательно)",
     "periodAll": "Все неоплаченные"
+  },
+  "Equipment": {
+    "title": "Оборудование",
+    "description": "Реестр оборудования офисов",
+    "searchPlaceholder": "Название, S/N, инв. №",
+    "allOffices": "Все офисы",
+    "allCategories": "Все категории",
+    "allStatuses": "Все статусы",
+    "add": "Добавить",
+    "empty": "Оборудования пока нет",
+    "emptySearch": "Ничего не найдено",
+    "colName": "Наименование",
+    "colResponsible": "Ответственный",
+    "colLocation": "Офис / отдел",
+    "colCategory": "Категория",
+    "colStatus": "Статус",
+    "total": "Всего: {count}",
+    "deleted": "Оборудование удалено",
+    "genericError": "Не получилось. Попробуйте ещё раз",
+    "deleteConfirmTitle": "Удалить оборудование?",
+    "deleteConfirmText": "«{name}» будет удалено без возможности восстановления.",
+    "createTitle": "Новое оборудование",
+    "editTitle": "Оборудование",
+    "formHint": "Заполните карточку оборудования",
+    "name": "Наименование",
+    "serialNumber": "Серийный номер",
+    "inventoryNumber": "Инвентарный номер",
+    "office": "Офис",
+    "department": "Отдел",
+    "category": "Категория",
+    "status": "Статус",
+    "responsible": "Ответственный",
+    "note": "Заметка",
+    "officePlaceholder": "Выберите офис",
+    "none": "— нет —",
+    "statusDefault": "По умолчанию",
+    "nameRequired": "Укажите наименование",
+    "officeRequired": "Выберите офис",
+    "responsibleNotFound": "Пользователь не найден",
+    "saved": "Сохранено",
+    "created": "Оборудование добавлено",
+    "responsiblePlaceholder": "Не назначен",
+    "responsibleSearch": "Имя или телефон",
+    "clearResponsible": "Убрать ответственного"
+  },
+  "Locations": {
+    "addOffice": "Добавить офис",
+    "officeName": "Название офиса",
+    "deptName": "Название отдела",
+    "empty": "Офисов пока нет",
+    "nameTaken": "Такое название уже есть",
+    "officeHasChildren": "В офисе есть отделы или оборудование — сначала удалите их",
+    "deptHasEquipment": "К отделу привязано оборудование — сначала перенесите его",
+    "genericError": "Не получилось. Попробуйте ещё раз"
+  },
+  "EquipmentDicts": {
+    "categories": "Категории",
+    "statuses": "Статусы",
+    "categoryName": "Новая категория",
+    "statusName": "Новый статус",
+    "noCategories": "Категорий пока нет",
+    "default": "по умолчанию",
+    "makeDefault": "Сделать по умолчанию",
+    "nameTaken": "Такое название уже есть",
+    "categoryInUse": "Категория используется — сначала снимите её с оборудования",
+    "statusInUse": "Статус используется или он по умолчанию",
+    "genericError": "Не получилось. Попробуйте ещё раз"
   }
 }

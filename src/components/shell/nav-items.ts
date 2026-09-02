@@ -118,6 +118,8 @@ export const NAV_SECTIONS: NavSection[] = [
         anyPermission: [
           PERMISSIONS.rolesRead,
           PERMISSIONS.ticketsCategoriesManage,
+          PERMISSIONS.locationsView,
+          PERMISSIONS.equipmentView,
         ],
       },
       {
@@ -138,6 +140,12 @@ export const NAV_SECTIONS: NavSection[] = [
     key: "help",
     items: [
       { key: "tickets", href: "/tickets", icon: Ticket },
+      {
+        key: "equipment",
+        href: "/equipment",
+        icon: Package,
+        permission: PERMISSIONS.equipmentView,
+      },
       {
         key: "knowledgeBase",
         href: "/knowledge-base",

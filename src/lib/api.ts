@@ -1171,3 +1171,76 @@ export interface BalanceAuditResult {
   recognized: number;
   entitiesHealed: number;
 }
+
+// --- Тех. отдел: Оборудование + Локации (API 0.42, ТЗ) ----------------------
+
+/** Ссылка {id, name} */
+export interface NamedRef {
+  id: string;
+  name: string;
+}
+
+/** Офис (физическая площадка) */
+export interface Office {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
+/** Отдел внутри офиса */
+export interface Department {
+  id: string;
+  officeId: string;
+  name: string;
+  createdAt: string;
+}
+
+/** Элемент справочника (категория/статус оборудования); isDefault — только у статусов */
+export interface DictionaryItem {
+  id: string;
+  name: string;
+  isDefault?: boolean;
+}
+
+/** Единица оборудования */
+export interface Equipment {
+  id: string;
+  name: string;
+  serialNumber: string;
+  inventoryNumber: string;
+  responsible: NamedRef | null;
+  office: NamedRef | null;
+  department: NamedRef | null;
+  category: NamedRef | null;
+  status: NamedRef | null;
+  note: string;
+  createdAt: string;
+}
+
+export type EquipmentPage = Page<Equipment>;
+
+/** Создание оборудования (officeId обязателен) */
+export interface CreateEquipmentInput {
+  name: string;
+  serialNumber?: string;
+  inventoryNumber?: string;
+  responsibleId?: string;
+  officeId: string;
+  departmentId?: string;
+  categoryId?: string;
+  statusId?: string;
+  note?: string;
+}
+
+/** Правка оборудования; null очищает responsible/department/category */
+export interface UpdateEquipmentInput {
+  name?: string;
+  serialNumber?: string;
+  inventoryNumber?: string;
+  responsibleId?: string | null;
+  officeId?: string;
+  departmentId?: string | null;
+  categoryId?: string | null;
+  statusId?: string;
+  note?: string;
+}

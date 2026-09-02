@@ -33,6 +33,15 @@ export const PERMISSIONS = {
   venuesManage: "venues.manage",
   invoicesView: "invoices.view",
   invoicesManage: "invoices.manage",
+  locationsView: "locations.view",
+  locationsManage: "locations.manage",
+  equipmentView: "equipment.view",
+  equipmentManage: "equipment.manage",
+  inventoryView: "inventory.view",
+  inventoryManage: "inventory.manage",
+  inventoryApprove: "inventory.approve",
+  knowledgeView: "knowledge.view",
+  knowledgeManage: "knowledge.manage",
 } as const;
 
 export function can(

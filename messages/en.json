@@ -26,7 +26,8 @@
     "transactions": "Transactions",
     "invoices": "Invoices",
     "knowledgeBase": "Knowledge base",
-    "inDevelopment": "in development"
+    "inDevelopment": "in development",
+    "equipment": "Equipment"
   },
   "Shell": {
     "logout": "Sign out",
@@ -783,7 +784,9 @@
     "description": "System dictionaries management",
     "tabs": {
       "categories": "Categories",
-      "severities": "Request types"
+      "severities": "Request types",
+      "locations": "Locations",
+      "equipmentDicts": "Equipment"
     }
   },
   "AdminPanel": {
@@ -1344,5 +1347,72 @@
     "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone.",
     "periodMonth": "Month (optional)",
     "periodAll": "All unpaid"
+  },
+  "Equipment": {
+    "title": "Equipment",
+    "description": "Office equipment registry",
+    "searchPlaceholder": "Name, S/N, inv. no.",
+    "allOffices": "All offices",
+    "allCategories": "All categories",
+    "allStatuses": "All statuses",
+    "add": "Add",
+    "empty": "No equipment yet",
+    "emptySearch": "Nothing found",
+    "colName": "Name",
+    "colResponsible": "Responsible",
+    "colLocation": "Office / dept",
+    "colCategory": "Category",
+    "colStatus": "Status",
+    "total": "Total: {count}",
+    "deleted": "Equipment deleted",
+    "genericError": "Something went wrong. Try again",
+    "deleteConfirmTitle": "Delete equipment?",
+    "deleteConfirmText": "“{name}” will be permanently removed.",
+    "createTitle": "New equipment",
+    "editTitle": "Equipment",
+    "formHint": "Fill in the equipment card",
+    "name": "Name",
+    "serialNumber": "Serial number",
+    "inventoryNumber": "Inventory number",
+    "office": "Office",
+    "department": "Department",
+    "category": "Category",
+    "status": "Status",
+    "responsible": "Responsible",
+    "note": "Note",
+    "officePlaceholder": "Select office",
+    "none": "— none —",
+    "statusDefault": "Default",
+    "nameRequired": "Enter a name",
+    "officeRequired": "Select an office",
+    "responsibleNotFound": "User not found",
+    "saved": "Saved",
+    "created": "Equipment added",
+    "responsiblePlaceholder": "Unassigned",
+    "responsibleSearch": "Name or phone",
+    "clearResponsible": "Clear responsible"
+  },
+  "Locations": {
+    "addOffice": "Add office",
+    "officeName": "Office name",
+    "deptName": "Department name",
+    "empty": "No offices yet",
+    "nameTaken": "Name already exists",
+    "officeHasChildren": "Office has departments or equipment — remove them first",
+    "deptHasEquipment": "Department has equipment — move it first",
+    "genericError": "Something went wrong. Try again"
+  },
+  "EquipmentDicts": {
+    "categories": "Categories",
+    "statuses": "Statuses",
+    "categoryName": "New category",
+    "statusName": "New status",
+    "noCategories": "No categories yet",
+    "default": "default",
+    "makeDefault": "Make default",
+    "nameTaken": "Name already exists",
+    "categoryInUse": "Category is in use — detach it from equipment first",
+    "statusInUse": "Status is in use or is the default",
+    "genericError": "Something went wrong. Try again"
   }
 }

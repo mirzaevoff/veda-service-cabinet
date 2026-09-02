@@ -26,7 +26,8 @@
     "transactions": "Tranzaksiyalar",
     "invoices": "Hisob-fakturalar",
     "knowledgeBase": "Bilimlar bazasi",
-    "inDevelopment": "ishlab chiqilmoqda"
+    "inDevelopment": "ishlab chiqilmoqda",
+    "equipment": "Jihozlar"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -782,7 +783,9 @@
     "description": "Tizim ma'lumotnomalarini boshqarish",
     "tabs": {
       "categories": "Kategoriyalar",
-      "severities": "Murojaat turlari"
+      "severities": "Murojaat turlari",
+      "locations": "Lokatsiyalar",
+      "equipmentDicts": "Jihozlar"
     }
   },
   "AdminPanel": {
@@ -1343,5 +1346,72 @@
     "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi.",
     "periodMonth": "Oy (ixtiyoriy)",
     "periodAll": "Barcha toʻlanmagan"
+  },
+  "Equipment": {
+    "title": "Jihozlar",
+    "description": "Ofis jihozlari reestri",
+    "searchPlaceholder": "Nomi, S/N, inv. №",
+    "allOffices": "Barcha ofislar",
+    "allCategories": "Barcha turkumlar",
+    "allStatuses": "Barcha holatlar",
+    "add": "Qoʻshish",
+    "empty": "Hozircha jihoz yoʻq",
+    "emptySearch": "Hech narsa topilmadi",
+    "colName": "Nomi",
+    "colResponsible": "Masʼul",
+    "colLocation": "Ofis / boʻlim",
+    "colCategory": "Turkum",
+    "colStatus": "Holat",
+    "total": "Jami: {count}",
+    "deleted": "Jihoz oʻchirildi",
+    "genericError": "Xatolik yuz berdi. Qayta urinib koʻring",
+    "deleteConfirmTitle": "Jihoz oʻchirilsinmi?",
+    "deleteConfirmText": "«{name}» butunlay oʻchiriladi.",
+    "createTitle": "Yangi jihoz",
+    "editTitle": "Jihoz",
+    "formHint": "Jihoz kartochkasini toʻldiring",
+    "name": "Nomi",
+    "serialNumber": "Seriya raqami",
+    "inventoryNumber": "Inventar raqami",
+    "office": "Ofis",
+    "department": "Boʻlim",
+    "category": "Turkum",
+    "status": "Holat",
+    "responsible": "Masʼul",
+    "note": "Izoh",
+    "officePlaceholder": "Ofisni tanlang",
+    "none": "— yoʻq —",
+    "statusDefault": "Standart",
+    "nameRequired": "Nomini kiriting",
+    "officeRequired": "Ofisni tanlang",
+    "responsibleNotFound": "Foydalanuvchi topilmadi",
+    "saved": "Saqlandi",
+    "created": "Jihoz qoʻshildi",
+    "responsiblePlaceholder": "Tayinlanmagan",
+    "responsibleSearch": "Ism yoki telefon",
+    "clearResponsible": "Masʼulni olib tashlash"
+  },
+  "Locations": {
+    "addOffice": "Ofis qoʻshish",
+    "officeName": "Ofis nomi",
+    "deptName": "Boʻlim nomi",
+    "empty": "Hozircha ofis yoʻq",
+    "nameTaken": "Bunday nom allaqachon mavjud",
+    "officeHasChildren": "Ofisda boʻlim yoki jihoz bor — avval oʻchiring",
+    "deptHasEquipment": "Boʻlimga jihoz biriktirilgan — avval koʻchiring",
+    "genericError": "Xatolik yuz berdi. Qayta urinib koʻring"
+  },
+  "EquipmentDicts": {
+    "categories": "Turkumlar",
+    "statuses": "Holatlar",
+    "categoryName": "Yangi turkum",
+    "statusName": "Yangi holat",
+    "noCategories": "Hozircha turkum yoʻq",
+    "default": "standart",
+    "makeDefault": "Standart qilish",
+    "nameTaken": "Bunday nom allaqachon mavjud",
+    "categoryInUse": "Turkum ishlatilmoqda — avval jihozdan uzing",
+    "statusInUse": "Holat ishlatilmoqda yoki standart",
+    "genericError": "Xatolik yuz berdi. Qayta urinib koʻring"
   }
 }

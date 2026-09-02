@@ -7,6 +7,8 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CategoryTree } from "@/components/admin/categories/category-tree";
 import { SeveritiesManager } from "@/components/admin/severities/severities-manager";
+import { LocationsManager } from "@/components/admin/locations/locations-manager";
+import { EquipmentDictsManager } from "@/components/admin/equipment-dicts/equipment-dicts-manager";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -30,6 +32,8 @@ export default function AdminDirectoriesPage() {
   const tabs = [
     { key: "categories", visible: can(PERMISSIONS.ticketsCategoriesManage) },
     { key: "severities", visible: can(PERMISSIONS.ticketsCategoriesManage) },
+    { key: "locations", visible: can(PERMISSIONS.locationsView) },
+    { key: "equipmentDicts", visible: can(PERMISSIONS.equipmentView) },
   ].filter((tab) => tab.visible);
 
   if (tabs.length === 0) return <NoAccess />;
@@ -61,6 +65,12 @@ export default function AdminDirectoriesPage() {
         </TabsContent>
         <TabsContent value="severities">
           <SeveritiesManager embedded />
+        </TabsContent>
+        <TabsContent value="locations">
+          <LocationsManager />
+        </TabsContent>
+        <TabsContent value="equipmentDicts">
+          <EquipmentDictsManager />
         </TabsContent>
       </Tabs>
     </div>

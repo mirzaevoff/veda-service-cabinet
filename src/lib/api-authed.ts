@@ -7,6 +7,13 @@ import {
   type CreateInvoiceInput,
   type Invoice,
   type InvoicesPage,
+  type Office,
+  type Department,
+  type DictionaryItem,
+  type Equipment,
+  type EquipmentPage,
+  type CreateEquipmentInput,
+  type UpdateEquipmentInput,
   type AuthSession,
   type Bank,
   type BankAccount,
@@ -1025,4 +1032,92 @@ export const severitiesApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/ticket-severities/${id}`, { method: "DELETE" }),
+};
+
+// --- Тех. отдел: Локации + Оборудование (API 0.42) --------------------------
+
+export const locationsApi = {
+  offices: () => authedRequest<Office[]>("/offices"),
+  createOffice: (name: string) =>
+    authedRequest<Office>("/offices", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+  updateOffice: (id: string, name: string) =>
+    authedRequest<Office>(`/offices/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name }),
+    }),
+  removeOffice: (id: string) =>
+    authedRequest<void>(`/offices/${id}`, { method: "DELETE" }),
+  departments: (officeId: string) =>
+    authedRequest<Department[]>(`/offices/${officeId}/departments`),
+  createDepartment: (officeId: string, name: string) =>
+    authedRequest<Department>(`/offices/${officeId}/departments`, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+  updateDepartment: (id: string, name: string) =>
+    authedRequest<Department>(`/departments/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name }),
+    }),
+  removeDepartment: (id: string) =>
+    authedRequest<void>(`/departments/${id}`, { method: "DELETE" }),
+};
+
+export const equipmentApi = {
+  list: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: string;
+    officeId?: string;
+    departmentId?: string;
+    responsibleId?: string;
+    categoryId?: string;
+    statusId?: string;
+  } = {}) =>
+    authedRequest<EquipmentPage>(`/equipment${query({ ...params })}`),
+  get: (id: string) => authedRequest<Equipment>(`/equipment/${id}`),
+  create: (body: CreateEquipmentInput) =>
+    authedRequest<Equipment>("/equipment", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: UpdateEquipmentInput) =>
+    authedRequest<Equipment>(`/equipment/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/equipment/${id}`, { method: "DELETE" }),
+
+  categories: () => authedRequest<DictionaryItem[]>("/equipment-categories"),
+  createCategory: (name: string) =>
+    authedRequest<DictionaryItem>("/equipment-categories", {
+      method: "POST",
+      body: JSON.stringify({ name }),
+    }),
+  updateCategory: (id: string, name: string) =>
+    authedRequest<DictionaryItem>(`/equipment-categories/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ name }),
+    }),
+  removeCategory: (id: string) =>
+    authedRequest<void>(`/equipment-categories/${id}`, { method: "DELETE" }),
+
+  statuses: () => authedRequest<DictionaryItem[]>("/equipment-statuses"),
+  createStatus: (name: string, isDefault?: boolean) =>
+    authedRequest<DictionaryItem>("/equipment-statuses", {
+      method: "POST",
+      body: JSON.stringify({ name, ...(isDefault !== undefined ? { isDefault } : {}) }),
+    }),
+  updateStatus: (id: string, body: { name?: string; isDefault?: boolean }) =>
+    authedRequest<DictionaryItem>(`/equipment-statuses/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  removeStatus: (id: string) =>
+    authedRequest<void>(`/equipment-statuses/${id}`, { method: "DELETE" }),
 };
