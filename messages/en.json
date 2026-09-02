@@ -1,7 +1,7 @@
 {
   "Nav": {
     "dashboard": "Dashboard",
-    "tickets": "Support",
+    "tickets": "Tickets",
     "admin": "Administration",
     "users": "Users",
     "roles": "Roles & Access",
@@ -16,7 +16,7 @@
     "severities": "Severities",
     "directories": "Directories",
     "panel": "Control panel",
-    "help": "Help",
+    "help": "Support",
     "products": "Products & services",
     "bank": "Bank",
     "services": "Services",
@@ -24,7 +24,9 @@
     "iikoPartner": "iiko Partner",
     "venues": "Venues",
     "transactions": "Transactions",
-    "invoices": "Invoices"
+    "invoices": "Invoices",
+    "knowledgeBase": "Knowledge base",
+    "inDevelopment": "in development"
   },
   "Shell": {
     "logout": "Sign out",

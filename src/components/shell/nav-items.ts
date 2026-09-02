@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Building2,
   Handshake,
   Store,
@@ -26,6 +27,8 @@ export interface NavItem {
   permission?: string;
   /** Пункт виден при ЛЮБОМ из этих прав */
   anyPermission?: string[];
+  /** Заглушка: показывается, но не кликается (в разработке) */
+  disabled?: boolean;
 }
 
 export interface NavSection {
@@ -133,7 +136,15 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     key: "help",
-    items: [{ key: "tickets", href: "/tickets", icon: Ticket }],
+    items: [
+      { key: "tickets", href: "/tickets", icon: Ticket },
+      {
+        key: "knowledgeBase",
+        href: "/knowledge-base",
+        icon: BookOpen,
+        disabled: true,
+      },
+    ],
   },
 ];
 

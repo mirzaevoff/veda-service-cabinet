@@ -57,6 +57,21 @@ export function MobileNav() {
                 )}
                 {items.map((item) => {
                   const active = isNavItemActive(pathname, item.href);
+                  if (item.disabled) {
+                    return (
+                      <div
+                        key={item.key}
+                        aria-disabled
+                        className="flex h-10 cursor-not-allowed items-center gap-2.5 rounded-md px-3 text-sm font-medium text-muted-foreground/50"
+                      >
+                        <item.icon className="size-4.5 shrink-0" />
+                        {t(item.key)}
+                        <span className="ms-auto shrink-0 rounded-full bg-secondary px-1.5 py-0.5 text-[0.6rem] font-medium tracking-wide text-muted-foreground/70">
+                          {t("inDevelopment")}
+                        </span>
+                      </div>
+                    );
+                  }
                   return (
                     <Link
                       key={item.key}

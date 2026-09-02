@@ -1,7 +1,7 @@
 {
   "Nav": {
     "dashboard": "Boshqaruv paneli",
-    "tickets": "Yordam",
+    "tickets": "Murojaatlar",
     "admin": "Administratsiya",
     "users": "Foydalanuvchilar",
     "roles": "Rollar va ruxsatlar",
@@ -16,7 +16,7 @@
     "severities": "Muhimliklar",
     "directories": "Ma'lumotnomalar",
     "panel": "Boshqaruv paneli",
-    "help": "Yordam",
+    "help": "Qoʻllab-quvvatlash",
     "products": "Mahsulot va xizmatlar",
     "bank": "Bank",
     "services": "Servislar",
@@ -24,7 +24,9 @@
     "iikoPartner": "iiko Partner",
     "venues": "Muassasalar",
     "transactions": "Tranzaksiyalar",
-    "invoices": "Hisob-fakturalar"
+    "invoices": "Hisob-fakturalar",
+    "knowledgeBase": "Bilimlar bazasi",
+    "inDevelopment": "ishlab chiqilmoqda"
   },
   "Shell": {
     "logout": "Chiqish",
