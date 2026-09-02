@@ -1549,5 +1549,11 @@
       "slaPct": "SLA %",
       "rating": "Rating"
     }
+  },
+  "CommandPalette": {
+    "open": "Search sections (⌘K)",
+    "title": "Quick navigation",
+    "placeholder": "Where to?",
+    "empty": "Nothing found"
   }
 }

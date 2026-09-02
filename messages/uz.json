@@ -1548,5 +1548,11 @@
       "slaPct": "SLA %",
       "rating": "Baho"
     }
+  },
+  "CommandPalette": {
+    "open": "Boʻlimlardan qidirish (⌘K)",
+    "title": "Tez oʻtish",
+    "placeholder": "Qayerga?",
+    "empty": "Hech narsa topilmadi"
   }
 }

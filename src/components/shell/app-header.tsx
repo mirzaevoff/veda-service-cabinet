@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/common/locale-switcher";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { MobileNav } from "./mobile-nav";
+import { CommandPalette } from "./command-palette";
 import { NotificationsBell } from "./notifications-bell";
 import { UserMenu } from "./user-menu";
 import { NAV_SECTIONS, isNavItemActive } from "./nav-items";
@@ -26,6 +27,7 @@ export function AppHeader() {
         </h1>
       </div>
       <div className="flex items-center gap-1.5">
+        <CommandPalette />
         <NotificationsBell />
         <LocaleSwitcher />
         <ThemeToggle />

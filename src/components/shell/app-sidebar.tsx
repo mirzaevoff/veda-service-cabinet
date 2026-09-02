@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { NAV_SECTIONS, isNavItemActive, isNavItemVisible } from "./nav-items";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { version } from "../../../package.json";
 
 const COLLAPSE_KEY = "sidebar-collapsed";
+const GROUPS_KEY = "sidebar-collapsed-groups";
 
 export function AppSidebar() {
   const t = useTranslations("Nav");
@@ -20,6 +21,7 @@ export function AppSidebar() {
   const { can, loading } = useCurrentUser();
   const unread = useUnreadTickets();
   const [collapsed, setCollapsed] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
   const [apiVersion, setApiVersion] = useState<string | null>(null);
 
@@ -27,6 +29,12 @@ export function AppSidebar() {
     // localStorage доступен только после маунта — иначе SSR/CSR разъедутся
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
+    try {
+      const raw = localStorage.getItem(GROUPS_KEY);
+      if (raw) setCollapsedGroups(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      /* игнор */
+    }
     setHydrated(true);
     api
       .info()
@@ -38,6 +46,20 @@ export function AppSidebar() {
     setCollapsed((prev) => {
       localStorage.setItem(COLLAPSE_KEY, prev ? "0" : "1");
       return !prev;
+    });
+  }
+
+  function toggleGroup(key: string) {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      try {
+        localStorage.setItem(GROUPS_KEY, JSON.stringify([...next]));
+      } catch {
+        /* игнор */
+      }
+      return next;
     });
   }
 
@@ -69,17 +91,33 @@ export function AppSidebar() {
             isNavItemVisible(item, can)
           );
           if (!items.length || (section.key && loading)) return null;
+          const activeGroup = items.some((item) =>
+            isNavItemActive(pathname, item.href)
+          );
+          // Активную группу всегда показываем раскрытой
+          const groupCollapsed =
+            !!section.key && collapsedGroups.has(section.key) && !activeGroup;
           return (
             <div key={section.key ?? i} className="flex flex-col gap-0.5">
               {section.key && !collapsed && (
-                <span className="mt-3 mb-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(section.key!)}
+                  className="mt-3 mb-1 flex items-center gap-1 px-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <ChevronDown
+                    className={cn(
+                      "size-3 transition-transform",
+                      groupCollapsed && "-rotate-90"
+                    )}
+                  />
                   {t(section.key)}
-                </span>
+                </button>
               )}
               {section.key && collapsed && (
                 <div className="my-3 h-px bg-border" />
               )}
-              {items.map((item) => {
+              {!groupCollapsed && items.map((item) => {
                 const active = isNavItemActive(pathname, item.href);
                 if (item.disabled) {
                   return (
