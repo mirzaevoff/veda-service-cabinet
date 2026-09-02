@@ -174,7 +174,7 @@ export function ActivityLogsTable() {
           <SelectTrigger className="h-9 w-auto min-w-36">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-auto max-w-[min(20rem,90vw)]">
             <SelectItem value={ALL}>{t("allCategories")}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c} value={c}>
@@ -191,10 +191,10 @@ export function ActivityLogsTable() {
           }}
           onValueChange={(v) => setType(v ?? ALL)}
         >
-          <SelectTrigger className="h-9 w-auto min-w-44">
+          <SelectTrigger className="h-9 w-auto min-w-44 max-w-56">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-auto max-w-[min(24rem,90vw)]">
             <SelectItem value={ALL}>{t("allTypes")}</SelectItem>
             {typeOptions.map((x) => (
               <SelectItem key={x.type} value={x.type}>
