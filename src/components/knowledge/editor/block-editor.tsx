@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import type EditorJS from "@editorjs/editorjs";
 import type { OutputData } from "@editorjs/editorjs";
 import type { EditorJsData } from "@/lib/api";
+import type { EditorImageUpload } from "@/lib/upload";
 import { PrivateImageTool } from "./private-image-tool";
 import "./editor.css";
 
@@ -25,8 +26,13 @@ export interface BlockEditorHandle {
  */
 export const BlockEditor = forwardRef<
   BlockEditorHandle,
-  { initialData?: EditorJsData; placeholder?: string }
->(function BlockEditor({ initialData, placeholder }, ref) {
+  {
+    initialData?: EditorJsData;
+    placeholder?: string;
+    /** Загрузчик картинок (по умолчанию — приватный, для БЗ) */
+    uploadImage?: (file: File) => Promise<EditorImageUpload>;
+  }
+>(function BlockEditor({ initialData, placeholder, uploadImage }, ref) {
   const t = useTranslations("Knowledge.editor");
   const holderRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorJS | null>(null);
@@ -95,6 +101,7 @@ export const BlockEditor = forwardRef<
               badType: t("imageBadType"),
               failed: t("imageFailed"),
             },
+            uploader: uploadImage,
             onError: (m: string) => toast.error(m),
           },
         },

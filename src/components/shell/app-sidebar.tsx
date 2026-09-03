@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronDown, PanelLeftClose, PanelLeftOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { NAV_SECTIONS, isNavItemActive, isNavItemVisible } from "./nav-items";
 import { useUnreadTickets } from "@/hooks/use-unread-tickets";
+import { useUnreadUpdates } from "@/hooks/use-unread-updates";
 import { Link, usePathname } from "@/i18n/navigation";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { can, loading } = useCurrentUser();
   const unread = useUnreadTickets();
+  const unreadUpdates = useUnreadUpdates();
   const [collapsed, setCollapsed] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
@@ -74,15 +76,30 @@ export function AppSidebar() {
       <div
         className={cn(
           "flex h-16 items-center border-b border-border",
-          collapsed ? "justify-center px-0" : "px-5"
+          collapsed ? "justify-center px-0" : "justify-between px-5"
         )}
       >
-        <Link
-          href="/"
-          className="font-brand text-base font-semibold text-primary"
+        {!collapsed && (
+          <Link
+            href="/"
+            className="font-brand text-base font-semibold text-primary"
+          >
+            Veda Service
+          </Link>
+        )}
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={toggle}
+          aria-label={t(collapsed ? "expand" : "collapse")}
+          className="size-8 shrink-0 rounded-full text-muted-foreground hover:text-foreground"
         >
-          {collapsed ? "V" : "Veda Service"}
-        </Link>
+          {collapsed ? (
+            <PanelLeftOpen className="size-4.5" />
+          ) : (
+            <PanelLeftClose className="size-4.5" />
+          )}
+        </Button>
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
@@ -162,6 +179,11 @@ export function AppSidebar() {
                         {unread}
                       </span>
                     )}
+                    {item.key === "updates" && unreadUpdates > 0 && !collapsed && (
+                      <span className="ms-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[0.7rem] font-semibold text-primary-foreground tabular-nums">
+                        {unreadUpdates > 99 ? "99+" : unreadUpdates}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -171,25 +193,29 @@ export function AppSidebar() {
       </nav>
 
       <div className={cn("border-t border-border p-3", collapsed && "px-1.5")}>
-        <Button
-          variant="ghost"
-          size={collapsed ? "icon" : "sm"}
-          onClick={toggle}
-          aria-label={t(collapsed ? "expand" : "collapse")}
+        <Link
+          href="/updates"
+          aria-label={t("updates")}
+          title={collapsed ? t("updates") : undefined}
           className={cn(
-            "text-muted-foreground",
-            !collapsed && "w-full justify-start gap-3 px-3"
+            "relative mb-1 flex h-8 items-center gap-2.5 rounded-md px-3 text-[0.8rem] font-medium transition-colors",
+            collapsed && "justify-center px-0",
+            isNavItemActive(pathname, "/updates")
+              ? "bg-accent-light text-primary"
+              : "text-muted-foreground/80 hover:bg-secondary hover:text-foreground"
           )}
         >
-          {collapsed ? (
-            <PanelLeftOpen className="size-4.5" />
-          ) : (
-            <>
-              <PanelLeftClose className="size-4.5" />
-              {t("collapse")}
-            </>
-          )}
-        </Button>
+          <Sparkles className="size-4 shrink-0" />
+          {!collapsed && <span className="truncate">{t("updates")}</span>}
+          {unreadUpdates > 0 &&
+            (collapsed ? (
+              <span className="absolute right-1 top-1 size-2 rounded-full bg-primary" />
+            ) : (
+              <span className="ms-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.65rem] font-semibold text-primary-foreground tabular-nums">
+                {unreadUpdates > 99 ? "99+" : unreadUpdates}
+              </span>
+            ))}
+        </Link>
         {!collapsed && (
           <div className="mt-1 px-3 pb-1 text-[0.7rem] leading-4 text-muted-foreground/70 tabular-nums">
             <span className="block truncate">Veda Service v{version}</span>

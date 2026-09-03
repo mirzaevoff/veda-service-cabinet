@@ -82,6 +82,13 @@ import {
   type ActivityLogSource,
   type ActivityLogTypeDef,
   type ActivityLogEvent,
+  type ReleaseNote,
+  type ReleaseNotesPage,
+  type ReleaseStatus,
+  type ReleaseArea,
+  type CreateReleaseNoteInput,
+  type ApiToken,
+  type ApiTokenCreated,
 } from "./api";
 import {
   clearSession,
@@ -1254,4 +1261,60 @@ export const knowledgeApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/knowledge/${id}`, { method: "DELETE" }),
+};
+
+export interface ReleaseNotesListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  area?: ReleaseArea;
+  tag?: string;
+  /** только для менеджера: draft|published */
+  status?: ReleaseStatus;
+}
+
+/** Лента «Обновления» (release notes, API 0.49) */
+export const releaseNotesApi = {
+  list: (params: ReleaseNotesListParams = {}) =>
+    authedRequest<ReleaseNotesPage>(`/release-notes${query({ ...params })}`),
+  unreadCount: () =>
+    authedRequest<{ unread: number }>("/release-notes/unread-count"),
+  readAll: () =>
+    authedRequest<void>("/release-notes/read-all", { method: "POST" }),
+  get: (id: string) => authedRequest<ReleaseNote>(`/release-notes/${id}`),
+  read: (id: string) =>
+    authedRequest<void>(`/release-notes/${id}/read`, { method: "POST" }),
+  create: (body: CreateReleaseNoteInput) =>
+    authedRequest<ReleaseNote>("/release-notes", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: Partial<CreateReleaseNoteInput>) =>
+    authedRequest<ReleaseNote>(`/release-notes/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  publish: (id: string, channels: { inApp?: boolean; push?: boolean }) =>
+    authedRequest<ReleaseNote>(`/release-notes/${id}/publish`, {
+      method: "POST",
+      body: JSON.stringify(channels),
+    }),
+  unpublish: (id: string) =>
+    authedRequest<ReleaseNote>(`/release-notes/${id}/unpublish`, {
+      method: "POST",
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/release-notes/${id}`, { method: "DELETE" }),
+};
+
+/** API-токены (PAT, API 0.49) — право apiTokens.manage */
+export const apiTokensApi = {
+  list: () => authedRequest<ApiToken[]>("/api-tokens"),
+  create: (body: { name: string; roleId: string; expiresAt?: string | null }) =>
+    authedRequest<ApiTokenCreated>("/api-tokens", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/api-tokens/${id}`, { method: "DELETE" }),
 };

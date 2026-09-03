@@ -2,7 +2,7 @@ import type {
   BlockTool,
   BlockToolConstructorOptions,
 } from "@editorjs/editorjs";
-import { uploadKnowledgeImage } from "@/lib/upload";
+import { uploadKnowledgeImage, type EditorImageUpload } from "@/lib/upload";
 import { fileProxyUrl } from "./shared";
 
 export interface PrivateImageData {
@@ -19,6 +19,8 @@ export interface PrivateImageConfig {
     badType: string;
     failed: string;
   };
+  /** Загрузчик картинки (БЗ — приватно, «Обновления» — публично) */
+  uploader?: (file: File) => Promise<EditorImageUpload>;
   onError?: (message: string) => void;
 }
 
@@ -87,7 +89,8 @@ export class PrivateImageTool implements BlockTool {
       if (!file) return;
       if (this.wrapper) this.wrapper.classList.add("kb-image--loading");
       try {
-        const res = await uploadKnowledgeImage(file);
+        const upload = this.config.uploader ?? uploadKnowledgeImage;
+        const res = await upload(file);
         this.data = { file: res.file, caption: this.data.caption };
         this.renderFilled();
       } catch (e) {

@@ -43,6 +43,8 @@ export const PERMISSIONS = {
   knowledgeView: "knowledge.view",
   knowledgeManage: "knowledge.manage",
   logsView: "logs.view",
+  releaseNotesManage: "releaseNotes.manage",
+  apiTokensManage: "apiTokens.manage",
 } as const;
 
 export function can(

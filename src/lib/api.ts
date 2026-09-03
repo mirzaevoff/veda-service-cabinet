@@ -1439,6 +1439,72 @@ export interface CreateArticleInput {
   attachmentIds?: string[];
 }
 
+// --- Обновления (release notes, API 0.49) -----------------------------------
+
+export type ReleaseArea = "frontend" | "api" | "both";
+export type ReleaseAudience = "all" | "staff";
+export type ReleaseStatus = "draft" | "published";
+
+export interface ReleaseNoteListItem {
+  id: string;
+  title: string;
+  summary: string;
+  area: ReleaseArea;
+  frontVersion: string;
+  apiVersion: string;
+  tags: string[];
+  audience: ReleaseAudience;
+  status: ReleaseStatus;
+  publishedAt: string | null;
+  pinned: boolean;
+  important: boolean;
+  /** Прочитано текущим пользователем */
+  read: boolean;
+  author: { id: string; name: string } | null;
+  createdAt: string;
+}
+
+export interface ReleaseNote extends ReleaseNoteListItem {
+  content: EditorJsData;
+  updatedBy: { id: string; name: string } | null;
+}
+
+export type ReleaseNotesPage = Page<ReleaseNoteListItem>;
+
+export interface CreateReleaseNoteInput {
+  title: string;
+  summary?: string;
+  content?: EditorJsData;
+  area?: ReleaseArea;
+  frontVersion?: string;
+  apiVersion?: string;
+  tags?: string[];
+  audience?: ReleaseAudience;
+  pinned?: boolean;
+  important?: boolean;
+}
+
+// --- API-токены (PAT, API 0.49) ---------------------------------------------
+
+export type ApiTokenState = "active" | "revoked" | "expired";
+
+export interface ApiToken {
+  id: string;
+  name: string;
+  prefix: string;
+  user: { id: string; name: string } | null;
+  state: ApiTokenState;
+  expiresAt: string | null;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+}
+
+/** Ответ создания токена — `token` (сырой секрет) виден один раз */
+export interface ApiTokenCreated extends ApiToken {
+  token: string;
+}
+
 // --- Тех. отдел: Дашборд (статистика заявок, API 0.42) ----------------------
 
 export type StatsPreset = "day" | "week" | "month";

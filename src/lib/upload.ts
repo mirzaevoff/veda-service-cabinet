@@ -124,7 +124,8 @@ export interface EditorImageUpload {
   file: { url: string; id: string };
 }
 
-async function knowledgeImageAttempt(
+async function imageUploadAttempt(
+  endpoint: string,
   file: File,
   token: string
 ): Promise<EditorImageUpload> {
@@ -132,7 +133,7 @@ async function knowledgeImageAttempt(
   form.append("image", file);
   let res: Response;
   try {
-    res = await fetch(`${API_URL}/knowledge/uploads/image`, {
+    res = await fetch(`${API_URL}${endpoint}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: form,
@@ -153,8 +154,9 @@ async function knowledgeImageAttempt(
   return body as EditorImageUpload;
 }
 
-/** Загрузка inline-картинки статьи БЗ (приватно, через FilesModule) */
-export async function uploadKnowledgeImage(
+/** Загрузка inline-картинки Editor.js на указанный эндпоинт (с refresh на 401) */
+async function uploadEditorImage(
+  endpoint: string,
   file: File
 ): Promise<EditorImageUpload> {
   const limit = uploadLimitFor(file);
@@ -171,12 +173,22 @@ export async function uploadKnowledgeImage(
   const token = getAccessToken();
   if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
   try {
-    return await knowledgeImageAttempt(file, token);
+    return await imageUploadAttempt(endpoint, file, token);
   } catch (e) {
     if (!(e instanceof ApiError) || e.status !== 401) throw e;
     const tokens = await refreshSession();
-    return knowledgeImageAttempt(file, tokens.accessToken);
+    return imageUploadAttempt(endpoint, file, tokens.accessToken);
   }
+}
+
+/** Картинка статьи базы знаний — приватно (`/files/:id`) */
+export function uploadKnowledgeImage(file: File): Promise<EditorImageUpload> {
+  return uploadEditorImage("/knowledge/uploads/image", file);
+}
+
+/** Скриншот новости «Обновления» — публично (`/files/public/:id`) */
+export function uploadReleaseNoteImage(file: File): Promise<EditorImageUpload> {
+  return uploadEditorImage("/release-notes/uploads/image", file);
 }
 
 export function formatBytes(bytes: number): string {
