@@ -30,7 +30,8 @@
     "equipment": "Equipment",
     "inventory": "Inventory",
     "techStats": "Statistics",
-    "logs": "Activity log"
+    "logs": "Activity log",
+    "clientServers": "Client servers"
   },
   "Shell": {
     "logout": "Sign out",
@@ -329,7 +330,9 @@
       "users": "Users",
       "usersOnline": "online now",
       "usersTotal": "Total active",
-      "venuesUnknown": "No data"
+      "venuesUnknown": "No data",
+      "serversOutdated": "Version outdated",
+      "serversCritical": "Version critical"
     }
   },
   "Home": {
@@ -1074,7 +1077,15 @@
       "history": "Transition history",
       "historyEmpty": "No transitions yet",
       "firstAppeared": "Appeared in the list",
-      "loadMore": "Show more"
+      "loadMore": "Show more",
+      "versionStatus": {
+        "current": "Current",
+        "outdated": "Outdated",
+        "critical": "Critical",
+        "unknown": "—"
+      },
+      "latestVersionLabel": "Latest version:",
+      "latestVersionTip": "Latest: {version}"
     },
     "invoices": {
       "kind": {
@@ -1243,7 +1254,15 @@
     "statusSection": "Status",
     "copyUid": "Copy UID",
     "uidCopied": "UID copied",
-    "serverRow": "Server"
+    "serverRow": "Server",
+    "colVersion": "iiko version",
+    "linkCopied": "Link copied",
+    "copyLink": "Copy: {label}",
+    "versionStatus": {
+      "outdated": "Outdated",
+      "critical": "Critical"
+    },
+    "versionTip": "Latest: {version}"
   },
   "Transactions": {
     "title": "Transactions",
@@ -1291,7 +1310,11 @@
     "payerInn": "Payer TIN",
     "payerAccount": "Payer account",
     "purpose": "Purpose",
-    "innMatch": "TIN match"
+    "innMatch": "TIN match",
+    "searchPlaceholder": "Payer, INN, account, entity…",
+    "amountMin": "Amount from",
+    "amountMax": "Amount to",
+    "amountPlaceholder": "sum"
   },
   "Balances": {
     "balance": "Balance",
@@ -1523,14 +1546,24 @@
     "categoryPlaceholder": "e.g. POS",
     "tags": "Tags",
     "tagsPlaceholder": "Enter to add",
-    "body": "Body (Markdown)",
+    "body": "Content",
     "bodyPlaceholder": "Article text in Markdown…",
     "markdownHint": "Markdown supported: headings, lists, tables, code, links",
     "preview": "Preview",
     "edit": "Edit",
     "titleRequired": "Enter a title",
     "saved": "Saved",
-    "createdArticle": "Article created"
+    "createdArticle": "Article created",
+    "editorHint": "Write like in Notion: press “/” to insert a block (heading, list, checklist, quote, code, table, image)",
+    "bodyTooBig": "Article is too large (1 MB limit)",
+    "editor": {
+      "placeholder": "Start writing or press “/” for blocks…",
+      "imageSelect": "Upload image",
+      "imageCaption": "Caption (optional)",
+      "imageTooBig": "Image is too large (max 15 MB)",
+      "imageBadType": "Unsupported image format",
+      "imageFailed": "Failed to upload image"
+    }
   },
   "TechDashboard": {
     "title": "Tech-dept dashboard",
@@ -1594,5 +1627,9 @@
     "colSource": "Source",
     "colIp": "IP",
     "system": "System"
+  },
+  "ClientServers": {
+    "title": "Client servers",
+    "description": "Monitoring of clients’ iiko servers"
   }
 }

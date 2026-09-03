@@ -140,7 +140,7 @@ export function DashboardBlocks() {
         <BlockCard
           icon={Server}
           title={t("servers")}
-          href="/iiko-partner?tab=servers"
+          href="/client-servers"
           headline={servers.total}
           headlineLabel={t("serversTotal")}
           delay={0}
@@ -152,6 +152,20 @@ export function DashboardBlocks() {
               label={t("serversMaintenance")}
               value={servers.maintenance}
               tone="warning"
+            />
+          )}
+          {servers.versions.outdated > 0 && (
+            <StatRow
+              label={t("serversOutdated")}
+              value={servers.versions.outdated}
+              tone="warning"
+            />
+          )}
+          {servers.versions.critical > 0 && (
+            <StatRow
+              label={t("serversCritical")}
+              value={servers.versions.critical}
+              tone="destructive"
             />
           )}
         </BlockCard>

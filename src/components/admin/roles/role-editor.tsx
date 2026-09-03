@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiError, type PermissionDef, type Role } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { pickLocalized } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -126,16 +127,32 @@ export function RoleEditor({
     };
     try {
       if (isNew) {
-        await adminApi.roles.create({
+        const created = await adminApi.roles.create({
           slug: slug.trim(),
           ...common,
           permissions: [...checked],
+        });
+        logActivity({
+          type: "role.create",
+          category: "Роли и доступы",
+          description: "Создание роли",
+          targetType: "role",
+          targetId: created.id,
+          meta: { slug: created.slug },
         });
       } else if (role) {
         await adminApi.roles.update(role.id, {
           ...(slugLocked ? {} : { slug: slug.trim() }),
           ...common,
           ...(isAdminRole ? {} : { permissions: [...checked] }),
+        });
+        logActivity({
+          type: "role.update",
+          category: "Роли и доступы",
+          description: "Изменение роли",
+          targetType: "role",
+          targetId: role.id,
+          meta: { slug: role.slug },
         });
       }
       toast.success(t("saved"));

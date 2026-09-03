@@ -18,9 +18,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { Markdown } from "./markdown";
+import { EditorRenderer } from "./editor/editor-renderer";
+import { fileProxyUrl } from "./editor/shared";
 import type { Article } from "@/lib/api";
 import { knowledgeApi, SessionExpiredError } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
 
@@ -51,6 +53,14 @@ export function ArticleView({ articleId }: { articleId: string }) {
   async function remove() {
     try {
       await knowledgeApi.remove(articleId);
+      logActivity({
+        type: "knowledge.delete",
+        category: "База знаний",
+        description: "Удаление статьи БЗ",
+        targetType: "knowledge",
+        targetId: articleId,
+        meta: { title: article?.title },
+      });
       toast.success(t("deleted"));
       router.replace("/knowledge");
     } catch {
@@ -122,8 +132,8 @@ export function ArticleView({ articleId }: { articleId: string }) {
         )}
       </div>
 
-      {article.body ? (
-        <Markdown>{article.body}</Markdown>
+      {article.content?.blocks?.length ? (
+        <EditorRenderer content={article.content} />
       ) : (
         <p className="text-sm text-muted-foreground">{t("noBody")}</p>
       )}
@@ -137,7 +147,7 @@ export function ArticleView({ articleId }: { articleId: string }) {
             {article.attachments.map((f) => (
               <a
                 key={f.id}
-                href={f.url}
+                href={fileProxyUrl(f.url)}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary"

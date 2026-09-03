@@ -103,6 +103,13 @@ export function UserDrawer({
         lastName: lastName.trim(),
         birthDate: birthDate || null,
       });
+      logActivity({
+        type: "user.profile.update",
+        category: "Пользователи",
+        description: "Изменение анкеты пользователя",
+        targetType: "user",
+        targetId: user!.id,
+      });
       onChanged(updated);
       toast.success(t("profileSaved"));
     } catch (e) {
@@ -116,6 +123,14 @@ export function UserDrawer({
     setBusy(true);
     try {
       const updated = await adminApi.users.update(user!.id, { roleId });
+      logActivity({
+        type: "user.role.change",
+        category: "Пользователи",
+        description: "Смена роли пользователя",
+        targetType: "user",
+        targetId: user!.id,
+        meta: { roleId },
+      });
       onChanged(updated);
       toast.success(t("roleSaved"));
     } catch (e) {

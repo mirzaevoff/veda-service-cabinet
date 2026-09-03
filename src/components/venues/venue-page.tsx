@@ -48,6 +48,7 @@ import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { VERSION_STATUS_STYLES } from "@/lib/iiko-version";
 import { VenueInvoices } from "./venue-invoices";
 
 const SERVER_STATUS_STYLES: Record<IikoServerStatus, string> = {
@@ -471,7 +472,18 @@ export function VenuePage({ venueId }: { venueId: string }) {
             {venue.version && (
               <div className="flex items-baseline justify-between gap-4">
                 <dt className="shrink-0 text-muted-foreground">{t("version")}</dt>
-                <dd>
+                <dd className="flex items-center gap-1.5">
+                  {venue.server &&
+                    (venue.server.versionStatus === "outdated" ||
+                      venue.server.versionStatus === "critical") && (
+                      <Badge
+                        variant="secondary"
+                        title={t("versionTip", { version: venue.server.latestVersion })}
+                        className={cn(VERSION_STATUS_STYLES[venue.server.versionStatus])}
+                      >
+                        {t(`versionStatus.${venue.server.versionStatus}`)}
+                      </Badge>
+                    )}
                   <CodeChip>{venue.version}</CodeChip>
                 </dd>
               </div>
@@ -526,16 +538,32 @@ export function VenuePage({ venueId }: { venueId: string }) {
             {externalLinks
               .filter(([, url]) => url)
               .map(([label, url]) => (
-                <a
+                <div
                   key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs transition-colors hover:border-primary/40 hover:text-primary"
+                  className="group flex items-center rounded-md border border-border py-0.5 pl-2.5 pr-0.5 text-xs transition-colors hover:border-primary/40"
                 >
-                  <ExternalLink className="size-3" />
-                  {label}
-                </a>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 py-1 font-medium text-foreground transition-colors hover:text-primary hover:underline"
+                  >
+                    <ExternalLink className="size-3" />
+                    {label}
+                  </a>
+                  <span className="mx-1 h-3.5 w-px bg-border" />
+                  <button
+                    type="button"
+                    aria-label={t("copyLink", { label })}
+                    onClick={() => {
+                      void navigator.clipboard.writeText(url);
+                      toast.success(t("linkCopied"));
+                    }}
+                    className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <Copy className="size-3.5" />
+                  </button>
+                </div>
               ))}
           </div>
         )}

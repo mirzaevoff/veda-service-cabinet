@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ApiError, type Role } from "@/lib/api";
 import { adminApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 
 export function RoleDeleteDialog({
   role,
@@ -33,6 +34,14 @@ export function RoleDeleteDialog({
     setBusy(true);
     try {
       await adminApi.roles.remove(role.id);
+      logActivity({
+        type: "role.delete",
+        category: "Роли и доступы",
+        description: "Удаление роли",
+        targetType: "role",
+        targetId: role.id,
+        meta: { slug: role.slug },
+      });
       toast.success(t("deleted"));
       onDeleted();
     } catch (e) {

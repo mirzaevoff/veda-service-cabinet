@@ -1,0 +1,198 @@
+/* Стилизация Editor.js под дизайн-систему кабинета (токены темы = авто dark) */
+
+.kb-editor {
+  color: var(--foreground);
+}
+
+.kb-editor .codex-editor {
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* Полная ширина контента (Editor.js по умолчанию сужает и центрирует) */
+.kb-editor .ce-block__content,
+.kb-editor .ce-toolbar__content {
+  max-width: 100%;
+}
+
+.kb-editor .ce-paragraph {
+  color: var(--foreground);
+}
+.kb-editor .cdx-block {
+  padding: 0.3em 0;
+}
+
+/* Заголовки */
+.kb-editor .ce-header {
+  color: var(--foreground);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0.2em 0;
+  padding: 0;
+}
+.kb-editor h2.ce-header {
+  font-size: 1.5rem;
+}
+.kb-editor h3.ce-header {
+  font-size: 1.25rem;
+}
+.kb-editor h4.ce-header {
+  font-size: 1.1rem;
+}
+
+/* Списки */
+.kb-editor .cdx-list__item {
+  padding: 0.15em 0;
+}
+
+/* Цитата */
+.kb-editor .cdx-quote {
+  border-left: 3px solid var(--primary);
+  padding-left: 1rem;
+}
+.kb-editor .cdx-quote__text {
+  min-height: auto;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Код */
+.kb-editor .ce-code__textarea {
+  background: var(--secondary);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Разделитель */
+.kb-editor .ce-delimiter::before {
+  color: var(--muted-foreground);
+}
+
+/* Таблица */
+.kb-editor .tc-wrap {
+  --color-border: var(--border);
+  --color-background: var(--secondary);
+  --color-text-secondary: var(--muted-foreground);
+}
+.kb-editor .tc-cell {
+  border-color: var(--border);
+}
+
+/* Инлайн-инструменты и всплывашки — под нашу палитру */
+.kb-editor .ce-inline-toolbar,
+.kb-editor .ce-conversion-toolbar,
+.kb-editor .ce-popover__container,
+.kb-editor .ce-settings {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+.kb-editor .ce-popover-item__title,
+.kb-editor .ce-inline-tool,
+.kb-editor .ce-conversion-tool__title {
+  color: var(--popover-foreground);
+}
+.kb-editor .ce-popover-item:hover,
+.kb-editor .ce-inline-tool:hover,
+.kb-editor .ce-conversion-tool:hover,
+.kb-editor .ce-popover-item--focused {
+  background: var(--secondary) !important;
+}
+.kb-editor .ce-popover-item__icon,
+.kb-editor .ce-conversion-tool__icon {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.kb-editor .cdx-search-field {
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.kb-editor .cdx-search-field__input {
+  color: var(--foreground);
+}
+
+/* Кнопки «плюс» и настроек блока */
+.kb-editor .ce-toolbar__plus,
+.kb-editor .ce-toolbar__settings-btn {
+  color: var(--muted-foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.kb-editor .ce-toolbar__plus:hover,
+.kb-editor .ce-toolbar__settings-btn:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+/* Активный инлайн-инструмент — акцент */
+.kb-editor .ce-inline-tool--active {
+  color: var(--primary);
+}
+
+/* Выделение маркером */
+.kb-editor .cdx-marker {
+  background: var(--accent-light);
+  color: var(--foreground);
+  padding: 0.05em 0.15em;
+  border-radius: 0.2em;
+}
+.kb-editor .inline-code,
+.kb-editor code.inline-code {
+  background: var(--secondary);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: 0.3em;
+  padding: 0.05em 0.35em;
+  font-size: 0.85em;
+}
+
+/* Кастомный image-блок */
+.kb-image {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.3em 0;
+}
+.kb-image--loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.kb-image__img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+}
+.kb-image__caption {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  text-align: center;
+  outline: none;
+  min-height: 1.2em;
+}
+.kb-image__caption:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted-foreground);
+  opacity: 0.6;
+}
+.kb-image__select {
+  align-self: flex-start;
+  border: 1px dashed var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  background: var(--secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.kb-image__select:hover {
+  border-color: var(--primary);
+  color: var(--foreground);
+}

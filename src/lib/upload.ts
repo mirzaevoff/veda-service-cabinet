@@ -118,6 +118,67 @@ export async function uploadFile(
   }
 }
 
+/** Ответ загрузчика картинок Editor.js — POST /knowledge/uploads/image */
+export interface EditorImageUpload {
+  success: number;
+  file: { url: string; id: string };
+}
+
+async function knowledgeImageAttempt(
+  file: File,
+  token: string
+): Promise<EditorImageUpload> {
+  const form = new FormData();
+  form.append("image", file);
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/knowledge/uploads/image`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+  } catch {
+    throw new ApiError(0, { code: "NETWORK", message: "Network error" });
+  }
+  const body = (await res.json().catch(() => null)) as
+    | EditorImageUpload
+    | ApiErrorBody
+    | null;
+  if (!res.ok) {
+    throw new ApiError(
+      res.status,
+      (body as ApiErrorBody) ?? { code: "ER100", message: "Upload failed" }
+    );
+  }
+  return body as EditorImageUpload;
+}
+
+/** Загрузка inline-картинки статьи БЗ (приватно, через FilesModule) */
+export async function uploadKnowledgeImage(
+  file: File
+): Promise<EditorImageUpload> {
+  const limit = uploadLimitFor(file);
+  if (!limit || limit.kind !== "image") {
+    throw new ApiError(400, { code: "ER501", message: "Type not allowed" });
+  }
+  if (file.size > limit.maxBytes) {
+    throw new ApiError(400, {
+      code: "ER502",
+      message: "File too large",
+      data: { maxBytes: limit.maxBytes },
+    });
+  }
+  const token = getAccessToken();
+  if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
+  try {
+    return await knowledgeImageAttempt(file, token);
+  } catch (e) {
+    if (!(e instanceof ApiError) || e.status !== 401) throw e;
+    const tokens = await refreshSession();
+    return knowledgeImageAttempt(file, tokens.accessToken);
+  }
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;

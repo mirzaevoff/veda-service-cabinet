@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, Link2, ScrollText, ShieldCheck } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Link2,
+  Search,
+  ScrollText,
+  ShieldCheck,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,6 +44,7 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import type { LedgerEntry, LedgerList } from "@/lib/api";
 import { balancesApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
+import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -52,11 +60,15 @@ export function LedgerFeed() {
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.balancesManage);
 
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 400);
   const [type, setType] = useState("");
   const [source, setSource] = useState("");
   const [recognized, setRecognized] = useState<"" | "yes" | "no">("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [amountMin, setAmountMin] = useState("");
+  const [amountMax, setAmountMax] = useState("");
   const [sort, setSort] = useState<SortValue>("createdAt:desc");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<LedgerList | null>(null);
@@ -68,18 +80,21 @@ export function LedgerFeed() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
     setPage(1);
-  }, [type, source, recognized, dateFrom, dateTo, sort]);
+  }, [debouncedSearch, type, source, recognized, dateFrom, dateTo, amountMin, amountMax, sort]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const result = await balancesApi.ledger({
         page,
+        search: debouncedSearch || undefined,
         type: type || undefined,
         source: source || undefined,
         recognized: recognized ? recognized === "yes" : undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
+        amountMin: amountMin ? Number(amountMin) : undefined,
+        amountMax: amountMax ? Number(amountMax) : undefined,
         sort,
       });
       if (result.items.length === 0 && result.page > 1) {
@@ -94,7 +109,7 @@ export function LedgerFeed() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны
-  }, [page, type, source, recognized, dateFrom, dateTo, sort]);
+  }, [page, debouncedSearch, type, source, recognized, dateFrom, dateTo, amountMin, amountMax, sort]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await
@@ -150,6 +165,15 @@ export function LedgerFeed() {
         setDateTo("");
       },
     });
+  if (amountMin || amountMax)
+    activeFilters.push({
+      key: "amount",
+      label: `${amountMin || "…"} — ${amountMax || "…"}`,
+      onRemove: () => {
+        setAmountMin("");
+        setAmountMax("");
+      },
+    });
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -164,6 +188,15 @@ export function LedgerFeed() {
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="w-72 pl-9"
+            />
+          </div>
           <FiltersDialog
             active={activeFilters}
             onReset={() => {
@@ -172,6 +205,8 @@ export function LedgerFeed() {
               setRecognized("");
               setDateFrom("");
               setDateTo("");
+              setAmountMin("");
+              setAmountMax("");
             }}
           >
             <div className="flex flex-col gap-1.5">
@@ -242,6 +277,33 @@ export function LedgerFeed() {
               <div className="flex flex-col gap-1.5">
                 <Label className="text-sm font-medium text-muted-foreground">{t("to")}</Label>
                 <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium text-muted-foreground">{t("amountMin")}</Label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={amountMin}
+                  placeholder={t("amountPlaceholder")}
+                  onChange={(e) => setAmountMin(e.target.value)}
+                  className="tabular-nums"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-sm font-medium text-muted-foreground">{t("amountMax")}</Label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={amountMax}
+                  placeholder={t("amountPlaceholder")}
+                  onChange={(e) => setAmountMax(e.target.value)}
+                  className="tabular-nums"
+                />
               </div>
             </div>
           </FiltersDialog>

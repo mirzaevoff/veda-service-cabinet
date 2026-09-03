@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/input-otp";
 import { Spinner } from "@/components/ui/spinner";
 import { api, ApiError, type OtpSession } from "@/lib/api";
+import { logActivity } from "@/lib/activity-log";
 import { saveSession } from "@/lib/auth";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -151,6 +152,11 @@ export function LoginFlow() {
     try {
       const tokens = await api.verify(phone, value);
       saveSession(tokens);
+      logActivity({
+        type: "auth.login",
+        category: "Авторизация",
+        description: "Вход в систему",
+      });
       router.replace("/");
       router.refresh();
     } catch (e) {

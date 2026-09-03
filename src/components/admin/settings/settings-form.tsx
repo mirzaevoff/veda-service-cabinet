@@ -21,6 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import type { Setting } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { settingsApi, SessionExpiredError } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { useDelayed } from "@/hooks/use-delayed";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -167,6 +168,15 @@ export function SettingsForm() {
       }
       try {
         const updated = await settingsApi.update(setting.key, value);
+        logActivity({
+          type: "settings.update",
+          category: "Настройки",
+          description: "Изменение настройки",
+          targetType: "setting",
+          targetId: updated.key,
+          // секретные значения не логируем
+          meta: updated.secret ? { key: updated.key } : { key: updated.key, value },
+        });
         setItems(
           (prev) =>
             prev?.map((s) => (s.key === updated.key ? updated : s)) ?? prev

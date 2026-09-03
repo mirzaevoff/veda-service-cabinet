@@ -30,7 +30,8 @@
     "equipment": "Оборудование",
     "inventory": "Инвентаризация",
     "techStats": "Статистика",
-    "logs": "Журнал действий"
+    "logs": "Журнал действий",
+    "clientServers": "Серверы клиентов"
   },
   "Shell": {
     "logout": "Выйти",
@@ -328,7 +329,9 @@
       "users": "Пользователи",
       "usersOnline": "онлайн сейчас",
       "usersTotal": "Всего активных",
-      "venuesUnknown": "Нет данных"
+      "venuesUnknown": "Нет данных",
+      "serversOutdated": "Версия устарела",
+      "serversCritical": "Версия критична"
     }
   },
   "Home": {
@@ -1073,7 +1076,15 @@
       "history": "История переходов",
       "historyEmpty": "Переходов ещё не было",
       "firstAppeared": "Появился в списке",
-      "loadMore": "Показать ещё"
+      "loadMore": "Показать ещё",
+      "versionStatus": {
+        "current": "Актуальна",
+        "outdated": "Устарела",
+        "critical": "Критично",
+        "unknown": "—"
+      },
+      "latestVersionLabel": "Актуальная версия:",
+      "latestVersionTip": "Актуальная: {version}"
     },
     "invoices": {
       "kind": {
@@ -1242,7 +1253,15 @@
     "statusSection": "Статус",
     "copyUid": "Скопировать UID",
     "uidCopied": "UID скопирован",
-    "serverRow": "Сервер"
+    "serverRow": "Сервер",
+    "colVersion": "Версия iiko",
+    "linkCopied": "Ссылка скопирована",
+    "copyLink": "Скопировать: {label}",
+    "versionStatus": {
+      "outdated": "Устарела",
+      "critical": "Критично"
+    },
+    "versionTip": "Актуальная: {version}"
   },
   "Transactions": {
     "title": "Транзакции",
@@ -1290,7 +1309,11 @@
     "payerInn": "ИНН плательщика",
     "payerAccount": "Счёт плательщика",
     "purpose": "Назначение",
-    "innMatch": "ИНН совпал"
+    "innMatch": "ИНН совпал",
+    "searchPlaceholder": "Плательщик, ИНН, счёт, ЮЛ…",
+    "amountMin": "Сумма от",
+    "amountMax": "Сумма до",
+    "amountPlaceholder": "сум"
   },
   "Balances": {
     "balance": "Баланс",
@@ -1522,14 +1545,24 @@
     "categoryPlaceholder": "напр. Кассы",
     "tags": "Теги",
     "tagsPlaceholder": "Enter для добавления",
-    "body": "Текст (Markdown)",
+    "body": "Текст",
     "bodyPlaceholder": "Текст статьи в формате Markdown…",
     "markdownHint": "Поддерживается Markdown: заголовки, списки, таблицы, код, ссылки",
     "preview": "Предпросмотр",
     "edit": "Редактировать",
     "titleRequired": "Укажите заголовок",
     "saved": "Сохранено",
-    "createdArticle": "Статья создана"
+    "createdArticle": "Статья создана",
+    "editorHint": "Пишите как в Notion: «/» — вставить блок (заголовок, список, чеклист, цитата, код, таблица, картинка)",
+    "bodyTooBig": "Статья слишком большая (лимит 1 МБ)",
+    "editor": {
+      "placeholder": "Начните писать или нажмите «/» для блоков…",
+      "imageSelect": "Загрузить картинку",
+      "imageCaption": "Подпись (необязательно)",
+      "imageTooBig": "Картинка слишком большая (до 15 МБ)",
+      "imageBadType": "Неподдерживаемый формат картинки",
+      "imageFailed": "Не удалось загрузить картинку"
+    }
   },
   "TechDashboard": {
     "title": "Дашборд тех-отдела",
@@ -1593,5 +1626,9 @@
     "colSource": "Источник",
     "colIp": "IP",
     "system": "Система"
+  },
+  "ClientServers": {
+    "title": "Серверы клиентов",
+    "description": "Мониторинг iiko-серверов клиентов"
   }
 }

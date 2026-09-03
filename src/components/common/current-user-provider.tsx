@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { UserProfile } from "@/lib/api";
 import { usersApi, SessionExpiredError } from "@/lib/api-authed";
+import { logActivity, flushActivity } from "@/lib/activity-log";
 import { clearSession, logout } from "@/lib/auth";
 import { can as canCheck } from "@/lib/permissions";
 import { disablePush } from "@/lib/web-push";
@@ -62,6 +63,13 @@ export function CurrentUserProvider({
       can: (permission) => canCheck(user, permission),
       reload: load,
       signOut: async () => {
+        // логируем выход, пока токен ещё валиден (бэкенд /auth/logout не аудирует)
+        logActivity({
+          type: "auth.logout",
+          category: "Авторизация",
+          description: "Выход из системы",
+        });
+        await flushActivity();
         // снимаем FCM-токен, чтобы устройство перестало получать пуши
         await disablePush().catch(() => {});
         await logout();

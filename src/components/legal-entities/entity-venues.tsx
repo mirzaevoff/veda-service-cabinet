@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { ApiError, type Venue, type VenueStatus } from "@/lib/api";
 import { legalEntitiesApi, venuesApi } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
@@ -72,6 +73,14 @@ function AttachVenueDialog({
     setBusyId(venue.id);
     try {
       await legalEntitiesApi.attachVenue(entityId, venue.id);
+      logActivity({
+        type: "venue.attach",
+        category: "Заведения",
+        description: "Привязка заведения к юрлицу",
+        targetType: "venue",
+        targetId: venue.id,
+        meta: { legalEntityId: entityId },
+      });
       toast.success(t("attached"));
       onAttached();
       onClose();
@@ -214,6 +223,14 @@ export function EntityVenues({ entityId }: { entityId: string }) {
     setDetachingId(venue.id);
     try {
       await legalEntitiesApi.detachVenue(entityId, venue.id);
+      logActivity({
+        type: "venue.detach",
+        category: "Заведения",
+        description: "Отвязка заведения от юрлица",
+        targetType: "venue",
+        targetId: venue.id,
+        meta: { legalEntityId: entityId },
+      });
       setVenues((prev) => prev?.filter((v) => v.id !== venue.id) ?? prev);
       toast.success(t("detached"));
     } catch (e) {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Eye, Pencil, X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { Markdown } from "./markdown";
-import type { Article } from "@/lib/api";
+import { BlockEditor, type BlockEditorHandle } from "./editor/block-editor";
+import { ApiError, type Article, type EditorJsData } from "@/lib/api";
 import { knowledgeApi, SessionExpiredError } from "@/lib/api-authed";
+import { logActivity } from "@/lib/activity-log";
 import { PERMISSIONS } from "@/lib/permissions";
 import { Link, useRouter } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
 
 /** Редактор статьи базы знаний. articleId=null — создание */
 export function ArticleEditor({ articleId }: { articleId: string | null }) {
@@ -29,9 +29,9 @@ export function ArticleEditor({ articleId }: { articleId: string | null }) {
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [body, setBody] = useState("");
-  const [preview, setPreview] = useState(false);
+  const [initialContent, setInitialContent] = useState<EditorJsData | undefined>();
   const [saving, setSaving] = useState(false);
+  const editorRef = useRef<BlockEditorHandle>(null);
 
   useEffect(() => {
     if (!articleId) return;
@@ -41,7 +41,7 @@ export function ArticleEditor({ articleId }: { articleId: string | null }) {
         setTitle(a.title);
         setCategory(a.category);
         setTags(a.tags);
-        setBody(a.body);
+        setInitialContent(a.content);
         setLoaded(true);
       })
       .catch((e) => {
@@ -63,20 +63,30 @@ export function ArticleEditor({ articleId }: { articleId: string | null }) {
       return;
     }
     setSaving(true);
-    const payload = {
-      title: title.trim(),
-      body,
-      category: category.trim(),
-      tags,
-    };
     try {
+      const content = (await editorRef.current?.save()) ?? { blocks: [] };
+      const payload = {
+        title: title.trim(),
+        content,
+        category: category.trim(),
+        tags,
+      };
       const saved: Article = articleId
         ? await knowledgeApi.update(articleId, payload)
         : await knowledgeApi.create(payload);
+      logActivity({
+        type: articleId ? "knowledge.update" : "knowledge.create",
+        category: "База знаний",
+        description: articleId ? "Изменение статьи БЗ" : "Создание статьи БЗ",
+        targetType: "knowledge",
+        targetId: saved.id,
+        meta: { title: saved.title },
+      });
       toast.success(articleId ? t("saved") : t("createdArticle"));
       router.replace(`/knowledge/${saved.id}`);
-    } catch {
-      toast.error(t("genericError"));
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "ER2001") toast.error(t("bodyTooBig"));
+      else toast.error(t("genericError"));
       setSaving(false);
     }
   }
@@ -156,35 +166,11 @@ export function ArticleEditor({ articleId }: { articleId: string | null }) {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">{t("body")}</Label>
-          <Button
-            variant="ghost"
-            size="xs"
-            className="gap-1.5"
-            onClick={() => setPreview((v) => !v)}
-          >
-            {preview ? <Pencil className="size-3.5" /> : <Eye className="size-3.5" />}
-            {preview ? t("edit") : t("preview")}
-          </Button>
+        <Label className="text-sm font-medium text-muted-foreground">{t("body")}</Label>
+        <div className="min-h-64 rounded-lg border border-border px-3 py-3 focus-within:border-primary/40">
+          <BlockEditor ref={editorRef} initialData={initialContent} />
         </div>
-        {preview ? (
-          <div className="min-h-64 rounded-md border border-border p-4">
-            {body ? <Markdown>{body}</Markdown> : <p className="text-sm text-muted-foreground">{t("noBody")}</p>}
-          </div>
-        ) : (
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={16}
-            placeholder={t("bodyPlaceholder")}
-            className={cn(
-              "w-full resize-y rounded-md border border-border bg-transparent px-3 py-2 font-mono text-sm outline-none",
-              "focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            )}
-          />
-        )}
-        <span className="text-xs text-muted-foreground">{t("markdownHint")}</span>
+        <span className="text-xs text-muted-foreground">{t("editorHint")}</span>
       </div>
 
       <div className="flex justify-end gap-2">

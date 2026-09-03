@@ -13,6 +13,7 @@ import {
   ArrowLeftRight,
   ReceiptText,
   ScrollText,
+  Server,
   ShieldCheck,
   SlidersHorizontal,
   Ticket,
@@ -72,7 +73,6 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: Handshake,
         anyPermission: [
           PERMISSIONS.iikoPartnerView,
-          PERMISSIONS.iikoServersView,
           PERMISSIONS.iikoInvoicesView,
           PERMISSIONS.iikoPartnerInvoicesView,
         ],
@@ -154,6 +154,12 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/tech-stats",
         icon: ChartColumn,
         permission: PERMISSIONS.ticketsList,
+      },
+      {
+        key: "clientServers",
+        href: "/client-servers",
+        icon: Server,
+        permission: PERMISSIONS.iikoServersView,
       },
       {
         key: "equipment",

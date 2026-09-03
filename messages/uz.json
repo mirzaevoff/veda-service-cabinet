@@ -30,7 +30,8 @@
     "equipment": "Jihozlar",
     "inventory": "Inventarizatsiya",
     "techStats": "Statistika",
-    "logs": "Amallar jurnali"
+    "logs": "Amallar jurnali",
+    "clientServers": "Mijoz serverlari"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -328,7 +329,9 @@
       "users": "Foydalanuvchilar",
       "usersOnline": "hozir onlayn",
       "usersTotal": "Jami faol",
-      "venuesUnknown": "Maʼlumot yoʻq"
+      "venuesUnknown": "Maʼlumot yoʻq",
+      "serversOutdated": "Versiya eskirgan",
+      "serversCritical": "Versiya kritik"
     }
   },
   "Home": {
@@ -1073,7 +1076,15 @@
       "history": "O'tishlar tarixi",
       "historyEmpty": "Hali o'tishlar bo'lmagan",
       "firstAppeared": "Ro'yxatda paydo bo'ldi",
-      "loadMore": "Yana ko'rsatish"
+      "loadMore": "Yana ko'rsatish",
+      "versionStatus": {
+        "current": "Dolzarb",
+        "outdated": "Eskirgan",
+        "critical": "Kritik",
+        "unknown": "—"
+      },
+      "latestVersionLabel": "Dolzarb versiya:",
+      "latestVersionTip": "Eng yangi: {version}"
     },
     "invoices": {
       "kind": {
@@ -1242,7 +1253,15 @@
     "statusSection": "Holat",
     "copyUid": "UID nusxalash",
     "uidCopied": "UID nusxalandi",
-    "serverRow": "Server"
+    "serverRow": "Server",
+    "colVersion": "iiko versiyasi",
+    "linkCopied": "Havola nusxalandi",
+    "copyLink": "Nusxalash: {label}",
+    "versionStatus": {
+      "outdated": "Eskirgan",
+      "critical": "Kritik"
+    },
+    "versionTip": "Eng yangi: {version}"
   },
   "Transactions": {
     "title": "Tranzaksiyalar",
@@ -1290,7 +1309,11 @@
     "payerInn": "To'lovchi STIR",
     "payerAccount": "To'lovchi hisobi",
     "purpose": "Maqsad",
-    "innMatch": "STIR mos"
+    "innMatch": "STIR mos",
+    "searchPlaceholder": "To‘lovchi, INN, hisob, YuSh…",
+    "amountMin": "Summa dan",
+    "amountMax": "Summa gacha",
+    "amountPlaceholder": "so‘m"
   },
   "Balances": {
     "balance": "Balans",
@@ -1522,14 +1545,24 @@
     "categoryPlaceholder": "masalan, Kassalar",
     "tags": "Teglar",
     "tagsPlaceholder": "Qoʻshish uchun Enter",
-    "body": "Matn (Markdown)",
+    "body": "Matn",
     "bodyPlaceholder": "Maqola matni Markdown formatida…",
     "markdownHint": "Markdown qoʻllab-quvvatlanadi: sarlavhalar, roʻyxatlar, jadvallar, kod, havolalar",
     "preview": "Koʻrish",
     "edit": "Tahrirlash",
     "titleRequired": "Sarlavhani kiriting",
     "saved": "Saqlandi",
-    "createdArticle": "Maqola yaratildi"
+    "createdArticle": "Maqola yaratildi",
+    "editorHint": "Notion kabi yozing: blok qo‘shish uchun “/” bosing (sarlavha, ro‘yxat, checklist, iqtibos, kod, jadval, rasm)",
+    "bodyTooBig": "Maqola juda katta (1 MB chegara)",
+    "editor": {
+      "placeholder": "Yozishni boshlang yoki bloklar uchun “/” bosing…",
+      "imageSelect": "Rasm yuklash",
+      "imageCaption": "Izoh (ixtiyoriy)",
+      "imageTooBig": "Rasm juda katta (maks. 15 MB)",
+      "imageBadType": "Rasm formati qo‘llab-quvvatlanmaydi",
+      "imageFailed": "Rasmni yuklab bo‘lmadi"
+    }
   },
   "TechDashboard": {
     "title": "Texnik boʻlim dashboardi",
@@ -1593,5 +1626,9 @@
     "colSource": "Manba",
     "colIp": "IP",
     "system": "Tizim"
+  },
+  "ClientServers": {
+    "title": "Mijoz serverlari",
+    "description": "Mijozlar iiko serverlari monitoringi"
   }
 }

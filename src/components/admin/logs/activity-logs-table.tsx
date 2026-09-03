@@ -32,6 +32,27 @@ import { cn } from "@/lib/utils";
 
 const ALL = "__all__";
 
+/**
+ * Семантические типы, которые эмитит кабинет, но которых пока нет в серверном
+ * реестре `/activity-logs/types` — домешиваем в фильтры (категория/тип),
+ * чтобы по ним можно было отбирать. Если появятся на сервере — дедупим по type.
+ */
+const CABINET_LOG_TYPES: ActivityLogTypeDef[] = [
+  { type: "auth.login", category: "Авторизация", description: "Вход в систему" },
+  { type: "auth.logout", category: "Авторизация", description: "Выход из системы" },
+  { type: "knowledge.create", category: "База знаний", description: "Создание статьи БЗ" },
+  { type: "knowledge.update", category: "База знаний", description: "Изменение статьи БЗ" },
+  { type: "knowledge.delete", category: "База знаний", description: "Удаление статьи БЗ" },
+  { type: "user.role.change", category: "Пользователи", description: "Смена роли пользователя" },
+  { type: "user.profile.update", category: "Пользователи", description: "Изменение анкеты пользователя" },
+  { type: "role.create", category: "Роли и доступы", description: "Создание роли" },
+  { type: "role.update", category: "Роли и доступы", description: "Изменение роли" },
+  { type: "role.delete", category: "Роли и доступы", description: "Удаление роли" },
+  { type: "settings.update", category: "Настройки", description: "Изменение настройки" },
+  { type: "venue.attach", category: "Заведения", description: "Привязка заведения к юрлицу" },
+  { type: "venue.detach", category: "Заведения", description: "Отвязка заведения от юрлица" },
+];
+
 function statusTone(code: number | null): string {
   if (code === null) return "text-muted-foreground";
   if (code >= 500) return "text-destructive";
@@ -62,13 +83,17 @@ export function ActivityLogsTable() {
     void activityLogsApi.types().then(setTypes).catch(() => {});
   }, []);
 
+  const allTypes = useMemo(() => {
+    const seen = new Set(types.map((x) => x.type));
+    return [...types, ...CABINET_LOG_TYPES.filter((x) => !seen.has(x.type))];
+  }, [types]);
   const categories = useMemo(
-    () => [...new Set(types.map((x) => x.category))].sort((a, b) => a.localeCompare(b)),
-    [types]
+    () => [...new Set(allTypes.map((x) => x.category))].sort((a, b) => a.localeCompare(b)),
+    [allTypes]
   );
   const typeOptions = useMemo(
-    () => (category === ALL ? types : types.filter((x) => x.category === category)),
-    [types, category]
+    () => (category === ALL ? allTypes : allTypes.filter((x) => x.category === category)),
+    [allTypes, category]
   );
 
   useEffect(() => {

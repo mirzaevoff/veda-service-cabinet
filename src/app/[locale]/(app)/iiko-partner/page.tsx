@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PartnerProfile } from "@/components/iiko-partner/partner-profile";
-import { IikoServers } from "@/components/iiko-partner/iiko-servers";
 import { IikoInvoices } from "@/components/iiko-partner/iiko-invoices";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
@@ -26,7 +25,6 @@ export default function IikoPartnerPage() {
 
   const tabs = [
     { key: "profile", visible: can(PERMISSIONS.iikoPartnerView) },
-    { key: "servers", visible: can(PERMISSIONS.iikoServersView) },
     { key: "invoices", visible: canInvoices },
   ].filter((tab) => tab.visible);
 
@@ -60,11 +58,6 @@ export default function IikoPartnerPage() {
         {tabs.some((tab) => tab.key === "profile") && (
           <TabsContent value="profile">
             <PartnerProfile />
-          </TabsContent>
-        )}
-        {tabs.some((tab) => tab.key === "servers") && (
-          <TabsContent value="servers">
-            <IikoServers />
           </TabsContent>
         )}
         {canInvoices && (

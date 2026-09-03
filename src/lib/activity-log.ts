@@ -38,3 +38,23 @@ export function logActivity(event: ActivityLogEvent) {
   if (queue.length >= MAX_BATCH) flush();
   else schedule();
 }
+
+/**
+ * Немедленно отправить накопленную очередь и дождаться — для случаев,
+ * когда после лога токен станет недоступен (напр. выход из системы).
+ */
+export async function flushActivity(): Promise<void> {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  while (queue.length > 0) {
+    const batch = queue.slice(0, MAX_BATCH);
+    queue = queue.slice(MAX_BATCH);
+    try {
+      await activityLogsApi.write(batch);
+    } catch {
+      // журнал не критичен
+    }
+  }
+}

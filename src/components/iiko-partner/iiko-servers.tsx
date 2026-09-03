@@ -49,6 +49,7 @@ import type {
 } from "@/lib/api";
 import { iikoPartnerApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
+import { VERSION_STATUS_STYLES } from "@/lib/iiko-version";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
 import { useRouter } from "@/i18n/navigation";
@@ -208,6 +209,27 @@ export function IikoServers() {
         </div>
       )}
 
+      {summary?.latestVersion && (
+        <div className="flex flex-wrap items-center gap-2 text-xs duration-300 animate-in fade-in">
+          <span className="text-muted-foreground">{t("latestVersionLabel")}</span>
+          <span className="rounded bg-secondary px-1.5 py-0.5 font-mono tabular-nums">
+            {summary.latestVersion}
+          </span>
+          {(["current", "outdated", "critical"] as const)
+            .filter((k) => summary.versions[k] > 0)
+            .map((k) => (
+              <Badge
+                key={k}
+                variant="secondary"
+                className={cn("gap-1", VERSION_STATUS_STYLES[k])}
+              >
+                {t(`versionStatus.${k}`)}
+                <span className="tabular-nums">{summary.versions[k]}</span>
+              </Badge>
+            ))}
+        </div>
+      )}
+
       {summary?.lastSyncError && (
         <div className="flex items-center gap-2.5 rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm text-destructive duration-300 animate-in fade-in">
           <CircleAlert className="size-4 shrink-0" />
@@ -335,7 +357,26 @@ export function IikoServers() {
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {server.uid}
                     </TableCell>
-                    <TableCell className="tabular-nums">{server.version}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="tabular-nums">{server.version || "—"}</span>
+                        {(server.versionStatus === "outdated" ||
+                          server.versionStatus === "critical") && (
+                          <Badge
+                            variant="secondary"
+                            title={t("latestVersionTip", {
+                              version: server.latestVersion,
+                            })}
+                            className={cn(
+                              "shrink-0",
+                              VERSION_STATUS_STYLES[server.versionStatus]
+                            )}
+                          >
+                            {t(`versionStatus.${server.versionStatus}`)}
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"

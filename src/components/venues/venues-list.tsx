@@ -46,6 +46,7 @@ import { useCurrentUser } from "@/components/common/current-user-provider";
 import { type VenueStatus, type VenuesList } from "@/lib/api";
 import { venuesApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
+import { VERSION_STATUS_STYLES } from "@/lib/iiko-version";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
 import { useRouter } from "@/i18n/navigation";
@@ -375,13 +376,7 @@ export function VenuesList() {
                     </SortableTableHead>
                     <TableHead>{t("colEntity")}</TableHead>
                     <TableHead>{t("colStatus")}</TableHead>
-                    <SortableTableHead
-                      field="lastSeenAt"
-                      sort={sort}
-                      onSort={setSort}
-                    >
-                      {t("colLastSeen")}
-                    </SortableTableHead>
+                    <TableHead>{t("colVersion")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -453,8 +448,33 @@ export function VenuesList() {
                           <span className="text-sm text-muted-foreground">—</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground tabular-nums">
-                        {formatTime(venue.lastSeenAt)}
+                      <TableCell>
+                        {(() => {
+                          // Показываем версию мониторинга (её и оценивает статус),
+                          // иначе версию из карточки iiko нейтрально
+                          const shown = venue.server?.version || venue.version;
+                          const vs = venue.server?.versionStatus;
+                          const attention = vs === "outdated" || vs === "critical";
+                          if (!shown)
+                            return <span className="text-sm text-muted-foreground">—</span>;
+                          return (
+                            <span
+                              title={
+                                attention && venue.server
+                                  ? t("versionTip", { version: venue.server.latestVersion })
+                                  : undefined
+                              }
+                              className={cn(
+                                "rounded px-1.5 py-0.5 font-mono text-xs tabular-nums",
+                                attention && vs
+                                  ? VERSION_STATUS_STYLES[vs]
+                                  : "bg-secondary text-muted-foreground"
+                              )}
+                            >
+                              {shown}
+                            </span>
+                          );
+                        })()}
                       </TableCell>
                     </TableRow>
                   ))}

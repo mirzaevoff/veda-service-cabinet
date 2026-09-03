@@ -831,12 +831,28 @@ export interface IikoPartnerHealth {
 
 export type IikoServerStatus = "up" | "down" | "maintenance" | "unknown";
 
+/** Свежесть версии сервера относительно эталона (API 0.48) */
+export type IikoVersionStatus = "current" | "outdated" | "critical" | "unknown";
+
+/** Счётчики серверов по свежести версии */
+export interface IikoVersionCounts {
+  current: number;
+  outdated: number;
+  critical: number;
+  unknown: number;
+}
+
 export interface IikoServer {
   id: string;
   uid: string;
   clientId: string | null;
   pointName: string;
   version: string;
+  /** Эталонная («актуальная») версия по флоту/override */
+  latestVersion: string;
+  /** Отставание в минорных версиях */
+  versionLag: number;
+  versionStatus: IikoVersionStatus;
   status: IikoServerStatus;
   statusChangedAt: string;
   /** Заполнено, пока сервер недоступен */
@@ -851,6 +867,8 @@ export interface IikoServersSummary {
   down: number;
   maintenance: number;
   unknown: number;
+  latestVersion: string;
+  versions: IikoVersionCounts;
   lastSyncAt: string | null;
   lastSyncError: string | null;
 }
@@ -1078,6 +1096,9 @@ export interface VenueServer {
   statusChangedAt: string;
   downSince: string | null;
   version: string;
+  latestVersion: string;
+  versionLag: number;
+  versionStatus: IikoVersionStatus;
 }
 
 export interface Venue {
@@ -1155,6 +1176,8 @@ export interface DashboardServersBlock {
   down: number;
   maintenance: number;
   unknown: number;
+  latestVersion: string;
+  versions: IikoVersionCounts;
   lastSyncAt: string | null;
 }
 
@@ -1386,9 +1409,23 @@ export interface ArticleListItem {
   updatedAt: string;
 }
 
+/** Один блок документа Editor.js */
+export interface EditorJsBlock {
+  id?: string;
+  type: string;
+  data: Record<string, unknown>;
+}
+
+/** Документ Editor.js — тело статьи базы знаний (API 0.47) */
+export interface EditorJsData {
+  time?: number;
+  blocks: EditorJsBlock[];
+  version?: string;
+}
+
 export interface Article extends ArticleListItem {
-  /** Markdown (GFM) */
-  body: string;
+  /** Документ Editor.js (JSON блоков) */
+  content: EditorJsData;
   attachments: FileAttachment[];
 }
 
@@ -1396,7 +1433,7 @@ export type ArticlesPage = Page<ArticleListItem>;
 
 export interface CreateArticleInput {
   title: string;
-  body?: string;
+  content?: EditorJsData;
   category?: string;
   tags?: string[];
   attachmentIds?: string[];

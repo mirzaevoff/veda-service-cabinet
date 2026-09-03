@@ -886,6 +886,11 @@ export const balancesApi = {
     recognized?: boolean;
     dateFrom?: string;
     dateTo?: string;
+    /** Поиск по плательщику/комментарию/ЮЛ */
+    search?: string;
+    /** Сумма в сумах (сервер переведёт в тийины) */
+    amountMin?: number;
+    amountMax?: number;
     sort?: string;
   }) => authedRequest<LedgerList>(`/balances/ledger${query({ ...params })}`),
   /** Баланс ЮЛ */
