@@ -33,7 +33,8 @@
     "logs": "Activity log",
     "clientServers": "Client servers",
     "updates": "Updates",
-    "apiTokens": "API tokens"
+    "apiTokens": "API tokens",
+    "system": "System"
   },
   "Shell": {
     "logout": "Sign out",
@@ -89,6 +90,12 @@
       "title": "Activity periods",
       "empty": "No activity recorded",
       "more": "Show more"
+    },
+    "hubTitle": "Users & access",
+    "hubDescription": "Accounts and roles",
+    "tabs": {
+      "people": "People",
+      "roles": "Roles & access"
     }
   },
   "AdminRoles": {
@@ -307,6 +314,10 @@
     "sla": {
       "breached": "SLA breached",
       "deadline": "SLA: {minutes} min"
+    },
+    "tabs": {
+      "queue": "Tickets",
+      "stats": "Statistics"
     }
   },
   "Dashboard": {
@@ -334,7 +345,31 @@
       "usersTotal": "Total active",
       "venuesUnknown": "No data",
       "serversOutdated": "Version outdated",
-      "serversCritical": "Version critical"
+      "serversCritical": "Version critical",
+      "balances": "Balances",
+      "balancesTotal": "total balance",
+      "balancesDebtors": "Debtors",
+      "balancesDebt": "Total debt",
+      "bank": "Bank",
+      "bankUnrecognized": "unrecognized top-ups",
+      "bankIncomingToday": "Received today",
+      "bankIncomingCount": "Payments today",
+      "invoicesCustomer": "Customer invoices",
+      "invoicesPartner": "iiko invoices",
+      "invoicesUnpaid": "unpaid",
+      "invoicesCount": "Invoices",
+      "checklists": "Checklists",
+      "checklistsDue": "due today",
+      "checklistsCompleted": "Completed",
+      "checklistsOverdue": "Overdue",
+      "inventory": "Inventory",
+      "inventoryOpen": "open audits",
+      "inventoryDiscrepancies": "With discrepancies",
+      "equipment": "Equipment",
+      "equipmentTotal": "units",
+      "legalEntities": "Legal entities",
+      "legalEntitiesTotal": "total",
+      "legalEntitiesWithAccess": "With access"
     }
   },
   "Home": {
@@ -1441,7 +1476,13 @@
     "created": "Equipment added",
     "responsiblePlaceholder": "Unassigned",
     "responsibleSearch": "Name or phone",
-    "clearResponsible": "Clear responsible"
+    "clearResponsible": "Clear responsible",
+    "hubTitle": "Equipment",
+    "hubDescription": "Registry and inventory",
+    "tabs": {
+      "registry": "Registry",
+      "inventory": "Inventory"
+    }
   },
   "Locations": {
     "addOffice": "Add office",
@@ -1729,5 +1770,24 @@
     "secretDone": "Done",
     "revokeConfirmTitle": "Revoke “{name}”?",
     "revokeConfirmText": "Access via this token stops immediately."
+  },
+  "Finance": {
+    "title": "Finance",
+    "description": "Bank, transactions and invoices",
+    "tabs": {
+      "transactions": "Transactions",
+      "invoices": "Invoices",
+      "bank": "Bank"
+    }
+  },
+  "AdminSystem": {
+    "title": "System",
+    "description": "Settings, broadcasts, activity log and API tokens",
+    "tabs": {
+      "settings": "Settings",
+      "broadcast": "Broadcast",
+      "logs": "Activity log",
+      "apiTokens": "API tokens"
+    }
   }
 }

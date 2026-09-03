@@ -15,6 +15,23 @@ export function formatMinutes(value: number | null | undefined): string {
   return m ? `${h} ч ${m} мин` : `${h} ч`;
 }
 
+/** Тийины → «12 345 сум» (÷100) */
+export function formatTiyin(tiyin: number, locale: string): string {
+  return `${Math.round(tiyin / 100).toLocaleString(locale)} сум`;
+}
+
+/** Минорные единицы валюты счёта → «$1 234.50» / «1 234.50 ₽» (÷100) */
+export function formatMinor(
+  amountMinor: number,
+  currency: "USD" | "RUB",
+  locale: string
+): string {
+  const amount = (amountMinor / 100).toLocaleString(locale, {
+    maximumFractionDigits: 2,
+  });
+  return currency === "USD" ? `$${amount}` : `${amount} ₽`;
+}
+
 /** Выбор перевода локализованной строки API (фолбэк на ru) */
 export function pickLocalized(
   value: LocalizedString | null | undefined,

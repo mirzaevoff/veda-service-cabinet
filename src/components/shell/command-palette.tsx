@@ -6,13 +6,14 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import { NAV_SECTIONS, isNavItemVisible } from "./nav-items";
+import { NAV_SECTIONS, NAV_SUBITEMS, isNavItemVisible } from "./nav-items";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 /** Командная палитра: ⌘K / Ctrl+K — быстрый переход по разделам */
 export function CommandPalette() {
   const t = useTranslations("Nav");
+  const tRoot = useTranslations();
   const tp = useTranslations("CommandPalette");
   const { can } = useCurrentUser();
   const router = useRouter();
@@ -21,22 +22,36 @@ export function CommandPalette() {
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
 
-  const items = useMemo(
-    () =>
-      NAV_SECTIONS.flatMap((s) =>
-        s.items
-          .filter((it) => !it.disabled && isNavItemVisible(it, can))
-          .map((it) => ({ key: it.key, href: it.href, icon: it.icon, section: s.key }))
-      ),
-    [can]
-  );
+  const items = useMemo(() => {
+    const main = NAV_SECTIONS.flatMap((s) =>
+      s.items
+        .filter((it) => !it.disabled && isNavItemVisible(it, can))
+        .map((it) => ({
+          key: it.key,
+          href: it.href,
+          icon: it.icon,
+          label: t(it.key),
+          section: s.key,
+        }))
+    );
+    // Вкладки хабов (бывшие разделы) — тоже находимы в ⌘K
+    const subs = NAV_SUBITEMS.filter((it) => isNavItemVisible(it, can)).map(
+      (it) => ({
+        key: it.key,
+        href: it.href,
+        icon: it.icon,
+        label: tRoot(it.labelKey),
+        section: it.sectionKey,
+      })
+    );
+    return [...main, ...subs];
+  }, [can, t, tRoot]);
 
   const filtered = useMemo(() => {
-    const withLabel = items.map((it) => ({ ...it, label: t(it.key) }));
     const query = q.trim().toLowerCase();
-    if (!query) return withLabel;
-    return withLabel.filter((it) => it.label.toLowerCase().includes(query));
-  }, [items, q, t]);
+    if (!query) return items;
+    return items.filter((it) => it.label.toLowerCase().includes(query));
+  }, [items, q]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

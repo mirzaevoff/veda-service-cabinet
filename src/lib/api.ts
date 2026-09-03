@@ -1209,12 +1209,67 @@ export interface DashboardUsersBlock {
   online: number;
 }
 
+export interface DashboardBalancesBlock {
+  /** Суммарный баланс всех ЮЛ (тийины, со знаком) */
+  totalTiyin: number;
+  /** Число должников */
+  debtors: number;
+  /** Суммарный долг (сумма отрицательных, тийины, положительное) */
+  debtTiyin: number;
+}
+
+export interface DashboardBankBlock {
+  /** Нераспознанные пополнения (не привязаны к ЮЛ) */
+  unrecognized: number;
+  /** Поступило сегодня (Ташкент), тийины */
+  incomingTodayTiyin: number;
+  incomingTodayCount: number;
+}
+
+/** Неоплаченные счета одного вида (клиентам $ / нам от iiko ₽) */
+export interface DashboardReceivableBlock {
+  currency: "USD" | "RUB";
+  amountMinor: number;
+  count: number;
+}
+
+export interface DashboardChecklistsBlock {
+  dueToday: number;
+  completed: number;
+  overdue: number;
+}
+
+export interface DashboardInventoryBlock {
+  /** Открытые акты (не утверждены) */
+  open: number;
+  /** Акты с расхождениями */
+  discrepancies: number;
+}
+
+export interface DashboardEquipmentBlock {
+  total: number;
+}
+
+export interface DashboardLegalEntitiesBlock {
+  total: number;
+  /** С хотя бы одним участником */
+  withAccess: number;
+}
+
 export interface Dashboard {
   rates: DashboardRatesBlock | null;
   servers: DashboardServersBlock | null;
   venues: DashboardVenuesBlock | null;
   tickets: DashboardTicketsBlock | null;
   users: DashboardUsersBlock | null;
+  balances: DashboardBalancesBlock | null;
+  bank: DashboardBankBlock | null;
+  invoicesCustomer: DashboardReceivableBlock | null;
+  invoicesPartner: DashboardReceivableBlock | null;
+  checklists: DashboardChecklistsBlock | null;
+  inventory: DashboardInventoryBlock | null;
+  equipment: DashboardEquipmentBlock | null;
+  legalEntities: DashboardLegalEntitiesBlock | null;
   generatedAt: string;
 }
 

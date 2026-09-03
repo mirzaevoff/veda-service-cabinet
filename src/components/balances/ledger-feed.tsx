@@ -52,7 +52,7 @@ import { LEDGER_TYPE_STYLES, formatLedgerAmount } from "./ledger-format";
 import { LinkPaymentDialog } from "./link-payment-dialog";
 
 /** Финансы → Транзакции: глобальный фид движений баланса */
-export function LedgerFeed() {
+export function LedgerFeed({ embedded = false }: { embedded?: boolean }) {
   const t = useTranslations("Transactions");
   const tc = useTranslations("Common");
   const locale = useLocale();
@@ -175,16 +175,22 @@ export function LedgerFeed() {
       },
     });
 
+  const auditButton = canManage && (
+    <Button variant="outline" onClick={audit} disabled={auditing} className="gap-2">
+      {auditing ? <Spinner className="size-4" /> : <ShieldCheck className="size-4" />}
+      {t("runAudit")}
+    </Button>
+  );
+
   return (
-    <div className="mx-auto max-w-6xl">
-      <PageHeader title={t("title")} description={t("description")}>
-        {canManage && (
-          <Button variant="outline" onClick={audit} disabled={auditing} className="gap-2">
-            {auditing ? <Spinner className="size-4" /> : <ShieldCheck className="size-4" />}
-            {t("runAudit")}
-          </Button>
-        )}
-      </PageHeader>
+    <div className={embedded ? "" : "mx-auto max-w-6xl"}>
+      {embedded ? (
+        auditButton && <div className="mb-4 flex justify-end">{auditButton}</div>
+      ) : (
+        <PageHeader title={t("title")} description={t("description")}>
+          {auditButton}
+        </PageHeader>
+      )}
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">

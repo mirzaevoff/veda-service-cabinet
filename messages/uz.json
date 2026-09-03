@@ -33,7 +33,8 @@
     "logs": "Amallar jurnali",
     "clientServers": "Mijoz serverlari",
     "updates": "Yangiliklar",
-    "apiTokens": "API-tokenlar"
+    "apiTokens": "API-tokenlar",
+    "system": "Tizim"
   },
   "Shell": {
     "logout": "Chiqish",
@@ -89,6 +90,12 @@
       "title": "Faollik davrlari",
       "empty": "Faollik qayd etilmagan",
       "more": "Yana ko'rsatish"
+    },
+    "hubTitle": "Foydalanuvchilar va ruxsatlar",
+    "hubDescription": "Hisoblar va rollar",
+    "tabs": {
+      "people": "Odamlar",
+      "roles": "Rollar va ruxsatlar"
     }
   },
   "AdminRoles": {
@@ -306,6 +313,10 @@
     "sla": {
       "breached": "SLA buzilgan",
       "deadline": "SLA: {minutes} daqiqa"
+    },
+    "tabs": {
+      "queue": "Murojaatlar",
+      "stats": "Statistika"
     }
   },
   "Dashboard": {
@@ -333,7 +344,31 @@
       "usersTotal": "Jami faol",
       "venuesUnknown": "Maʼlumot yoʻq",
       "serversOutdated": "Versiya eskirgan",
-      "serversCritical": "Versiya kritik"
+      "serversCritical": "Versiya kritik",
+      "balances": "Balanslar",
+      "balancesTotal": "umumiy balans",
+      "balancesDebtors": "Qarzdorlar",
+      "balancesDebt": "Qarz summasi",
+      "bank": "Bank",
+      "bankUnrecognized": "tan olinmagan to‘ldirishlar",
+      "bankIncomingToday": "Bugun tushdi",
+      "bankIncomingCount": "Bugun to‘lovlar",
+      "invoicesCustomer": "Mijoz hisoblari",
+      "invoicesPartner": "iiko hisoblari",
+      "invoicesUnpaid": "to‘lanmagan",
+      "invoicesCount": "Hisoblar",
+      "checklists": "Cheklistlar",
+      "checklistsDue": "bugungi",
+      "checklistsCompleted": "Bajarilgan",
+      "checklistsOverdue": "Muddati o‘tgan",
+      "inventory": "Inventarizatsiya",
+      "inventoryOpen": "ochiq dalolatnomalar",
+      "inventoryDiscrepancies": "Nomuvofiqliklar bilan",
+      "equipment": "Jihozlar",
+      "equipmentTotal": "dona",
+      "legalEntities": "Yur. shaxslar",
+      "legalEntitiesTotal": "jami",
+      "legalEntitiesWithAccess": "Ruxsat bilan"
     }
   },
   "Home": {
@@ -1440,7 +1475,13 @@
     "created": "Jihoz qoʻshildi",
     "responsiblePlaceholder": "Tayinlanmagan",
     "responsibleSearch": "Ism yoki telefon",
-    "clearResponsible": "Masʼulni olib tashlash"
+    "clearResponsible": "Masʼulni olib tashlash",
+    "hubTitle": "Jihozlar",
+    "hubDescription": "Reyestr va inventarizatsiya",
+    "tabs": {
+      "registry": "Reyestr",
+      "inventory": "Inventarizatsiya"
+    }
   },
   "Locations": {
     "addOffice": "Ofis qoʻshish",
@@ -1728,5 +1769,24 @@
     "secretDone": "Tayyor",
     "revokeConfirmTitle": "«{name}» bekor qilinsinmi?",
     "revokeConfirmText": "Bu token orqali kirish darhol to‘xtaydi."
+  },
+  "Finance": {
+    "title": "Moliya",
+    "description": "Bank, tranzaksiyalar va hisoblar",
+    "tabs": {
+      "transactions": "Tranzaksiyalar",
+      "invoices": "Hisoblar",
+      "bank": "Bank"
+    }
+  },
+  "AdminSystem": {
+    "title": "Tizim",
+    "description": "Sozlamalar, tarqatmalar, amallar jurnali va API-tokenlar",
+    "tabs": {
+      "settings": "Sozlamalar",
+      "broadcast": "Tarqatma",
+      "logs": "Amallar jurnali",
+      "apiTokens": "API-tokenlar"
+    }
   }
 }

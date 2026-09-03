@@ -1,18 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowUpRight,
+  Building2,
+  ClipboardList,
+  Landmark,
+  ListChecks,
+  Package,
+  ReceiptText,
   Rocket,
   Server,
   Store,
   Ticket,
   UsersRound,
+  Wallet,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Dashboard } from "@/lib/api";
 import { dashboardApi } from "@/lib/api-authed";
+import { formatMinor, formatTiyin } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -23,9 +31,10 @@ function StatRow({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   tone?: "success" | "destructive" | "warning";
 }) {
+  const positive = typeof value !== "number" || value > 0;
   return (
     <div className="flex items-baseline justify-between gap-3">
       <span className="text-sm text-muted-foreground">{label}</span>
@@ -33,8 +42,8 @@ function StatRow({
         className={cn(
           "font-semibold tabular-nums",
           tone === "success" && "text-success",
-          tone === "destructive" && value > 0 && "text-destructive",
-          tone === "warning" && value > 0 && "text-warning"
+          tone === "destructive" && positive && "text-destructive",
+          tone === "warning" && positive && "text-warning"
         )}
       >
         {value}
@@ -56,9 +65,9 @@ function BlockCard({
   icon: typeof Server;
   title: string;
   href: string;
-  headline: number;
+  headline: React.ReactNode;
   headlineLabel: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   delay: number;
 }) {
   return (
@@ -108,6 +117,7 @@ function InDevelopment() {
 /** Блоки дашборда из GET /dashboard — каждый виден только при своём праве */
 export function DashboardBlocks() {
   const t = useTranslations("Dashboard.blocks");
+  const locale = useLocale();
 
   const [data, setData] = useState<Dashboard | null>(null);
   const [failed, setFailed] = useState(false);
@@ -131,8 +141,25 @@ export function DashboardBlocks() {
     );
   }
 
-  const { servers, venues, tickets, users } = data;
-  if (!servers && !venues && !tickets && !users) return <InDevelopment />;
+  const {
+    servers,
+    venues,
+    tickets,
+    users,
+    balances,
+    bank,
+    invoicesCustomer,
+    invoicesPartner,
+    checklists,
+    inventory,
+    equipment,
+    legalEntities,
+  } = data;
+  const hasAny =
+    servers || venues || tickets || users || balances || bank ||
+    invoicesCustomer || invoicesPartner || checklists || inventory ||
+    equipment || legalEntities;
+  if (!hasAny) return <InDevelopment />;
 
   return (
     <div className="grid w-full max-w-4xl gap-4 sm:grid-cols-2">
@@ -229,6 +256,125 @@ export function DashboardBlocks() {
           delay={180}
         >
           <StatRow label={t("usersTotal")} value={users.total} />
+        </BlockCard>
+      )}
+
+      {balances && (
+        <BlockCard
+          icon={Wallet}
+          title={t("balances")}
+          href="/legal-entities"
+          headline={formatTiyin(balances.totalTiyin, locale)}
+          headlineLabel={t("balancesTotal")}
+          delay={240}
+        >
+          <StatRow label={t("balancesDebtors")} value={balances.debtors} tone="destructive" />
+          {balances.debtors > 0 && (
+            <StatRow
+              label={t("balancesDebt")}
+              value={formatTiyin(balances.debtTiyin, locale)}
+              tone="destructive"
+            />
+          )}
+        </BlockCard>
+      )}
+
+      {bank && (
+        <BlockCard
+          icon={Landmark}
+          title={t("bank")}
+          href="/finance?tab=bank"
+          headline={bank.unrecognized}
+          headlineLabel={t("bankUnrecognized")}
+          delay={300}
+        >
+          <StatRow
+            label={t("bankIncomingToday")}
+            value={formatTiyin(bank.incomingTodayTiyin, locale)}
+            tone="success"
+          />
+          <StatRow label={t("bankIncomingCount")} value={bank.incomingTodayCount} />
+        </BlockCard>
+      )}
+
+      {invoicesCustomer && (
+        <BlockCard
+          icon={ReceiptText}
+          title={t("invoicesCustomer")}
+          href="/finance?tab=invoices"
+          headline={formatMinor(invoicesCustomer.amountMinor, invoicesCustomer.currency, locale)}
+          headlineLabel={t("invoicesUnpaid")}
+          delay={360}
+        >
+          <StatRow label={t("invoicesCount")} value={invoicesCustomer.count} />
+        </BlockCard>
+      )}
+
+      {invoicesPartner && (
+        <BlockCard
+          icon={ReceiptText}
+          title={t("invoicesPartner")}
+          href="/iiko-partner"
+          headline={formatMinor(invoicesPartner.amountMinor, invoicesPartner.currency, locale)}
+          headlineLabel={t("invoicesUnpaid")}
+          delay={420}
+        >
+          <StatRow label={t("invoicesCount")} value={invoicesPartner.count} />
+        </BlockCard>
+      )}
+
+      {checklists && (
+        <BlockCard
+          icon={ListChecks}
+          title={t("checklists")}
+          href="/checklists"
+          headline={checklists.dueToday}
+          headlineLabel={t("checklistsDue")}
+          delay={480}
+        >
+          <StatRow label={t("checklistsCompleted")} value={checklists.completed} tone="success" />
+          <StatRow label={t("checklistsOverdue")} value={checklists.overdue} tone="destructive" />
+        </BlockCard>
+      )}
+
+      {inventory && (
+        <BlockCard
+          icon={ClipboardList}
+          title={t("inventory")}
+          href="/equipment?tab=inventory"
+          headline={inventory.open}
+          headlineLabel={t("inventoryOpen")}
+          delay={540}
+        >
+          <StatRow
+            label={t("inventoryDiscrepancies")}
+            value={inventory.discrepancies}
+            tone="destructive"
+          />
+        </BlockCard>
+      )}
+
+      {equipment && (
+        <BlockCard
+          icon={Package}
+          title={t("equipment")}
+          href="/equipment"
+          headline={equipment.total}
+          headlineLabel={t("equipmentTotal")}
+          delay={600}
+        />
+      )}
+
+      {legalEntities && (
+        <BlockCard
+          icon={Building2}
+          title={t("legalEntities")}
+          href="/legal-entities"
+          headline={legalEntities.total}
+          headlineLabel={t("legalEntitiesTotal")}
+          delay={660}
+        >
+          <StatRow label={t("legalEntitiesWithAccess")} value={legalEntities.withAccess} />
         </BlockCard>
       )}
     </div>

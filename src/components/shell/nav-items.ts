@@ -1,19 +1,20 @@
 import {
+  ArrowLeftRight,
   BookOpen,
+  Building2,
   ChartColumn,
   ClipboardList,
-  Building2,
   Handshake,
-  Store,
   KeyRound,
+  Store,
   Landmark,
   LayoutDashboard,
   LibraryBig,
   ListChecks,
   Package,
-  ArrowLeftRight,
   ReceiptText,
   ScrollText,
+  Send,
   Server,
   ShieldCheck,
   SlidersHorizontal,
@@ -62,6 +63,17 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: Package,
         permission: PERMISSIONS.productsList,
       },
+      {
+        // Хаб: Банк · Транзакции · Счета
+        key: "finance",
+        href: "/finance",
+        icon: Landmark,
+        anyPermission: [
+          PERMISSIONS.bankView,
+          PERMISSIONS.balancesView,
+          PERMISSIONS.invoicesView,
+        ],
+      },
     ],
   },
   {
@@ -81,86 +93,16 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    key: "finance",
-    items: [
-      {
-        key: "bank",
-        href: "/admin/bank",
-        icon: Landmark,
-        permission: PERMISSIONS.bankView,
-      },
-      {
-        key: "transactions",
-        href: "/transactions",
-        icon: ArrowLeftRight,
-        permission: PERMISSIONS.balancesView,
-      },
-      {
-        key: "invoices",
-        href: "/invoices",
-        icon: ReceiptText,
-        permission: PERMISSIONS.invoicesView,
-      },
-    ],
-  },
-  {
-    key: "admin",
-    items: [
-      {
-        key: "panel",
-        href: "/admin/panel",
-        icon: SlidersHorizontal,
-        anyPermission: [
-          PERMISSIONS.notificationsSend,
-          PERMISSIONS.settingsManage,
-        ],
-      },
-      {
-        key: "directories",
-        href: "/admin/directories",
-        icon: LibraryBig,
-        anyPermission: [
-          PERMISSIONS.rolesRead,
-          PERMISSIONS.ticketsCategoriesManage,
-          PERMISSIONS.locationsView,
-          PERMISSIONS.equipmentView,
-        ],
-      },
-      {
-        key: "users",
-        href: "/admin/users",
-        icon: Users,
-        permission: PERMISSIONS.usersList,
-      },
-      {
-        key: "roles",
-        href: "/admin/roles",
-        icon: ShieldCheck,
-        permission: PERMISSIONS.rolesRead,
-      },
-      {
-        key: "logs",
-        href: "/admin/logs",
-        icon: ScrollText,
-        permission: PERMISSIONS.logsView,
-      },
-      {
-        key: "apiTokens",
-        href: "/admin/api-tokens",
-        icon: KeyRound,
-        permission: PERMISSIONS.apiTokensManage,
-      },
-    ],
-  },
-  {
     key: "help",
     items: [
+      // Хаб: Заявки · Статистика
       { key: "tickets", href: "/tickets", icon: Ticket },
       {
-        key: "techStats",
-        href: "/tech-stats",
-        icon: ChartColumn,
-        permission: PERMISSIONS.ticketsList,
+        // Хаб: Реестр · Инвентаризация
+        key: "equipment",
+        href: "/equipment",
+        icon: Package,
+        anyPermission: [PERMISSIONS.equipmentView, PERMISSIONS.inventoryView],
       },
       {
         key: "clientServers",
@@ -169,24 +111,143 @@ export const NAV_SECTIONS: NavSection[] = [
         permission: PERMISSIONS.iikoServersView,
       },
       {
-        key: "equipment",
-        href: "/equipment",
-        icon: Package,
-        permission: PERMISSIONS.equipmentView,
-      },
-      {
-        key: "inventory",
-        href: "/inventory",
-        icon: ClipboardList,
-        permission: PERMISSIONS.inventoryView,
-      },
-      {
         key: "knowledgeBase",
         href: "/knowledge",
         icon: BookOpen,
         permission: PERMISSIONS.knowledgeView,
       },
     ],
+  },
+  {
+    key: "admin",
+    items: [
+      {
+        // Хаб: Люди · Роли и доступы
+        key: "users",
+        href: "/admin/users",
+        icon: Users,
+        anyPermission: [PERMISSIONS.usersList, PERMISSIONS.rolesRead],
+      },
+      {
+        key: "directories",
+        href: "/admin/directories",
+        icon: LibraryBig,
+        anyPermission: [
+          PERMISSIONS.ticketsCategoriesManage,
+          PERMISSIONS.locationsView,
+          PERMISSIONS.equipmentView,
+        ],
+      },
+      {
+        // Хаб: Настройки · Рассылка · Журнал · API-токены
+        key: "system",
+        href: "/admin/panel",
+        icon: SlidersHorizontal,
+        anyPermission: [
+          PERMISSIONS.settingsManage,
+          PERMISSIONS.notificationsSend,
+          PERMISSIONS.logsView,
+          PERMISSIONS.apiTokensManage,
+        ],
+      },
+    ],
+  },
+];
+
+/** Пункт-вкладка внутри хаба — для поиска ⌘K (в сайдбаре не показывается) */
+export interface NavSubItem {
+  key: string;
+  href: string;
+  icon: LucideIcon;
+  /** Полный путь i18n для подписи (вне namespace Nav) */
+  labelKey: string;
+  /** Ключ секции-родителя (namespace Nav) для правой подписи */
+  sectionKey: string;
+  permission?: string;
+  anyPermission?: string[];
+}
+
+/** Вкладки хабов, findable через ⌘K (переехавшие бывшие разделы) */
+export const NAV_SUBITEMS: NavSubItem[] = [
+  {
+    key: "finance-transactions",
+    href: "/finance?tab=transactions",
+    icon: ArrowLeftRight,
+    labelKey: "Finance.tabs.transactions",
+    sectionKey: "finance",
+    permission: PERMISSIONS.balancesView,
+  },
+  {
+    key: "finance-invoices",
+    href: "/finance?tab=invoices",
+    icon: ReceiptText,
+    labelKey: "Finance.tabs.invoices",
+    sectionKey: "finance",
+    permission: PERMISSIONS.invoicesView,
+  },
+  {
+    key: "finance-bank",
+    href: "/finance?tab=bank",
+    icon: Landmark,
+    labelKey: "Finance.tabs.bank",
+    sectionKey: "finance",
+    permission: PERMISSIONS.bankView,
+  },
+  {
+    key: "tickets-stats",
+    href: "/tickets?tab=stats",
+    icon: ChartColumn,
+    labelKey: "Tickets.tabs.stats",
+    sectionKey: "help",
+    permission: PERMISSIONS.ticketsList,
+  },
+  {
+    key: "equipment-inventory",
+    href: "/equipment?tab=inventory",
+    icon: ClipboardList,
+    labelKey: "Equipment.tabs.inventory",
+    sectionKey: "help",
+    permission: PERMISSIONS.inventoryView,
+  },
+  {
+    key: "users-roles",
+    href: "/admin/users?tab=roles",
+    icon: ShieldCheck,
+    labelKey: "AdminUsers.tabs.roles",
+    sectionKey: "admin",
+    permission: PERMISSIONS.rolesRead,
+  },
+  {
+    key: "system-settings",
+    href: "/admin/panel?tab=settings",
+    icon: SlidersHorizontal,
+    labelKey: "AdminSystem.tabs.settings",
+    sectionKey: "admin",
+    permission: PERMISSIONS.settingsManage,
+  },
+  {
+    key: "system-broadcast",
+    href: "/admin/panel?tab=broadcast",
+    icon: Send,
+    labelKey: "AdminSystem.tabs.broadcast",
+    sectionKey: "admin",
+    permission: PERMISSIONS.notificationsSend,
+  },
+  {
+    key: "system-logs",
+    href: "/admin/panel?tab=logs",
+    icon: ScrollText,
+    labelKey: "AdminSystem.tabs.logs",
+    sectionKey: "admin",
+    permission: PERMISSIONS.logsView,
+  },
+  {
+    key: "system-apiTokens",
+    href: "/admin/panel?tab=apiTokens",
+    icon: KeyRound,
+    labelKey: "AdminSystem.tabs.apiTokens",
+    sectionKey: "admin",
+    permission: PERMISSIONS.apiTokensManage,
   },
 ];
 

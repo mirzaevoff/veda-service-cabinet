@@ -161,7 +161,7 @@ export function UpdateEditor({ noteId }: { noteId: string | null }) {
             onValueChange={(v) => setArea((v ?? "frontend") as ReleaseArea)}
           >
             <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
+            <SelectContent className="w-auto min-w-44">
               <SelectItem value="frontend">{t("area.frontend")}</SelectItem>
               <SelectItem value="api">{t("area.api")}</SelectItem>
               <SelectItem value="both">{t("area.both")}</SelectItem>

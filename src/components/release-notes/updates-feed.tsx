@@ -122,7 +122,7 @@ export function UpdatesFeed() {
           <SelectTrigger className="h-9 w-auto min-w-32">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-auto min-w-44">
             <SelectItem value={ALL}>{t("allAreas")}</SelectItem>
             <SelectItem value="frontend">{t("area.frontend")}</SelectItem>
             <SelectItem value="api">{t("area.api")}</SelectItem>

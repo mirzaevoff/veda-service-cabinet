@@ -33,7 +33,8 @@
     "logs": "Журнал действий",
     "clientServers": "Серверы клиентов",
     "updates": "Обновления",
-    "apiTokens": "API-токены"
+    "apiTokens": "API-токены",
+    "system": "Система"
   },
   "Shell": {
     "logout": "Выйти",
@@ -89,6 +90,12 @@
       "title": "Периоды активности",
       "empty": "Активность не зафиксирована",
       "more": "Показать ещё"
+    },
+    "hubTitle": "Пользователи и доступы",
+    "hubDescription": "Учётные записи и роли",
+    "tabs": {
+      "people": "Люди",
+      "roles": "Роли и доступы"
     }
   },
   "AdminRoles": {
@@ -306,6 +313,10 @@
     "sla": {
       "breached": "SLA нарушен",
       "deadline": "SLA: {minutes} мин"
+    },
+    "tabs": {
+      "queue": "Заявки",
+      "stats": "Статистика"
     }
   },
   "Dashboard": {
@@ -333,7 +344,31 @@
       "usersTotal": "Всего активных",
       "venuesUnknown": "Нет данных",
       "serversOutdated": "Версия устарела",
-      "serversCritical": "Версия критична"
+      "serversCritical": "Версия критична",
+      "balances": "Балансы",
+      "balancesTotal": "суммарный баланс",
+      "balancesDebtors": "Должников",
+      "balancesDebt": "Сумма долга",
+      "bank": "Банк",
+      "bankUnrecognized": "нераспознанных пополнений",
+      "bankIncomingToday": "Поступило сегодня",
+      "bankIncomingCount": "Платежей сегодня",
+      "invoicesCustomer": "Счета клиентам",
+      "invoicesPartner": "Счета от iiko",
+      "invoicesUnpaid": "не оплачено",
+      "invoicesCount": "Счетов",
+      "checklists": "Чеклисты",
+      "checklistsDue": "на сегодня",
+      "checklistsCompleted": "Выполнено",
+      "checklistsOverdue": "Просрочено",
+      "inventory": "Инвентаризация",
+      "inventoryOpen": "открытых актов",
+      "inventoryDiscrepancies": "С расхождениями",
+      "equipment": "Оборудование",
+      "equipmentTotal": "единиц",
+      "legalEntities": "Юр. лица",
+      "legalEntitiesTotal": "всего",
+      "legalEntitiesWithAccess": "С доступом"
     }
   },
   "Home": {
@@ -1440,7 +1475,13 @@
     "created": "Оборудование добавлено",
     "responsiblePlaceholder": "Не назначен",
     "responsibleSearch": "Имя или телефон",
-    "clearResponsible": "Убрать ответственного"
+    "clearResponsible": "Убрать ответственного",
+    "hubTitle": "Оборудование",
+    "hubDescription": "Реестр техники и инвентаризация",
+    "tabs": {
+      "registry": "Реестр",
+      "inventory": "Инвентаризация"
+    }
   },
   "Locations": {
     "addOffice": "Добавить офис",
@@ -1728,5 +1769,24 @@
     "secretDone": "Готово",
     "revokeConfirmTitle": "Отозвать «{name}»?",
     "revokeConfirmText": "Доступ по этому токену прекратится немедленно."
+  },
+  "Finance": {
+    "title": "Финансы",
+    "description": "Банк, транзакции и счета",
+    "tabs": {
+      "transactions": "Транзакции",
+      "invoices": "Счета",
+      "bank": "Банк"
+    }
+  },
+  "AdminSystem": {
+    "title": "Система",
+    "description": "Настройки, рассылки, журнал действий и API-токены",
+    "tabs": {
+      "settings": "Настройки",
+      "broadcast": "Рассылка",
+      "logs": "Журнал действий",
+      "apiTokens": "API-токены"
+    }
   }
 }
