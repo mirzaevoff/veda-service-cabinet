@@ -1080,7 +1080,8 @@
       "servers": "Mijoz serverlari",
       "invoices": "Hisob-fakturalar",
       "chainInvoices": "Tarmoq hisoblari",
-      "productMap": "Mahsulotlar xaritasi"
+      "productMap": "Mahsulotlar xaritasi",
+      "allocations": "Taqsimot"
     },
     "servers": {
       "summary": {
@@ -1868,5 +1869,14 @@
     "networkNote": "Tarmoq mahsuloti — bosh YuShda, bo‘linmaydi",
     "deleteConfirmTitle": "Qoida o‘chirilsinmi?",
     "deleteConfirmText": "«{name}» moslashuvi o‘chiriladi."
+  },
+  "Allocations": {
+    "intro": "«Mahsulot → nuqtalar → miqdor» xaritasi, bo‘lish manbasi. Kechasi kron bilan sinxronlanadi; bu yerda — tekshirish/yangilash.",
+    "allChains": "Barcha tarmoqlar",
+    "sync": "Sinxronlash",
+    "synced": "Yangilangan taqsimotlar: {count}",
+    "lastSync": "sinx {time}",
+    "empty": "Hozircha taqsimotlar yo‘q",
+    "genericError": "Nimadir noto‘g‘ri ketdi"
   }
 }

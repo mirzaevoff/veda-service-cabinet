@@ -1081,7 +1081,8 @@
       "servers": "Client servers",
       "invoices": "Invoices",
       "chainInvoices": "Chain invoices",
-      "productMap": "Product map"
+      "productMap": "Product map",
+      "allocations": "Allocation"
     },
     "servers": {
       "summary": {
@@ -1869,5 +1870,14 @@
     "networkNote": "Network product — on the chain entity, not split",
     "deleteConfirmTitle": "Delete rule?",
     "deleteConfirmText": "“{name}” mapping will be removed."
+  },
+  "Allocations": {
+    "intro": "Map “product → points → qty”, the split source. Synced nightly; here — check/refresh.",
+    "allChains": "All chains",
+    "sync": "Sync",
+    "synced": "Allocations updated: {count}",
+    "lastSync": "synced {time}",
+    "empty": "No allocations yet",
+    "genericError": "Something went wrong"
   }
 }
