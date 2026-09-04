@@ -16,6 +16,7 @@ import {
   ScrollText,
   Send,
   Server,
+  Split,
   ShieldCheck,
   SlidersHorizontal,
   Ticket,
@@ -192,6 +193,14 @@ export const NAV_SUBITEMS: NavSubItem[] = [
     labelKey: "Finance.tabs.bank",
     sectionKey: "finance",
     permission: PERMISSIONS.bankView,
+  },
+  {
+    key: "finance-chainSplit",
+    href: "/finance?tab=chainSplit",
+    icon: Split,
+    labelKey: "Finance.tabs.chainSplit",
+    sectionKey: "finance",
+    permission: PERMISSIONS.iikoInvoicesView,
   },
   {
     key: "tickets-stats",

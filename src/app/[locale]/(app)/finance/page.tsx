@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LedgerFeed } from "@/components/balances/ledger-feed";
 import { InvoicesList } from "@/components/invoices/invoices-list";
+import { ChainSplitWorkshop } from "@/components/iiko-partner/chain-invoices/chain-split-workshop";
 import { BankPanel } from "@/components/bank/bank-panel";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
@@ -23,6 +24,7 @@ export default function FinancePage() {
   const tabs = [
     { key: "transactions", visible: can(PERMISSIONS.balancesView) },
     { key: "invoices", visible: can(PERMISSIONS.invoicesView) },
+    { key: "chainSplit", visible: can(PERMISSIONS.iikoInvoicesView) },
     { key: "bank", visible: can(PERMISSIONS.bankView) },
   ].filter((tab) => tab.visible);
 
@@ -52,6 +54,9 @@ export default function FinancePage() {
         </TabsContent>
         <TabsContent value="invoices">
           <InvoicesList />
+        </TabsContent>
+        <TabsContent value="chainSplit">
+          <ChainSplitWorkshop />
         </TabsContent>
         <TabsContent value="bank">
           <BankPanel />

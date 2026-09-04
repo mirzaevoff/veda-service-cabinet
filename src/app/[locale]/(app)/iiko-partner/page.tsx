@@ -6,9 +6,6 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PartnerProfile } from "@/components/iiko-partner/partner-profile";
 import { IikoInvoices } from "@/components/iiko-partner/iiko-invoices";
-import { ChainInvoices } from "@/components/iiko-partner/chain-invoices/chain-invoices";
-import { ProductMapManager } from "@/components/iiko-partner/chain-invoices/product-map-manager";
-import { AllocationsManager } from "@/components/iiko-partner/chain-invoices/allocations-manager";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -26,14 +23,9 @@ export default function IikoPartnerPage() {
     can(PERMISSIONS.iikoInvoicesView) ||
     can(PERMISSIONS.iikoPartnerInvoicesView);
 
-  const canChain = can(PERMISSIONS.iikoInvoicesView);
-
   const tabs = [
     { key: "profile", visible: can(PERMISSIONS.iikoPartnerView) },
     { key: "invoices", visible: canInvoices },
-    { key: "chainInvoices", visible: canChain },
-    { key: "productMap", visible: canChain },
-    { key: "allocations", visible: canChain },
   ].filter((tab) => tab.visible);
 
   if (loading) return null;
@@ -71,21 +63,6 @@ export default function IikoPartnerPage() {
         {canInvoices && (
           <TabsContent value="invoices">
             <IikoInvoices />
-          </TabsContent>
-        )}
-        {canChain && (
-          <TabsContent value="chainInvoices">
-            <ChainInvoices />
-          </TabsContent>
-        )}
-        {canChain && (
-          <TabsContent value="productMap">
-            <ProductMapManager />
-          </TabsContent>
-        )}
-        {canChain && (
-          <TabsContent value="allocations">
-            <AllocationsManager />
           </TabsContent>
         )}
       </Tabs>

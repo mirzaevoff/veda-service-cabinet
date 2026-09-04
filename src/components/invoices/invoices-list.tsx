@@ -142,7 +142,16 @@ export function InvoicesList() {
                   onClick={() => router.push(`/invoices/${inv.id}`)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="font-medium tabular-nums">{inv.number}</TableCell>
+                  <TableCell className="font-medium tabular-nums">
+                    <span className="flex items-center gap-1.5">
+                      {inv.number}
+                      {inv.origin === "chain" && (
+                        <Badge variant="secondary" className="bg-accent-light font-normal text-primary">
+                          {t("chainBadge")}
+                        </Badge>
+                      )}
+                    </span>
+                  </TableCell>
                   <TableCell className="max-w-64 truncate text-muted-foreground">
                     {inv.clientName}
                   </TableCell>

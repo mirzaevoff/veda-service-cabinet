@@ -1441,7 +1441,8 @@
     "deleteConfirmTitle": "Hisob oʻchirilsinmi?",
     "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi.",
     "periodMonth": "Oy (ixtiyoriy)",
-    "periodAll": "Barcha toʻlanmagan"
+    "periodAll": "Barcha toʻlanmagan",
+    "chainBadge": "tarmoq"
   },
   "Equipment": {
     "title": "Jihozlar",
@@ -1786,7 +1787,8 @@
     "tabs": {
       "transactions": "Tranzaksiyalar",
       "invoices": "Hisoblar",
-      "bank": "Bank"
+      "bank": "Bank",
+      "chainSplit": "Tarmoq bo‘lish"
     }
   },
   "AdminSystem": {
@@ -1885,5 +1887,10 @@
     "lastSync": "sinx {time}",
     "empty": "Hozircha taqsimotlar yo‘q",
     "genericError": "Nimadir noto‘g‘ri ketdi"
+  },
+  "ChainSplit": {
+    "split": "Bo‘lish",
+    "map": "Mahsulotlar xaritasi",
+    "alloc": "Taqsimot"
   }
 }

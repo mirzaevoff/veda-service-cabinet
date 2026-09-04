@@ -38,7 +38,14 @@ import { useRouter } from "@/i18n/navigation";
 
 const GLOBAL = "__global__";
 
-export function ProductMapManager() {
+/** Префилл может прийти пропсами (из мастера) или из URL (?chainClientId=&name=) */
+export function ProductMapManager({
+  initialChainId,
+  initialName,
+}: {
+  initialChainId?: string;
+  initialName?: string;
+} = {}) {
   const t = useTranslations("ProductMap");
   const tc = useTranslations("Common");
   const router = useRouter();
@@ -47,12 +54,16 @@ export function ProductMapManager() {
   const canManage = can(PERMISSIONS.iikoInvoicesManage);
 
   const [chains, setChains] = useState<Venue[]>([]);
-  const [scopeChainId, setScopeChainId] = useState(searchParams.get("chainClientId") ?? GLOBAL);
+  const [scopeChainId, setScopeChainId] = useState(
+    initialChainId ?? searchParams.get("chainClientId") ?? GLOBAL
+  );
   const [entries, setEntries] = useState<ProductMapEntry[] | null>(null);
   const showSkeleton = useDelayed(!entries);
 
   // Форма
-  const [invoiceProductName, setInvoiceProductName] = useState(searchParams.get("name") ?? "");
+  const [invoiceProductName, setInvoiceProductName] = useState(
+    initialName ?? searchParams.get("name") ?? ""
+  );
   const [kind, setKind] = useState<"cloud" | "saas">("cloud");
   const [isNetwork, setIsNetwork] = useState(false);
   const [productPortalId, setProductPortalId] = useState("");

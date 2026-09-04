@@ -1442,7 +1442,8 @@
     "deleteConfirmTitle": "Delete invoice?",
     "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone.",
     "periodMonth": "Month (optional)",
-    "periodAll": "All unpaid"
+    "periodAll": "All unpaid",
+    "chainBadge": "chain"
   },
   "Equipment": {
     "title": "Equipment",
@@ -1787,7 +1788,8 @@
     "tabs": {
       "transactions": "Transactions",
       "invoices": "Invoices",
-      "bank": "Bank"
+      "bank": "Bank",
+      "chainSplit": "Chain split"
     }
   },
   "AdminSystem": {
@@ -1886,5 +1888,10 @@
     "lastSync": "synced {time}",
     "empty": "No allocations yet",
     "genericError": "Something went wrong"
+  },
+  "ChainSplit": {
+    "split": "Split",
+    "map": "Product map",
+    "alloc": "Allocation"
   }
 }

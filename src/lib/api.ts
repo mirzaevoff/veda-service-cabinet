@@ -1034,6 +1034,8 @@ export interface Invoice {
   id: string;
   /** VV-2026-000123 (в dryRun — «ПРЕДПРОСМОТР») */
   number: string;
+  /** 'chain' — счёт из дробления сети (API 0.52); иначе обычный */
+  origin?: "manual" | "chain";
   status: string;
   legalEntityId: string;
   clientName: string;

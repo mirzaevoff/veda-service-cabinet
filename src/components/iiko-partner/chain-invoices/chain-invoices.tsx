@@ -42,7 +42,12 @@ async function openPdf(id: string, onError: () => void) {
   }
 }
 
-export function ChainInvoices() {
+export function ChainInvoices({
+  onFixUnmapped,
+}: {
+  /** Открыть «Справочник продуктов» с предзаполнением (из мастера) */
+  onFixUnmapped?: (chainClientId: string, name: string) => void;
+} = {}) {
   const t = useTranslations("ChainInvoices");
   const locale = useLocale();
   const router = useRouter();
@@ -173,9 +178,11 @@ export function ChainInvoices() {
               issuedIds={issuedIds}
               onIssue={issue}
               onFixUnmapped={(name) =>
-                router.push(
-                  `/iiko-partner?tab=productMap&chainClientId=${chainClientId}&name=${encodeURIComponent(name)}`
-                )
+                onFixUnmapped
+                  ? onFixUnmapped(chainClientId, name)
+                  : router.push(
+                      `/finance?tab=chainSplit&chainClientId=${chainClientId}&name=${encodeURIComponent(name)}`
+                    )
               }
             />
           )}
