@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { FileText, Play, RefreshCw, Store, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -39,11 +40,12 @@ export function ChainInvoices() {
   const tc = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.iikoInvoicesManage);
 
   const [chains, setChains] = useState<Venue[]>([]);
-  const [chainClientId, setChainClientId] = useState("");
+  const [chainClientId, setChainClientId] = useState(searchParams.get("chainClientId") ?? "");
   const [period, setPeriod] = useState(currentPeriod());
 
   const [preview, setPreview] = useState<ChainInvoicePreview | null>(null);
