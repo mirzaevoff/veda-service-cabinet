@@ -93,8 +93,6 @@ import {
   type ProductMapInput,
   type Allocation,
   type ChainInvoicePreview,
-  type ChainInvoice,
-  type ChainInvoiceStatus,
 } from "./api";
 import {
   clearSession,
@@ -1359,35 +1357,20 @@ export const allocationsApi = {
     ),
 };
 
-/** Дробление счетов сетей: превью → черновики → выпуск → оплата */
+/** Дробление счетов сетей: превью → выпуск (создаёт обычные счета) */
 export const chainInvoicesApi = {
   preview: (chainClientId: string, period: string) =>
     authedRequest<ChainInvoicePreview>(
       `/iiko-partner/chain-invoices/preview${query({ chainClientId, period })}`
     ),
-  generateDrafts: (chainClientId: string, period: string) =>
-    authedRequest<ChainInvoice[]>(
-      `/iiko-partner/chain-invoices/drafts${query({ chainClientId, period })}`,
+  /**
+   * Выпустить дробление как ОБЫЧНЫЕ счета (по одному на ЮЛ, долг в баланс).
+   * `legalEntityId` — только это ЮЛ (повтор за период → 400); без него — все
+   * биллируемые (уже выпущенные пропускаются). Дальше — через /invoices.
+   */
+  issue: (chainClientId: string, period: string, legalEntityId?: string) =>
+    authedRequest<Invoice[]>(
+      `/iiko-partner/chain-invoices/issue${query({ chainClientId, period, legalEntityId })}`,
       { method: "POST" }
     ),
-  list: (chainClientId: string, period: string, status?: ChainInvoiceStatus) =>
-    authedRequest<ChainInvoice[]>(
-      `/iiko-partner/chain-invoices${query({ chainClientId, period, status })}`
-    ),
-  get: (id: string) =>
-    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}`),
-  issue: (id: string) =>
-    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/issue`, {
-      method: "POST",
-    }),
-  pay: (id: string) =>
-    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/pay`, {
-      method: "POST",
-    }),
-  cancel: (id: string) =>
-    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/cancel`, {
-      method: "POST",
-    }),
-  /** PDF (черновик — live-превью, выпущенный — сохранённый файл) */
-  pdf: (id: string) => authedBlob(`/iiko-partner/chain-invoices/${id}/pdf`),
 };

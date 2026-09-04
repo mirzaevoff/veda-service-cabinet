@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
-import { FileText, Play, RefreshCw, Store, TriangleAlert } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, FileText, Play, Send, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,16 +17,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import type { ChainInvoice, ChainInvoicePreview, Venue } from "@/lib/api";
-import {
-  chainInvoicesApi,
-  venuesApi,
-  SessionExpiredError,
-} from "@/lib/api-authed";
+import { ApiError, type ChainInvoicePreview, type Invoice, type Venue } from "@/lib/api";
+import { chainInvoicesApi, invoicesApi, venuesApi, SessionExpiredError } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
+import { logActivity } from "@/lib/activity-log";
 import { formatTiyin } from "@/lib/format";
-import { useRouter } from "@/i18n/navigation";
-import { ChainInvoiceCard } from "./chain-invoice-card";
+import { Link, useRouter } from "@/i18n/navigation";
 import { minorToTiyin } from "./chain-format";
 
 function currentPeriod(): string {
@@ -35,23 +30,36 @@ function currentPeriod(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+/** Открыть PDF счёта во вкладке (authed blob → objectURL) */
+async function openPdf(id: string, onError: () => void) {
+  try {
+    const blob = await invoicesApi.pdfBlob(id);
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank", "noopener");
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch {
+    onError();
+  }
+}
+
 export function ChainInvoices() {
   const t = useTranslations("ChainInvoices");
-  const tc = useTranslations("Common");
   const locale = useLocale();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.iikoInvoicesManage);
 
   const [chains, setChains] = useState<Venue[]>([]);
-  const [chainClientId, setChainClientId] = useState(searchParams.get("chainClientId") ?? "");
+  const [chainClientId, setChainClientId] = useState("");
   const [period, setPeriod] = useState(currentPeriod());
 
   const [preview, setPreview] = useState<ChainInvoicePreview | null>(null);
   const [previewing, setPreviewing] = useState(false);
-  const [invoices, setInvoices] = useState<ChainInvoice[] | null>(null);
-  const [generating, setGenerating] = useState(false);
+  /** legalEntityId в процессе выпуска, или "all" */
+  const [issuing, setIssuing] = useState<string | null>(null);
+  /** ЮЛ, по которым счета уже выпущены в этой сессии */
+  const [issuedIds, setIssuedIds] = useState<Set<string>>(new Set());
+  const [created, setCreated] = useState<Invoice[]>([]);
 
   useEffect(() => {
     void venuesApi
@@ -60,23 +68,12 @@ export function ChainInvoices() {
       .catch(() => {});
   }, []);
 
-  const loadInvoices = useCallback(async () => {
-    if (!chainClientId || !period) return;
-    try {
-      setInvoices(await chainInvoicesApi.list(chainClientId, period));
-    } catch (e) {
-      if (e instanceof SessionExpiredError) router.replace("/login");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainClientId, period]);
-
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect -- сброс при смене сети/периода */
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс при смене сети/периода
     setPreview(null);
-    setInvoices(null);
-    /* eslint-enable react-hooks/set-state-in-effect */
-    void loadInvoices();
-  }, [loadInvoices]);
+    setIssuedIds(new Set());
+    setCreated([]);
+  }, [chainClientId, period]);
 
   async function runPreview() {
     if (!chainClientId || !period) return;
@@ -91,23 +88,36 @@ export function ChainInvoices() {
     }
   }
 
-  async function generateDrafts() {
-    setGenerating(true);
-    try {
-      const saved = await chainInvoicesApi.generateDrafts(chainClientId, period);
-      setInvoices(saved);
-      setPreview(null);
-      toast.success(t("draftsGenerated", { count: saved.length }));
-    } catch {
-      toast.error(t("genericError"));
-    } finally {
-      setGenerating(false);
-    }
-  }
+  const issue = useCallback(
+    async (legalEntityId?: string) => {
+      setIssuing(legalEntityId ?? "all");
+      try {
+        const invoices = await chainInvoicesApi.issue(chainClientId, period, legalEntityId);
+        logActivity({
+          type: "chainInvoice.issue",
+          category: "Счета iiko",
+          description: "Выпуск счетов сети",
+          meta: { chainClientId, period, count: invoices.length },
+        });
+        setIssuedIds((prev) => {
+          const next = new Set(prev);
+          invoices.forEach((inv) => inv.legalEntityId && next.add(inv.legalEntityId));
+          return next;
+        });
+        setCreated((prev) => [...invoices, ...prev]);
+        toast.success(t("issuedToast", { count: invoices.length }));
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 400) toast.error(t("issueExists"));
+        else toast.error(t("genericError"));
+      } finally {
+        setIssuing(null);
+      }
+    },
+    [chainClientId, period, t]
+  );
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Выбор сети и периода */}
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted-foreground">{t("chain")}</label>
@@ -122,10 +132,7 @@ export function ChainInvoices() {
             <SelectContent>
               {chains.map((c) => (
                 <SelectItem key={c.id} value={c.iikoClientId}>
-                  <span className="flex items-center gap-2">
-                    <Store className="size-3.5 text-muted-foreground" />
-                    {c.name}
-                  </span>
+                  {c.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -140,11 +147,7 @@ export function ChainInvoices() {
             className="h-9 w-40 tabular-nums"
           />
         </div>
-        <Button
-          onClick={runPreview}
-          disabled={!chainClientId || !period || previewing}
-          className="gap-2"
-        >
+        <Button onClick={runPreview} disabled={!chainClientId || !period || previewing} className="gap-2">
           {previewing ? <Spinner className="size-4" /> : <Play className="size-4" />}
           {t("preview")}
         </Button>
@@ -166,8 +169,9 @@ export function ChainInvoices() {
               preview={preview}
               locale={locale}
               canManage={canManage}
-              generating={generating}
-              onGenerate={generateDrafts}
+              issuing={issuing}
+              issuedIds={issuedIds}
+              onIssue={issue}
               onFixUnmapped={(name) =>
                 router.push(
                   `/iiko-partner?tab=productMap&chainClientId=${chainClientId}&name=${encodeURIComponent(name)}`
@@ -176,28 +180,30 @@ export function ChainInvoices() {
             />
           )}
 
-          {/* Сохранённые счета */}
-          {invoices && invoices.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold">
-                  {t("savedTitle", { period })}
-                </h3>
-                <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => void loadInvoices()}>
-                  <RefreshCw className="size-3.5" />
-                  {tc("refresh")}
-                </Button>
-              </div>
-              <div className="flex flex-col gap-3">
-                {invoices.map((inv) => (
-                  <ChainInvoiceCard
-                    key={inv._id}
-                    invoice={inv}
-                    canManage={canManage}
-                    onChanged={loadInvoices}
-                  />
-                ))}
-              </div>
+          {created.length > 0 && (
+            <div className="flex flex-col gap-2 rounded-lg border border-success/40 bg-success-light/30 p-4">
+              <span className="flex items-center gap-1.5 text-sm font-medium text-success">
+                <CheckCircle2 className="size-4" />
+                {t("createdTitle", { count: created.length })}
+              </span>
+              {created.map((inv) => (
+                <div key={inv.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <span className="min-w-0">
+                    <span className="font-mono">{inv.number}</span>
+                    <span className="text-muted-foreground"> · {inv.clientName}</span>
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="font-semibold tabular-nums">{formatTiyin(inv.totalTiyin, locale)}</span>
+                    <Button variant="ghost" size="icon-sm" aria-label={t("pdf")} onClick={() => void openPdf(inv.id, () => toast.error(t("pdfError")))}>
+                      <FileText className="size-4" />
+                    </Button>
+                  </span>
+                </div>
+              ))}
+              <Link href="/finance?tab=invoices" className="mt-1 flex items-center gap-1 self-start text-sm font-medium text-primary hover:underline">
+                {t("goToInvoices")}
+                <ArrowUpRight className="size-4" />
+              </Link>
             </div>
           )}
         </>
@@ -206,39 +212,36 @@ export function ChainInvoices() {
   );
 }
 
-/** Панель превью: требуют внимания + группы по ЮЛ */
 function PreviewPanel({
   preview,
   locale,
   canManage,
-  generating,
-  onGenerate,
+  issuing,
+  issuedIds,
+  onIssue,
   onFixUnmapped,
 }: {
   preview: ChainInvoicePreview;
   locale: string;
   canManage: boolean;
-  generating: boolean;
-  onGenerate: () => void;
+  issuing: string | null;
+  issuedIds: Set<string>;
+  onIssue: (legalEntityId?: string) => void;
   onFixUnmapped: (name: string) => void;
 }) {
   const t = useTranslations("ChainInvoices");
   const billable = preview.groups.filter((g) => g.legalEntityId && g.issuable);
   const baskets = preview.groups.filter((g) => !g.legalEntityId);
-  const hasAttention =
-    preview.unmappedProducts.length > 0 || preview.unlinkedClientIds.length > 0;
+  const hasAttention = preview.unmappedProducts.length > 0 || preview.unlinkedClientIds.length > 0;
+  const pending = billable.filter((g) => !issuedIds.has(g.legalEntityId!));
 
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-border p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-semibold">
-          {t("previewTitle", { chain: preview.chainName, period: preview.period })}
-        </h3>
+        <h3 className="font-semibold">{t("previewTitle", { chain: preview.chainName, period: preview.period })}</h3>
         <span className="text-sm text-muted-foreground">
           {t("rate", { rate: preview.rate.toLocaleString(locale) })} ·{" "}
-          <span className="font-semibold text-foreground tabular-nums">
-            {formatTiyin(preview.totalUzsTiyin, locale)}
-          </span>
+          <span className="font-semibold text-foreground tabular-nums">{formatTiyin(preview.totalUzsTiyin, locale)}</span>
         </span>
       </div>
 
@@ -252,12 +255,7 @@ function PreviewPanel({
             <div className="flex flex-wrap items-center gap-1.5 text-xs">
               <span className="text-muted-foreground">{t("unmapped")}:</span>
               {preview.unmappedProducts.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => onFixUnmapped(name)}
-                  className="rounded bg-secondary px-1.5 py-0.5 font-medium underline-offset-2 hover:underline"
-                >
+                <button key={name} type="button" onClick={() => onFixUnmapped(name)} className="rounded bg-secondary px-1.5 py-0.5 font-medium underline-offset-2 hover:underline">
                   {name}
                 </button>
               ))}
@@ -267,9 +265,7 @@ function PreviewPanel({
             <div className="flex flex-wrap items-center gap-1.5 text-xs">
               <span className="text-muted-foreground">{t("unlinked")}:</span>
               {preview.unlinkedClientIds.map((id) => (
-                <span key={id} className="rounded bg-secondary px-1.5 py-0.5 font-mono">
-                  {id}
-                </span>
+                <span key={id} className="rounded bg-secondary px-1.5 py-0.5 font-mono">{id}</span>
               ))}
             </div>
           )}
@@ -280,23 +276,31 @@ function PreviewPanel({
         <p className="py-6 text-center text-sm text-muted-foreground">{t("previewEmpty")}</p>
       ) : (
         <div className="flex flex-col gap-3">
-          {billable.map((g, i) => (
-            <PreviewGroup key={`b${i}`} group={g} rate={preview.rate} locale={locale} tone="ok" />
+          {billable.map((g) => (
+            <PreviewGroup
+              key={`b${g.legalEntityId}`}
+              group={g}
+              rate={preview.rate}
+              locale={locale}
+              tone="ok"
+              canManage={canManage}
+              issued={issuedIds.has(g.legalEntityId!)}
+              issuing={issuing === g.legalEntityId}
+              onIssue={() => onIssue(g.legalEntityId!)}
+            />
           ))}
           {baskets.map((g, i) => (
-            <PreviewGroup key={`x${i}`} group={g} rate={preview.rate} locale={locale} tone="basket" />
+            <PreviewGroup key={`x${i}`} group={g} rate={preview.rate} locale={locale} tone="basket" canManage={canManage} />
           ))}
         </div>
       )}
 
-      {canManage && (
+      {canManage && pending.length > 0 && (
         <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
-          <span className="text-sm text-muted-foreground">
-            {t("groupsSummary", { billable: billable.length, baskets: baskets.length })}
-          </span>
-          <Button onClick={onGenerate} disabled={generating || preview.groups.length === 0} className="gap-2">
-            {generating ? <Spinner className="size-4" /> : <FileText className="size-4" />}
-            {t("generateDrafts")}
+          <span className="text-sm text-muted-foreground">{t("groupsSummary", { billable: billable.length, baskets: baskets.length })}</span>
+          <Button onClick={() => onIssue()} disabled={issuing !== null} className="gap-2">
+            {issuing === "all" ? <Spinner className="size-4" /> : <Send className="size-4" />}
+            {t("issueAll")}
           </Button>
         </div>
       )}
@@ -309,32 +313,41 @@ function PreviewGroup({
   rate,
   locale,
   tone,
+  canManage,
+  issued,
+  issuing,
+  onIssue,
 }: {
   group: ChainInvoicePreview["groups"][number];
   rate: number;
   locale: string;
   tone: "ok" | "basket";
+  canManage: boolean;
+  issued?: boolean;
+  issuing?: boolean;
+  onIssue?: () => void;
 }) {
   const t = useTranslations("ChainInvoices");
   return (
-    <div
-      className={
-        tone === "basket"
-          ? "rounded-lg border border-warning/40 bg-warning-light/20 p-3"
-          : "rounded-lg border border-border p-3"
-      }
-    >
+    <div className={tone === "basket" ? "rounded-lg border border-warning/40 bg-warning-light/20 p-3" : "rounded-lg border border-border p-3"}>
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-        <span className="font-medium">
+        <span className="flex items-center gap-2 font-medium">
           {group.legalEntityName || t(`flags.${group.reason || "unmapped"}`)}
           {tone === "basket" && group.reason && (
-            <Badge variant="secondary" className="ms-2 bg-warning-light text-warning">
-              {t(`flags.${group.reason}`)}
-            </Badge>
+            <Badge variant="secondary" className="bg-warning-light text-warning">{t(`flags.${group.reason}`)}</Badge>
+          )}
+          {issued && (
+            <Badge variant="secondary" className="bg-success-light text-success">{t("issuedBadge")}</Badge>
           )}
         </span>
-        <span className="font-semibold tabular-nums">
-          {formatTiyin(group.totalUzsTiyin, locale)}
+        <span className="flex items-center gap-2">
+          <span className="font-semibold tabular-nums">{formatTiyin(group.totalUzsTiyin, locale)}</span>
+          {tone === "ok" && canManage && onIssue && !issued && (
+            <Button size="sm" variant="outline" className="h-7 gap-1.5" disabled={issuing} onClick={onIssue}>
+              {issuing ? <Spinner className="size-3.5" /> : <Send className="size-3.5" />}
+              {t("issueOne")}
+            </Button>
+          )}
         </span>
       </div>
       <div className="flex flex-col divide-y divide-border/60">
@@ -344,14 +357,10 @@ function PreviewGroup({
               <span className="font-medium">{line.venueName}</span>
               <span className="text-muted-foreground">· {line.product} ×{line.qty}</span>
               {line.flags.map((f) => (
-                <Badge key={f} variant="secondary" className="bg-secondary text-[0.65rem] text-muted-foreground">
-                  {t(`flags.${f}`)}
-                </Badge>
+                <Badge key={f} variant="secondary" className="bg-secondary text-[0.65rem] text-muted-foreground">{t(`flags.${f}`)}</Badge>
               ))}
             </span>
-            <span className="shrink-0 tabular-nums text-muted-foreground">
-              {formatTiyin(minorToTiyin(line.amountMinor, rate), locale)}
-            </span>
+            <span className="shrink-0 tabular-nums text-muted-foreground">{formatTiyin(minorToTiyin(line.amountMinor, rate), locale)}</span>
           </div>
         ))}
       </div>

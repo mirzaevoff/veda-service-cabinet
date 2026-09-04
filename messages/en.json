@@ -1845,7 +1845,14 @@
       "unlinked": "Point without entity",
       "no-co-entity": "No chain entity"
     },
-    "previewEmpty": "No invoices to split for this period"
+    "previewEmpty": "No invoices to split for this period",
+    "issueOne": "Issue",
+    "issueAll": "Issue all",
+    "issuedToast": "Invoices issued: {count}",
+    "issueExists": "Already issued for this period",
+    "issuedBadge": "Issued",
+    "createdTitle": "Invoices created: {count}",
+    "goToInvoices": "Go to Invoices"
   },
   "ProductMap": {
     "intro": "A bridge “invoice product name → allocation product”. Lets the split know which product maps to which allocation.",

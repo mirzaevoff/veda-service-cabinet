@@ -1844,7 +1844,14 @@
       "unlinked": "YuShsiz nuqta",
       "no-co-entity": "Tarmoq YuSh yo‘q"
     },
-    "previewEmpty": "Bu davr uchun bo‘linadigan hisoblar yo‘q"
+    "previewEmpty": "Bu davr uchun bo‘linadigan hisoblar yo‘q",
+    "issueOne": "Chiqarish",
+    "issueAll": "Hammasini chiqarish",
+    "issuedToast": "Chiqarilgan hisoblar: {count}",
+    "issueExists": "Bu davr uchun allaqachon chiqarilgan",
+    "issuedBadge": "Chiqarilgan",
+    "createdTitle": "Yaratilgan hisoblar: {count}",
+    "goToInvoices": "«Hisoblar»ga o‘tish"
   },
   "ProductMap": {
     "intro": "«Hisobdagi mahsulot nomi → taqsimot mahsuloti» ko‘prigi. Bo‘lish qaysi mahsulot qaysi taqsimotga tushishini bilishi uchun.",

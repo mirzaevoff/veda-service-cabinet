@@ -1612,8 +1612,6 @@ export type ChainGroupReason =
   | "unlinked"
   | "no-co-entity";
 
-export type ChainInvoiceStatus = "draft" | "issued" | "paid";
-
 /** Справочник продуктов: имя в счёте ↔ продукт раскладки */
 export interface ProductMapEntry {
   _id: string;
@@ -1690,45 +1688,8 @@ export interface ChainInvoicePreview {
   groups: ChainPreviewGroup[];
 }
 
-/** Строка сохранённого счёта (venue вместо venueId) */
-export interface ChainInvoiceLine {
-  invoiceNumber: string;
-  product: string;
-  productPortalId: string;
-  iikoClientId: string;
-  venue: string | null;
-  venueName: string;
-  qty: number;
-  unitPriceMinor: number;
-  amountMinor: number;
-  flags: ChainLineFlag[];
-}
-
-/** Сохранённый split-счёт (сырой документ: `_id`, ссылки строками/null) */
-export interface ChainInvoice {
-  _id: string;
-  chainClientId: string;
-  chainName: string;
-  period: string;
-  legalEntity: string | null;
-  legalEntityName: string;
-  reason: ChainGroupReason;
-  sourceInvoices: string[];
-  lines: ChainInvoiceLine[];
-  currency: string;
-  totalMinor: number;
-  rate: number;
-  totalUzsTiyin: number;
-  issuable: boolean;
-  status: ChainInvoiceStatus;
-  number: string;
-  pdfFile: string | null;
-  issuedAt: string | null;
-  paidAt: string | null;
-  ledgerEntry: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+// После рефактора API 0.52: выпуск дробления создаёт ОБЫЧНЫЕ счета (`Invoice`,
+// origin='chain') — отдельного split-счёта больше нет. Управление — через /invoices.
 
 // --- Тех. отдел: Дашборд (статистика заявок, API 0.42) ----------------------
 
