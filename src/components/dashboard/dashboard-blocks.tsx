@@ -18,11 +18,17 @@ import {
   Wallet,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BankRatesWidget } from "@/components/bank/bank-rates-widget";
+import { useCurrentUser } from "@/components/common/current-user-provider";
 import type { Dashboard } from "@/lib/api";
 import { dashboardApi } from "@/lib/api-authed";
 import { formatMinor, formatTiyin } from "@/lib/format";
+import { PERMISSIONS } from "@/lib/permissions";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+/** Сетка дашборда: адаптивно 1 → 2 → 3 → 4 колонки, во всю ширину */
+const DASH_GRID = "grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4";
 
 /** Строка «метка — значение» внутри карточки дашборда */
 function StatRow({
@@ -118,6 +124,8 @@ function InDevelopment() {
 export function DashboardBlocks() {
   const t = useTranslations("Dashboard.blocks");
   const locale = useLocale();
+  const { can } = useCurrentUser();
+  const canRates = can(PERMISSIONS.bankView);
 
   const [data, setData] = useState<Dashboard | null>(null);
   const [failed, setFailed] = useState(false);
@@ -133,8 +141,13 @@ export function DashboardBlocks() {
 
   if (!data) {
     return (
-      <div className="grid w-full max-w-4xl gap-4 sm:grid-cols-2">
-        {Array.from({ length: 2 }, (_, i) => (
+      <div className={DASH_GRID}>
+        {canRates && (
+          <div className="sm:col-span-2">
+            <BankRatesWidget />
+          </div>
+        )}
+        {Array.from({ length: 6 }, (_, i) => (
           <Skeleton key={i} className="h-44 rounded-lg animate-in fade-in duration-300" />
         ))}
       </div>
@@ -159,10 +172,15 @@ export function DashboardBlocks() {
     servers || venues || tickets || users || balances || bank ||
     invoicesCustomer || invoicesPartner || checklists || inventory ||
     equipment || legalEntities;
-  if (!hasAny) return <InDevelopment />;
+  if (!hasAny && !canRates) return <InDevelopment />;
 
   return (
-    <div className="grid w-full max-w-4xl gap-4 sm:grid-cols-2">
+    <div className={DASH_GRID}>
+      {canRates && (
+        <div className="sm:col-span-2">
+          <BankRatesWidget />
+        </div>
+      )}
       {servers && (
         <BlockCard
           icon={Server}

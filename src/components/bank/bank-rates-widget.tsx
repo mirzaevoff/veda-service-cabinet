@@ -61,7 +61,7 @@ export function BankRatesWidget() {
     : [];
 
   return (
-    <Card className="w-full max-w-md gap-3 rounded-lg p-5 duration-450 animate-in fade-in slide-in-from-bottom-4">
+    <Card className="h-full w-full gap-3 rounded-lg p-5 duration-450 animate-in fade-in slide-in-from-bottom-4">
       <div className="flex items-center gap-2">
         <CircleDollarSign className="size-4.5 text-primary" strokeWidth={1.75} />
         <h3 className="font-semibold">{t("title")}</h3>
