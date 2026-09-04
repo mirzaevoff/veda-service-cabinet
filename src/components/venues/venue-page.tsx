@@ -50,6 +50,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { VERSION_STATUS_STYLES } from "@/lib/iiko-version";
 import { VenueInvoices } from "./venue-invoices";
+import { VenueLicenses } from "./venue-licenses";
 
 const SERVER_STATUS_STYLES: Record<IikoServerStatus, string> = {
   up: "bg-success-light text-success",
@@ -573,6 +574,9 @@ export function VenuePage({ venueId }: { venueId: string }) {
             : t("cardNotSynced")}
         </p>
       </section>
+
+      {/* Лицензии / подписки / сервисный интервал (chain-invoices) */}
+      <VenueLicenses venue={venue} />
 
       {/* Счета заведения */}
       {canInvoices && venue.kind === "rms" && (

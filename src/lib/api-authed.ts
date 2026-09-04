@@ -89,6 +89,12 @@ import {
   type CreateReleaseNoteInput,
   type ApiToken,
   type ApiTokenCreated,
+  type ProductMapEntry,
+  type ProductMapInput,
+  type Allocation,
+  type ChainInvoicePreview,
+  type ChainInvoice,
+  type ChainInvoiceStatus,
 } from "./api";
 import {
   clearSession,
@@ -1317,4 +1323,71 @@ export const apiTokensApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/api-tokens/${id}`, { method: "DELETE" }),
+};
+
+// --- Счета сетей: дробление (chain-invoices, API 0.51) ---
+
+/** Справочник продуктов (имя в счёте ↔ раскладка) */
+export const productMapApi = {
+  list: (chainClientId?: string) =>
+    authedRequest<ProductMapEntry[]>(
+      `/iiko-partner/product-map${query({ chainClientId })}`
+    ),
+  upsert: (body: ProductMapInput) =>
+    authedRequest<ProductMapEntry>("/iiko-partner/product-map", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/iiko-partner/product-map/${id}`, { method: "DELETE" }),
+};
+
+/** Раскладка лицензий сетей (диагностика) */
+export const allocationsApi = {
+  list: (chainClientId?: string) =>
+    authedRequest<Allocation[]>(
+      `/iiko-partner/allocations${query({ chainClientId })}`
+    ),
+  syncStatus: () =>
+    authedRequest<{ lastSyncAt: string | null; running?: boolean }>(
+      "/iiko-partner/allocations/sync-status"
+    ),
+  sync: (chainClientId?: string) =>
+    authedRequest<{ pages?: number; allocations?: number; errors?: number; chains?: number }>(
+      `/iiko-partner/allocations/sync${query({ chainClientId })}`,
+      { method: "POST" }
+    ),
+};
+
+/** Дробление счетов сетей: превью → черновики → выпуск → оплата */
+export const chainInvoicesApi = {
+  preview: (chainClientId: string, period: string) =>
+    authedRequest<ChainInvoicePreview>(
+      `/iiko-partner/chain-invoices/preview${query({ chainClientId, period })}`
+    ),
+  generateDrafts: (chainClientId: string, period: string) =>
+    authedRequest<ChainInvoice[]>(
+      `/iiko-partner/chain-invoices/drafts${query({ chainClientId, period })}`,
+      { method: "POST" }
+    ),
+  list: (chainClientId: string, period: string, status?: ChainInvoiceStatus) =>
+    authedRequest<ChainInvoice[]>(
+      `/iiko-partner/chain-invoices${query({ chainClientId, period, status })}`
+    ),
+  get: (id: string) =>
+    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}`),
+  issue: (id: string) =>
+    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/issue`, {
+      method: "POST",
+    }),
+  pay: (id: string) =>
+    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/pay`, {
+      method: "POST",
+    }),
+  cancel: (id: string) =>
+    authedRequest<ChainInvoice>(`/iiko-partner/chain-invoices/${id}/cancel`, {
+      method: "POST",
+    }),
+  /** PDF (черновик — live-превью, выпущенный — сохранённый файл) */
+  pdf: (id: string) => authedBlob(`/iiko-partner/chain-invoices/${id}/pdf`),
 };

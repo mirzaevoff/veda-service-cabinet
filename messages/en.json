@@ -200,7 +200,8 @@
     "change": "Change",
     "search": "Search",
     "nothingFound": "Nothing found",
-    "clear": "Clear"
+    "clear": "Clear",
+    "refresh": "Refresh"
   },
   "Tickets": {
     "list": {
@@ -1078,7 +1079,9 @@
     "tabs": {
       "profile": "Profile",
       "servers": "Client servers",
-      "invoices": "Invoices"
+      "invoices": "Invoices",
+      "chainInvoices": "Chain invoices",
+      "productMap": "Product map"
     },
     "servers": {
       "summary": {
@@ -1299,7 +1302,13 @@
       "outdated": "Outdated",
       "critical": "Critical"
     },
-    "versionTip": "Latest: {version}"
+    "versionTip": "Latest: {version}",
+    "licensesTitle": "Licenses",
+    "subscriptionsTitle": "Subscriptions",
+    "serviceIntervalTitle": "Service interval",
+    "licenseExpired": "expired",
+    "licenseExpiresIn": "{days} days left",
+    "subUntil": "until {date}"
   },
   "Transactions": {
     "title": "Transactions",
@@ -1789,5 +1798,76 @@
       "logs": "Activity log",
       "apiTokens": "API tokens"
     }
+  },
+  "ChainInvoices": {
+    "chain": "Chain",
+    "chainPlaceholder": "Select a chain",
+    "period": "Period",
+    "preview": "Preview",
+    "pickChain": "Pick a chain and period, then click “Preview”",
+    "previewTitle": "{chain} · {period}",
+    "rate": "Rate {rate}",
+    "attention": "Needs attention",
+    "unmapped": "Unmapped",
+    "unlinked": "Points without entity",
+    "generateDrafts": "Generate drafts",
+    "groupsSummary": "Billable: {billable} · Baskets: {baskets}",
+    "savedTitle": "Invoices for {period}",
+    "draftsGenerated": "Drafts created: {count}",
+    "linesCount": "Lines: {count}",
+    "pdf": "PDF",
+    "issue": "Issue",
+    "markPaid": "Mark paid",
+    "cancel": "Cancel",
+    "basketHint": "Not billable — fix mapping/linking first",
+    "issueDone": "Invoice issued",
+    "payDone": "Marked paid",
+    "cancelDone": "Cancelled",
+    "issueNotAllowed": "Can't issue — check mapping/linking",
+    "payNotAllowed": "Can't mark paid",
+    "cancelNotAllowed": "Can't cancel",
+    "cancelConfirmTitle": "Cancel invoice?",
+    "cancelConfirmText": "The charge is reversed, PDF removed, invoice returns to draft.",
+    "previewError": "Failed to build preview",
+    "genericError": "Something went wrong",
+    "pdfError": "Failed to open PDF",
+    "status": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "paid": "Paid"
+    },
+    "flags": {
+      "network": "Network",
+      "qty-drift": "Qty mismatch",
+      "unmapped": "Unmapped",
+      "no-allocation": "No allocation",
+      "unlinked": "Point without entity",
+      "no-co-entity": "No chain entity"
+    },
+    "previewEmpty": "No invoices to split for this period"
+  },
+  "ProductMap": {
+    "intro": "A bridge “invoice product name → allocation product”. Lets the split know which product maps to which allocation.",
+    "scope": "Scope",
+    "scopeGlobal": "Global (all chains)",
+    "addTitle": "Add rule",
+    "invoiceProductName": "Invoice product name",
+    "invoiceProductNamePlaceholder": "Exactly as in the invoice",
+    "kind": "Kind",
+    "isNetwork": "Network (HQ, not split)",
+    "productPortalId": "Allocation product id",
+    "productName": "Product name",
+    "productNamePlaceholder": "e.g. POS iikoCloud Pro",
+    "add": "Add",
+    "nameRequired": "Enter product name",
+    "portalIdRequired": "Enter allocation product id",
+    "portalIdHint": "The id comes from the allocation (Allocation tab).",
+    "saved": "Saved",
+    "deleted": "Deleted",
+    "genericError": "Something went wrong",
+    "empty": "No rules yet",
+    "networkNote": "Network product — on the chain entity, not split",
+    "deleteConfirmTitle": "Delete rule?",
+    "deleteConfirmText": "“{name}” mapping will be removed."
   }
 }

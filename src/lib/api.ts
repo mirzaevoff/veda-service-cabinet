@@ -1134,6 +1134,39 @@ export interface Venue {
   active: boolean;
   cardSyncedAt: string | null;
   lastSeenAt: string;
+  /** Лицензии (chain-invoices, из карточки iiko); `to` — дата истечения */
+  licenses: VenueLicense[];
+  /** Подписки (cloud/saas) */
+  subscriptions: VenueSubscription[];
+  /** Ночное окно обслуживания (null — не задано) */
+  serviceInterval: VenueServiceInterval | null;
+}
+
+export interface VenueLicense {
+  product: string;
+  quantity: number;
+  /** ISO */
+  from: string | null;
+  /** ISO — дата истечения */
+  to: string | null;
+}
+
+export interface VenueSubscription {
+  kind: "cloud" | "saas";
+  number: string;
+  /** ЮЛ со стороны iiko (не наше) */
+  legalEntity: string;
+  from: string | null;
+  to: string | null;
+  period: string;
+}
+
+export interface VenueServiceInterval {
+  /** «22:00:00» */
+  from: string;
+  to: string;
+  /** «MSK» */
+  timezone: string;
 }
 
 export interface VenuesSummary {
@@ -1558,6 +1591,143 @@ export interface ApiToken {
 /** Ответ создания токена — `token` (сырой секрет) виден один раз */
 export interface ApiTokenCreated extends ApiToken {
   token: string;
+}
+
+// --- Счета сетей: дробление (chain-invoices, API 0.51) -----------------------
+
+/** Флаг строки дробления */
+export type ChainLineFlag =
+  | "network"
+  | "qty-drift"
+  | "unmapped"
+  | "no-allocation"
+  | "unlinked"
+  | "no-co-entity";
+
+/** Причина небиллируемой корзины (группа без ЮЛ) */
+export type ChainGroupReason =
+  | ""
+  | "unmapped"
+  | "no-allocation"
+  | "unlinked"
+  | "no-co-entity";
+
+export type ChainInvoiceStatus = "draft" | "issued" | "paid";
+
+/** Справочник продуктов: имя в счёте ↔ продукт раскладки */
+export interface ProductMapEntry {
+  _id: string;
+  /** null = глобальное правило */
+  chainClientId: string | null;
+  invoiceProductName: string;
+  kind: "cloud" | "saas";
+  /** id продукта раскладки ("" если сетевой) */
+  productPortalId: string;
+  productName: string;
+  /** true = сетевой/HQ, не дробится */
+  isNetwork: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductMapInput {
+  chainClientId?: string | null;
+  invoiceProductName: string;
+  kind: "cloud" | "saas";
+  productPortalId?: string;
+  productName?: string;
+  isNetwork?: boolean;
+}
+
+/** Раскладка «продукт → точки → кол-во» */
+export interface Allocation {
+  _id: string;
+  chainClientId: string;
+  kind: "cloud" | "saas";
+  productPortalId: string;
+  productName: string;
+  firmId: string;
+  firmName: string;
+  effectiveDate: string | null;
+  points: Array<{ crmId: string; clientId: string; name: string; qty: number }>;
+  syncedAt: string | null;
+}
+
+/** Строка превью (legalEntityId/venueId) */
+export interface ChainPreviewLine {
+  invoiceNumber: string;
+  product: string;
+  productPortalId: string;
+  iikoClientId: string;
+  venueId: string | null;
+  venueName: string;
+  qty: number;
+  unitPriceMinor: number;
+  amountMinor: number;
+  flags: ChainLineFlag[];
+}
+
+export interface ChainPreviewGroup {
+  /** null = небиллируемая корзина */
+  legalEntityId: string | null;
+  legalEntityName: string;
+  reason: ChainGroupReason;
+  issuable: boolean;
+  totalMinor: number;
+  totalUzsTiyin: number;
+  lines: ChainPreviewLine[];
+}
+
+export interface ChainInvoicePreview {
+  chainClientId: string;
+  chainName: string;
+  period: string;
+  rate: number;
+  totalMinor: number;
+  totalUzsTiyin: number;
+  unmappedProducts: string[];
+  unlinkedClientIds: string[];
+  groups: ChainPreviewGroup[];
+}
+
+/** Строка сохранённого счёта (venue вместо venueId) */
+export interface ChainInvoiceLine {
+  invoiceNumber: string;
+  product: string;
+  productPortalId: string;
+  iikoClientId: string;
+  venue: string | null;
+  venueName: string;
+  qty: number;
+  unitPriceMinor: number;
+  amountMinor: number;
+  flags: ChainLineFlag[];
+}
+
+/** Сохранённый split-счёт (сырой документ: `_id`, ссылки строками/null) */
+export interface ChainInvoice {
+  _id: string;
+  chainClientId: string;
+  chainName: string;
+  period: string;
+  legalEntity: string | null;
+  legalEntityName: string;
+  reason: ChainGroupReason;
+  sourceInvoices: string[];
+  lines: ChainInvoiceLine[];
+  currency: string;
+  totalMinor: number;
+  rate: number;
+  totalUzsTiyin: number;
+  issuable: boolean;
+  status: ChainInvoiceStatus;
+  number: string;
+  pdfFile: string | null;
+  issuedAt: string | null;
+  paidAt: string | null;
+  ledgerEntry: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // --- Тех. отдел: Дашборд (статистика заявок, API 0.42) ----------------------

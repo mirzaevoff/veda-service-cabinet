@@ -200,7 +200,8 @@
     "change": "Изменить",
     "search": "Поиск",
     "nothingFound": "Ничего не найдено",
-    "clear": "Очистить"
+    "clear": "Очистить",
+    "refresh": "Обновить"
   },
   "Tickets": {
     "list": {
@@ -1077,7 +1078,9 @@
     "tabs": {
       "profile": "Профиль",
       "servers": "Серверы клиентов",
-      "invoices": "Счета"
+      "invoices": "Счета",
+      "chainInvoices": "Счета сетей",
+      "productMap": "Справочник продуктов"
     },
     "servers": {
       "summary": {
@@ -1298,7 +1301,13 @@
       "outdated": "Устарела",
       "critical": "Критично"
     },
-    "versionTip": "Актуальная: {version}"
+    "versionTip": "Актуальная: {version}",
+    "licensesTitle": "Лицензии",
+    "subscriptionsTitle": "Подписки",
+    "serviceIntervalTitle": "Сервисный интервал",
+    "licenseExpired": "истёк",
+    "licenseExpiresIn": "ещё {days} дн.",
+    "subUntil": "до {date}"
   },
   "Transactions": {
     "title": "Транзакции",
@@ -1788,5 +1797,76 @@
       "logs": "Журнал действий",
       "apiTokens": "API-токены"
     }
+  },
+  "ChainInvoices": {
+    "chain": "Сеть",
+    "chainPlaceholder": "Выберите сеть",
+    "period": "Период",
+    "preview": "Превью",
+    "pickChain": "Выберите сеть и период, затем нажмите «Превью»",
+    "previewTitle": "{chain} · {period}",
+    "rate": "Курс {rate}",
+    "attention": "Требуют внимания",
+    "unmapped": "Без сопоставления",
+    "unlinked": "Точки без ЮЛ",
+    "generateDrafts": "Сгенерировать черновики",
+    "groupsSummary": "Биллируемых: {billable} · Корзин: {baskets}",
+    "savedTitle": "Счета за {period}",
+    "draftsGenerated": "Создано черновиков: {count}",
+    "linesCount": "Строк: {count}",
+    "pdf": "PDF",
+    "issue": "Выпустить",
+    "markPaid": "Оплачено",
+    "cancel": "Отменить",
+    "basketHint": "Небиллируемо — сначала почините сопоставление/привязку",
+    "issueDone": "Счёт выпущен",
+    "payDone": "Отмечено оплаченным",
+    "cancelDone": "Отменено",
+    "issueNotAllowed": "Нельзя выпустить — проверьте сопоставление/привязку",
+    "payNotAllowed": "Нельзя отметить оплаченным",
+    "cancelNotAllowed": "Нельзя отменить",
+    "cancelConfirmTitle": "Отменить счёт?",
+    "cancelConfirmText": "Проводка спишется обратно, PDF удалится, счёт вернётся в черновик.",
+    "previewError": "Не удалось построить превью",
+    "genericError": "Что-то пошло не так",
+    "pdfError": "Не удалось открыть PDF",
+    "status": {
+      "draft": "Черновик",
+      "issued": "Выпущен",
+      "paid": "Оплачен"
+    },
+    "flags": {
+      "network": "Сетевой",
+      "qty-drift": "Расхождение кол-ва",
+      "unmapped": "Без сопоставления",
+      "no-allocation": "Нет раскладки",
+      "unlinked": "Точка без ЮЛ",
+      "no-co-entity": "Нет ЮЛ сети"
+    },
+    "previewEmpty": "За этот период нет счетов для дробления"
+  },
+  "ProductMap": {
+    "intro": "Мост «имя продукта в счёте → продукт раскладки». Нужен, чтобы дробление знало, какой продукт на какую раскладку ложится.",
+    "scope": "Область",
+    "scopeGlobal": "Глобально (все сети)",
+    "addTitle": "Добавить правило",
+    "invoiceProductName": "Имя продукта в счёте",
+    "invoiceProductNamePlaceholder": "Точно как в счёте, напр. iiko Профессиональный",
+    "kind": "Тип",
+    "isNetwork": "Сетевой (HQ, не дробится)",
+    "productPortalId": "ID продукта раскладки",
+    "productName": "Название продукта",
+    "productNamePlaceholder": "напр. POS iikoCloud Pro",
+    "add": "Добавить",
+    "nameRequired": "Укажите имя продукта",
+    "portalIdRequired": "Укажите ID продукта раскладки",
+    "portalIdHint": "ID берётся из раскладки (вкладка «Раскладка»).",
+    "saved": "Сохранено",
+    "deleted": "Удалено",
+    "genericError": "Что-то пошло не так",
+    "empty": "Правил пока нет",
+    "networkNote": "Сетевой продукт — на ЮЛ головного, не дробится",
+    "deleteConfirmTitle": "Удалить правило?",
+    "deleteConfirmText": "«{name}» — сопоставление будет удалено."
   }
 }

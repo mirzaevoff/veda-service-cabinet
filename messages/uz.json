@@ -200,7 +200,8 @@
     "change": "Oʻzgartirish",
     "search": "Qidirish",
     "nothingFound": "Hech narsa topilmadi",
-    "clear": "Tozalash"
+    "clear": "Tozalash",
+    "refresh": "Yangilash"
   },
   "Tickets": {
     "list": {
@@ -1077,7 +1078,9 @@
     "tabs": {
       "profile": "Profil",
       "servers": "Mijoz serverlari",
-      "invoices": "Hisob-fakturalar"
+      "invoices": "Hisob-fakturalar",
+      "chainInvoices": "Tarmoq hisoblari",
+      "productMap": "Mahsulotlar xaritasi"
     },
     "servers": {
       "summary": {
@@ -1298,7 +1301,13 @@
       "outdated": "Eskirgan",
       "critical": "Kritik"
     },
-    "versionTip": "Eng yangi: {version}"
+    "versionTip": "Eng yangi: {version}",
+    "licensesTitle": "Litsenziyalar",
+    "subscriptionsTitle": "Obunalar",
+    "serviceIntervalTitle": "Xizmat oynasi",
+    "licenseExpired": "muddati o‘tgan",
+    "licenseExpiresIn": "{days} kun qoldi",
+    "subUntil": "{date} gacha"
   },
   "Transactions": {
     "title": "Tranzaksiyalar",
@@ -1788,5 +1797,76 @@
       "logs": "Amallar jurnali",
       "apiTokens": "API-tokenlar"
     }
+  },
+  "ChainInvoices": {
+    "chain": "Tarmoq",
+    "chainPlaceholder": "Tarmoqni tanlang",
+    "period": "Davr",
+    "preview": "Ko‘rib chiqish",
+    "pickChain": "Tarmoq va davrni tanlang, so‘ng «Ko‘rib chiqish» bosing",
+    "previewTitle": "{chain} · {period}",
+    "rate": "Kurs {rate}",
+    "attention": "E’tibor talab qiladi",
+    "unmapped": "Moslashtirilmagan",
+    "unlinked": "YuShsiz nuqtalar",
+    "generateDrafts": "Qoralamalar yaratish",
+    "groupsSummary": "Hisoblanadigan: {billable} · Savatlar: {baskets}",
+    "savedTitle": "{period} hisoblari",
+    "draftsGenerated": "Yaratilgan qoralamalar: {count}",
+    "linesCount": "Qatorlar: {count}",
+    "pdf": "PDF",
+    "issue": "Chiqarish",
+    "markPaid": "To‘langan",
+    "cancel": "Bekor qilish",
+    "basketHint": "Hisoblanmaydi — avval moslash/bog‘lashni to‘g‘rilang",
+    "issueDone": "Hisob chiqarildi",
+    "payDone": "To‘langan deb belgilandi",
+    "cancelDone": "Bekor qilindi",
+    "issueNotAllowed": "Chiqarib bo‘lmaydi — moslash/bog‘lashni tekshiring",
+    "payNotAllowed": "Belgilab bo‘lmaydi",
+    "cancelNotAllowed": "Bekor qilib bo‘lmaydi",
+    "cancelConfirmTitle": "Hisob bekor qilinsinmi?",
+    "cancelConfirmText": "Provodka qaytariladi, PDF o‘chiriladi, hisob qoralamaga qaytadi.",
+    "previewError": "Ko‘rib chiqishni tuzib bo‘lmadi",
+    "genericError": "Nimadir noto‘g‘ri ketdi",
+    "pdfError": "PDF ochib bo‘lmadi",
+    "status": {
+      "draft": "Qoralama",
+      "issued": "Chiqarilgan",
+      "paid": "To‘langan"
+    },
+    "flags": {
+      "network": "Tarmoq",
+      "qty-drift": "Miqdor farqi",
+      "unmapped": "Moslashtirilmagan",
+      "no-allocation": "Taqsimot yo‘q",
+      "unlinked": "YuShsiz nuqta",
+      "no-co-entity": "Tarmoq YuSh yo‘q"
+    },
+    "previewEmpty": "Bu davr uchun bo‘linadigan hisoblar yo‘q"
+  },
+  "ProductMap": {
+    "intro": "«Hisobdagi mahsulot nomi → taqsimot mahsuloti» ko‘prigi. Bo‘lish qaysi mahsulot qaysi taqsimotga tushishini bilishi uchun.",
+    "scope": "Soha",
+    "scopeGlobal": "Global (barcha tarmoqlar)",
+    "addTitle": "Qoida qo‘shish",
+    "invoiceProductName": "Hisobdagi mahsulot nomi",
+    "invoiceProductNamePlaceholder": "Aynan hisobdagidek",
+    "kind": "Turi",
+    "isNetwork": "Tarmoq (HQ, bo‘linmaydi)",
+    "productPortalId": "Taqsimot mahsuloti id",
+    "productName": "Mahsulot nomi",
+    "productNamePlaceholder": "masalan, POS iikoCloud Pro",
+    "add": "Qo‘shish",
+    "nameRequired": "Mahsulot nomini kiriting",
+    "portalIdRequired": "Taqsimot mahsuloti id kiriting",
+    "portalIdHint": "id taqsimotdan olinadi («Taqsimot» ilovasi).",
+    "saved": "Saqlandi",
+    "deleted": "O‘chirildi",
+    "genericError": "Nimadir noto‘g‘ri ketdi",
+    "empty": "Hozircha qoidalar yo‘q",
+    "networkNote": "Tarmoq mahsuloti — bosh YuShda, bo‘linmaydi",
+    "deleteConfirmTitle": "Qoida o‘chirilsinmi?",
+    "deleteConfirmText": "«{name}» moslashuvi o‘chiriladi."
   }
 }
