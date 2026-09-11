@@ -2130,7 +2130,8 @@
     "viewMovements": "Движения",
     "movementsOf": "Движения — {name}",
     "noSummary": "Нет данных за месяц",
-    "useMyLocation": "Моё местоположение"
+    "useMyLocation": "Моё местоположение",
+    "selectEntity": "Найдите юр. лицо"
   },
   "Documents": {
     "title": "Документы",

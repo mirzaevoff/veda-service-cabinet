@@ -31,18 +31,17 @@ import {
 import {
   ApiError,
   type Employment,
-  type LegalEntity,
   type Office,
   type Position,
   type SalaryType,
 } from "@/lib/api";
 import {
   checklistsApi,
-  legalEntitiesApi,
   locationsApi,
   SessionExpiredError,
   worktimeApi,
 } from "@/lib/api-authed";
+import { LegalEntityPicker } from "@/components/common/legal-entity-picker";
 import { formatTiyin, fullName, sumToTiyin, tiyinToSum } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/navigation";
@@ -188,11 +187,10 @@ function EmploymentDialog({
   const [user, setUser] = useState<{ id: string; name: string } | null>(
     employment ? { id: employment.user.id, name: fullName(employment.user) } : null
   );
-  const [entities, setEntities] = useState<LegalEntity[]>([]);
   const [offices, setOffices] = useState<Office[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
-  const [legalEntityId, setLegalEntityId] = useState(
-    employment?.legalEntity?.id ?? ""
+  const [entity, setEntity] = useState<{ id: string; name: string } | null>(
+    employment?.legalEntity ?? null
   );
   const [officeId, setOfficeId] = useState(employment?.office?.id ?? "");
   const [positionIds, setPositionIds] = useState<string[]>(
@@ -216,10 +214,6 @@ function EmploymentDialog({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    void legalEntitiesApi
-      .list({ limit: 100 })
-      .then((p) => setEntities(p.items))
-      .catch(() => {});
     void locationsApi
       .offices()
       .then(setOffices)
@@ -227,23 +221,23 @@ function EmploymentDialog({
   }, []);
 
   useEffect(() => {
-    if (!legalEntityId) {
+    if (!entity) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPositions([]);
       return;
     }
     void checklistsApi.positions
-      .list(legalEntityId)
+      .list(entity.id)
       .then(setPositions)
       .catch(() => setPositions([]));
-  }, [legalEntityId]);
+  }, [entity]);
 
   async function save() {
     if (!user) {
       toast.error(t("selectEmployee"));
       return;
     }
-    if (!legalEntityId || !officeId) {
+    if (!entity || !officeId) {
       toast.error(t("saveError"));
       return;
     }
@@ -260,7 +254,7 @@ function EmploymentDialog({
           : { hourlyRateTiyin: amountTiyin };
       if (employment) {
         await worktimeApi.updateEmployment(employment.id, {
-          legalEntityId,
+          legalEntityId: entity.id,
           officeId,
           positionIds,
           salaryType,
@@ -270,7 +264,7 @@ function EmploymentDialog({
       } else {
         await worktimeApi.createEmployment({
           userId: user.id,
-          legalEntityId,
+          legalEntityId: entity.id,
           officeId,
           positionIds,
           salaryType,
@@ -334,22 +328,11 @@ function EmploymentDialog({
 
           <div className="flex flex-col gap-1.5">
             <Label>{t("employer")}</Label>
-            <Select
-              value={legalEntityId}
-              items={Object.fromEntries(entities.map((e) => [e.id, e.name]))}
-              onValueChange={(v) => setLegalEntityId(v ?? "")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="—" />
-              </SelectTrigger>
-              <SelectContent className="w-auto min-w-52">
-                {entities.map((e) => (
-                  <SelectItem key={e.id} value={e.id}>
-                    {e.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <LegalEntityPicker
+              value={entity}
+              onChange={setEntity}
+              placeholder={t("selectEntity")}
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">

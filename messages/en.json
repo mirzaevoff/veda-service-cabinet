@@ -2130,7 +2130,8 @@
     "viewMovements": "Movements",
     "movementsOf": "Movements — {name}",
     "noSummary": "No data for this month",
-    "useMyLocation": "My location"
+    "useMyLocation": "My location",
+    "selectEntity": "Find a legal entity"
   },
   "Documents": {
     "title": "Documents",

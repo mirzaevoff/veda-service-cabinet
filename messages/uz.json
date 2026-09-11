@@ -2130,7 +2130,8 @@
     "viewMovements": "Harakatlar",
     "movementsOf": "Harakatlar — {name}",
     "noSummary": "Bu oy uchun ma'lumot yo'q",
-    "useMyLocation": "Mening joylashuvim"
+    "useMyLocation": "Mening joylashuvim",
+    "selectEntity": "Yuridik shaxsni toping"
   },
   "Documents": {
     "title": "Hujjatlar",
