@@ -40,7 +40,7 @@ export function AllocationsManager() {
   const showSkeleton = useDelayed(!items);
 
   useEffect(() => {
-    void venuesApi.list({ kind: "chain", limit: 200, sort: "name" }).then((p) => setChains(p.items)).catch(() => {});
+    void venuesApi.list({ kind: "chain", limit: 100, sort: "name:asc" }).then((p) => setChains(p.items)).catch(() => {});
     void allocationsApi.syncStatus().then((s) => setLastSyncAt(s.lastSyncAt)).catch(() => {});
   }, []);
 

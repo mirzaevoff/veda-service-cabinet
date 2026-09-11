@@ -73,7 +73,7 @@ export function ProductMapManager({
 
   useEffect(() => {
     void venuesApi
-      .list({ kind: "chain", limit: 200, sort: "name" })
+      .list({ kind: "chain", limit: 100, sort: "name:asc" })
       .then((p) => setChains(p.items))
       .catch(() => {});
   }, []);
