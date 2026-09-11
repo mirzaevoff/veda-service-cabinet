@@ -191,6 +191,65 @@ export function uploadReleaseNoteImage(file: File): Promise<EditorImageUpload> {
   return uploadEditorImage("/release-notes/uploads/image", file);
 }
 
+/** Inline-картинка документа (приказа) — приватно (`/files/:id`) */
+export function uploadDocumentImage(file: File): Promise<EditorImageUpload> {
+  return uploadEditorImage("/documents/uploads/image", file);
+}
+
+/** Вложение документа (pdf/…) → FileAttachment; id идёт в attachmentIds */
+async function documentFileAttempt(
+  file: File,
+  token: string
+): Promise<FileAttachment> {
+  const form = new FormData();
+  form.append("file", file);
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/documents/uploads/file`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+  } catch {
+    throw new ApiError(0, { code: "NETWORK", message: "Network error" });
+  }
+  const body = (await res.json().catch(() => null)) as
+    | FileAttachment
+    | ApiErrorBody
+    | null;
+  if (!res.ok) {
+    throw new ApiError(
+      res.status,
+      (body as ApiErrorBody) ?? { code: "ER100", message: "Upload failed" }
+    );
+  }
+  return body as FileAttachment;
+}
+
+/** Загрузка вложения документа (с refresh на 401) */
+export async function uploadDocumentFile(file: File): Promise<FileAttachment> {
+  const limit = uploadLimitFor(file);
+  if (!limit) {
+    throw new ApiError(400, { code: "ER501", message: "Type not allowed" });
+  }
+  if (file.size > limit.maxBytes) {
+    throw new ApiError(400, {
+      code: "ER502",
+      message: "File too large",
+      data: { maxBytes: limit.maxBytes },
+    });
+  }
+  const token = getAccessToken();
+  if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
+  try {
+    return await documentFileAttempt(file, token);
+  } catch (e) {
+    if (!(e instanceof ApiError) || e.status !== 401) throw e;
+    const tokens = await refreshSession();
+    return documentFileAttempt(file, tokens.accessToken);
+  }
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;

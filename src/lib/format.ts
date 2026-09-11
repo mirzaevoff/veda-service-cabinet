@@ -70,6 +70,82 @@ export function formatTime(iso: string, locale: string): string {
   }).format(new Date(iso));
 }
 
+/** Часовой пояс учёта рабочего времени — Ташкент (UTC+5) */
+export const TASHKENT_TZ = "Asia/Tashkent";
+
+/** Сегодняшняя дата в Ташкенте как «YYYY-MM-DD» */
+export function todayInTashkent(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TASHKENT_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+
+/** Текущий месяц в Ташкенте как «YYYY-MM» */
+export function currentMonthInTashkent(now: Date = new Date()): string {
+  return todayInTashkent(now).slice(0, 7);
+}
+
+/** Метка отметки (ISO) во времени Ташкента: «09:12» */
+export function formatTashkentTime(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: TASHKENT_TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(iso));
+}
+
+/** Метка отметки (ISO) в Ташкенте с датой: «10 сент., 09:12» */
+export function formatTashkentDateTime(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: TASHKENT_TZ,
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(iso));
+}
+
+/** День «YYYY-MM-DD» → «10 сент.» (дата уже локальная, без сдвига) */
+export function formatDateOnly(date: string, locale: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: "UTC",
+    day: "numeric",
+    month: "short",
+  }).format(new Date(Date.UTC(y, m - 1, d)));
+}
+
+/** Месяц «YYYY-MM» → «сентябрь 2026» */
+export function formatMonthLabel(month: string, locale: string): string {
+  const [y, m] = month.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: "UTC",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(Date.UTC(y, m - 1, 1)));
+}
+
+/** Ввод пользователя в сумах → тийины для API (×100) */
+export function sumToTiyin(sum: number | string): number {
+  const value =
+    typeof sum === "string"
+      ? Number(sum.replace(/\s/g, "").replace(",", "."))
+      : sum;
+  if (!Number.isFinite(value)) return 0;
+  return Math.round(value * 100);
+}
+
+/** Тийины → сумы числом для полей ввода (÷100) */
+export function tiyinToSum(tiyin: number | null | undefined): number {
+  if (tiyin === null || tiyin === undefined) return 0;
+  return Math.round(tiyin) / 100;
+}
+
 /** Дата-разделитель в чате */
 export function formatDay(iso: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {

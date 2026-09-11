@@ -1359,10 +1359,26 @@ export interface NamedRef {
 }
 
 /** Офис (физическая площадка) */
+/** Способ отметки на рабочем месте (API 0.53) */
+export type MarkingMethod = "button" | "geo" | "qr";
+
+/**
+ * Офис — он же «рабочее место» для учёта рабочего времени: с API 0.53 дорос
+ * геозоной и способом отметки. Поля рабочего места опциональны (у старых
+ * офисов их может не быть).
+ */
 export interface Office {
   id: string;
   name: string;
   createdAt: string;
+  address?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  /** Радиус геозоны в метрах (дефолт на бэкенде — 150) */
+  radiusMeters?: number | null;
+  markingMethod?: MarkingMethod;
+  /** QR-токен уже сгенерирован (сам токен отдаётся один раз для печати) */
+  hasQr?: boolean;
 }
 
 /** Отдел внутри офиса */
@@ -1739,4 +1755,308 @@ export interface AgentsStats {
   from: string | null;
   to: string | null;
   agents: AgentStats[];
+}
+
+// --- Документы: приказы, решения, объявления (API 0.53) ---------------------
+
+export type DocumentStatus = "draft" | "pending" | "active" | "archived";
+export type DocumentAudience = "all" | "specific";
+
+/** Тип документа (Приказ/Решение/Объявление + свои) */
+export interface DocumentType {
+  id: string;
+  name: string;
+  slug: string;
+  /** Сколько согласований нужно для вступления в силу (0 — сразу active) */
+  minConfirmations: number;
+  color?: string | null;
+  /** Встроенный тип — удалить нельзя */
+  system: boolean;
+  active: boolean;
+  order: number;
+}
+
+export interface DocumentUserRef {
+  id: string;
+  name: string;
+}
+
+export interface DocumentListItem {
+  id: string;
+  title: string;
+  type: { id: string; name: string; color?: string | null } | null;
+  status: DocumentStatus;
+  audience: DocumentAudience;
+  tags: string[];
+  /** Снимок minConfirmations типа на момент отправки */
+  requiredConfirmations: number;
+  confirmationsCount: number;
+  acknowledgmentsCount: number;
+  author: DocumentUserRef | null;
+  activatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocumentConfirmation {
+  user: DocumentUserRef;
+  at: string;
+}
+
+export type DocumentAcknowledgment = DocumentConfirmation;
+
+/** Запись журнала внутри документа — официальный аудит */
+export interface DocumentLogEntry {
+  action: string;
+  user: DocumentUserRef | null;
+  at: string;
+  note?: string | null;
+}
+
+export interface DocumentDetail extends DocumentListItem {
+  content: EditorJsData;
+  attachments: FileAttachment[];
+  visibleTo: DocumentUserRef[];
+  confirmations: DocumentConfirmation[];
+  acknowledgments: DocumentAcknowledgment[];
+  log: DocumentLogEntry[];
+}
+
+export type DocumentsPage = Page<DocumentListItem>;
+
+export interface CreateDocumentInput {
+  title: string;
+  content?: EditorJsData;
+  typeId: string;
+  tags?: string[];
+  attachmentIds?: string[];
+  audience: DocumentAudience;
+  /** id сотрудников при audience='specific' */
+  visibleTo?: string[];
+}
+
+export interface CreateDocumentTypeInput {
+  name: string;
+  minConfirmations?: number;
+  color?: string;
+}
+
+// --- Учёт рабочего времени и ЗП (worktime, API 0.53) ------------------------
+
+export type SalaryType = "salary" | "hourly";
+export type LeaveType = "vacation" | "sick" | "dayoff" | "unpaid";
+export type TimesheetStatus = "draft" | "approved";
+export type PayrollStatus = "draft" | "approved";
+/** Статус дня табеля (легенда цветов — worktime-format.ts) */
+export type AttendanceDayStatus =
+  | "present"
+  | "late"
+  | "incomplete"
+  | "absent"
+  | "leave"
+  | "dayoff";
+export type EmployeeLedgerEntryType =
+  | "accrual"
+  | "payment"
+  | "correction"
+  | "bonus"
+  | "deduction";
+
+export interface WorktimeUserRef {
+  id: string;
+  name: string;
+  lastName?: string;
+}
+
+/** Трудоустройство: кто, где, кем и на каких условиях оплаты */
+export interface Employment {
+  id: string;
+  user: WorktimeUserRef;
+  legalEntity: { id: string; name: string } | null;
+  office: { id: string; name: string } | null;
+  positions: { id: string; name: string }[];
+  salaryType: SalaryType;
+  monthlySalaryTiyin?: number | null;
+  hourlyRateTiyin?: number | null;
+  hireDate?: string | null;
+  active: boolean;
+}
+
+export interface CreateEmploymentInput {
+  userId: string;
+  legalEntityId: string;
+  officeId: string;
+  positionIds?: string[];
+  salaryType: SalaryType;
+  monthlySalaryTiyin?: number;
+  hourlyRateTiyin?: number;
+  hireDate?: string;
+}
+
+/** Состояние сегодняшнего дня сотрудника (null — ещё не отмечался) */
+export interface WorktimeToday {
+  date: string;
+  status: AttendanceDayStatus;
+  firstIn: string | null;
+  lastOut: string | null;
+  workedMinutes: number;
+  flagged: boolean;
+}
+
+/** Ответ на отметку: сама отметка + пересчитанный день */
+export interface MarkResult {
+  mark: {
+    withinGeofence: boolean;
+    distanceMeters?: number | null;
+    method: MarkingMethod;
+  };
+  day: {
+    status: AttendanceDayStatus;
+    workedMinutes: number;
+    flagged: boolean;
+  };
+}
+
+export interface MarkInput {
+  type: "in" | "out";
+  geo?: { lat: number; lng: number; accuracy?: number };
+  qrToken?: string;
+}
+
+/** Шаблон смены */
+export interface ShiftTemplate {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  breakMinutes?: number | null;
+  /** Ночная смена через полночь */
+  crossMidnight?: boolean;
+  color?: string | null;
+}
+
+export interface CreateShiftTemplateInput {
+  name: string;
+  startTime: string;
+  endTime: string;
+  breakMinutes?: number;
+  crossMidnight?: boolean;
+  color?: string;
+}
+
+/** Назначение смены на день (ротация) */
+export interface ShiftAssignment {
+  id: string;
+  date: string;
+  user?: WorktimeUserRef;
+  shift: {
+    id: string;
+    name: string;
+    color?: string | null;
+    crossMidnight?: boolean;
+  };
+  office?: { id: string; name: string } | null;
+}
+
+export interface Leave {
+  id: string;
+  user?: WorktimeUserRef;
+  type: LeaveType;
+  from: string;
+  to: string;
+  paid: boolean;
+  note?: string | null;
+}
+
+/** День табеля */
+export interface TimesheetDay {
+  date: string;
+  status: AttendanceDayStatus;
+  workedMinutes: number;
+  lateMinutes?: number;
+  overtimeMinutes?: number;
+  leaveType?: LeaveType | null;
+  leavePaid?: boolean;
+  /** Была отметка вне рабочей зоны */
+  flagged?: boolean;
+  shift?: { id: string; name: string } | null;
+}
+
+export interface TimesheetTotals {
+  workedDays: number;
+  workedHours?: number;
+  workedMinutes?: number;
+  lateCount?: number;
+  lateMinutes?: number;
+  absences?: number;
+  paidLeaveDays?: number;
+  overtimeMinutes?: number;
+  plannedDays?: number;
+}
+
+export interface Timesheet {
+  id: string;
+  user: WorktimeUserRef;
+  month: string;
+  days: TimesheetDay[];
+  totals: TimesheetTotals;
+  status: TimesheetStatus;
+  approvedBy?: WorktimeUserRef | null;
+  approvedAt?: string | null;
+}
+
+/** Строка надбавки/удержания расчётного листа */
+export interface PayrollAdjustment {
+  label: string;
+  amountTiyin: number;
+}
+
+export interface PayrollMetrics {
+  plannedDays: number;
+  workedDays: number;
+  workedMinutes: number;
+  paidLeaveDays: number;
+  lateMinutes: number;
+  overtimeMinutes: number;
+}
+
+export interface Payroll {
+  id: string;
+  user: WorktimeUserRef;
+  month: string;
+  salaryType: SalaryType;
+  rateTiyin: number;
+  metrics: PayrollMetrics;
+  baseTiyin: number;
+  additions: PayrollAdjustment[];
+  deductions: PayrollAdjustment[];
+  grossTiyin: number;
+  netTiyin: number;
+  amountTiyin: number;
+  status: PayrollStatus;
+  note?: string | null;
+}
+
+/** Движение личного леджера сотрудника (тийины, знаковые) */
+export interface EmployeeLedgerEntry {
+  id: string;
+  type: EmployeeLedgerEntryType;
+  amountTiyin: number;
+  period?: string | null;
+  comment?: string | null;
+  createdAt: string;
+}
+
+/** Баланс = долг компании перед сотрудником */
+export interface EmployeeLedgerBalance {
+  balanceTiyin: number;
+  balanceSum?: number;
+}
+
+/** Строка отчёта по всем сотрудникам за месяц */
+export interface EmployeeLedgerSummaryRow {
+  userId: string;
+  name: string;
+  accruedTiyin: number;
+  balanceTiyin: number;
 }

@@ -93,6 +93,31 @@ import {
   type ProductMapInput,
   type Allocation,
   type ChainInvoicePreview,
+  type MarkingMethod,
+  type DocumentType,
+  type DocumentDetail,
+  type DocumentsPage,
+  type DocumentStatus,
+  type CreateDocumentInput,
+  type CreateDocumentTypeInput,
+  type Employment,
+  type CreateEmploymentInput,
+  type WorktimeToday,
+  type MarkInput,
+  type MarkResult,
+  type ShiftTemplate,
+  type CreateShiftTemplateInput,
+  type ShiftAssignment,
+  type Leave,
+  type LeaveType,
+  type Timesheet,
+  type TimesheetStatus,
+  type Payroll,
+  type PayrollStatus,
+  type PayrollAdjustment,
+  type EmployeeLedgerEntry,
+  type EmployeeLedgerBalance,
+  type EmployeeLedgerSummaryRow,
 } from "./api";
 import {
   clearSession,
@@ -1152,6 +1177,25 @@ export const locationsApi = {
     }),
   removeDepartment: (id: string) =>
     authedRequest<void>(`/departments/${id}`, { method: "DELETE" }),
+  /** Рабочее место: адрес, геозона и способ отметки (API 0.53) */
+  updateWorkplace: (
+    id: string,
+    body: {
+      name?: string;
+      address?: string;
+      lat?: number | null;
+      lng?: number | null;
+      radiusMeters?: number;
+      markingMethod?: MarkingMethod;
+    }
+  ) =>
+    authedRequest<Office>(`/offices/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Сгенерировать/сменить QR рабочего места — сырой токен отдаётся один раз */
+  generateQr: (id: string) =>
+    authedRequest<{ qrToken: string }>(`/offices/${id}/qr`, { method: "POST" }),
 };
 
 export const equipmentApi = {
@@ -1373,4 +1417,277 @@ export const chainInvoicesApi = {
       `/iiko-partner/chain-invoices/issue${query({ chainClientId, period, legalEntityId })}`,
       { method: "POST" }
     ),
+};
+
+// --- Документы: приказы, решения, объявления (API 0.53) ---------------------
+
+export const documentsApi = {
+  list: (
+    params: {
+      page?: number;
+      limit?: number;
+      typeId?: string;
+      tag?: string;
+      status?: DocumentStatus;
+      /** Только адресованные мне */
+      mine?: boolean;
+      search?: string;
+      sort?: string;
+    } = {}
+  ) => authedRequest<DocumentsPage>(`/documents${query({ ...params })}`),
+  tags: () => authedRequest<string[]>("/documents/tags"),
+  get: (id: string) => authedRequest<DocumentDetail>(`/documents/${id}`),
+  create: (body: CreateDocumentInput) =>
+    authedRequest<DocumentDetail>("/documents", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Правка pending/active сбрасывает подтверждения → pending */
+  update: (id: string, body: Partial<CreateDocumentInput>) =>
+    authedRequest<DocumentDetail>(`/documents/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/documents/${id}`, { method: "DELETE" }),
+  /** draft → pending (или сразу active, если типу нужно 0 подтверждений) */
+  submit: (id: string) =>
+    authedRequest<DocumentDetail>(`/documents/${id}/submit`, {
+      method: "POST",
+    }),
+  /** Согласовать pending: ER2305 — уже подтвердил, ER2306 — свой документ */
+  confirm: (id: string) =>
+    authedRequest<DocumentDetail>(`/documents/${id}/confirm`, {
+      method: "POST",
+    }),
+  /** «Ознакомлен» на active-документе, адресованном мне */
+  acknowledge: (id: string) =>
+    authedRequest<DocumentDetail>(`/documents/${id}/acknowledge`, {
+      method: "POST",
+    }),
+  archive: (id: string) =>
+    authedRequest<DocumentDetail>(`/documents/${id}/archive`, {
+      method: "POST",
+    }),
+  types: () => authedRequest<DocumentType[]>("/document-types"),
+  createType: (body: CreateDocumentTypeInput) =>
+    authedRequest<DocumentType>("/document-types", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  updateType: (id: string, body: Partial<CreateDocumentTypeInput>) =>
+    authedRequest<DocumentType>(`/document-types/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Удалить свой тип (не system и не используемый) — иначе ER2303 */
+  removeType: (id: string) =>
+    authedRequest<void>(`/document-types/${id}`, { method: "DELETE" }),
+};
+
+// --- Учёт рабочего времени и ЗП (worktime, API 0.53) ------------------------
+
+export const worktimeApi = {
+  // --- Сотрудник (worktime.view) ---
+  /** Состояние сегодняшнего дня; null — сегодня ещё не отмечался */
+  today: () => authedRequest<WorktimeToday | null>("/worktime/me/today"),
+  myEmployment: () =>
+    authedRequest<Employment | null>("/worktime/employments/me"),
+  /** Само-отметка: ER2403 — нет активного трудоустройства */
+  mark: (body: MarkInput) =>
+    authedRequest<MarkResult>("/worktime/marks", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  // --- Трудоустройства (worktime.manage) ---
+  employments: (
+    params: { legalEntityId?: string; officeId?: string; active?: boolean } = {}
+  ) => authedRequest<Employment[]>(`/worktime/employments${query({ ...params })}`),
+  createEmployment: (body: CreateEmploymentInput) =>
+    authedRequest<Employment>("/worktime/employments", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** active:false — уволить */
+  updateEmployment: (
+    id: string,
+    body: Partial<CreateEmploymentInput> & { active?: boolean }
+  ) =>
+    authedRequest<Employment>(`/worktime/employments/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  /** Отметка за сотрудника (коррекция спорных дней) */
+  manualMark: (body: {
+    userId: string;
+    type: "in" | "out";
+    at: string;
+    note?: string;
+  }) =>
+    authedRequest<MarkResult>("/worktime/marks/manual", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  // --- Шаблоны смен ---
+  shiftTemplates: () =>
+    authedRequest<ShiftTemplate[]>("/worktime/shift-templates"),
+  createShiftTemplate: (body: CreateShiftTemplateInput) =>
+    authedRequest<ShiftTemplate>("/worktime/shift-templates", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  updateShiftTemplate: (id: string, body: Partial<CreateShiftTemplateInput>) =>
+    authedRequest<ShiftTemplate>(`/worktime/shift-templates/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Нельзя удалить, пока смена назначена */
+  removeShiftTemplate: (id: string) =>
+    authedRequest<void>(`/worktime/shift-templates/${id}`, {
+      method: "DELETE",
+    }),
+
+  // --- График (назначения смен) ---
+  assignments: (params: { userId?: string; month?: string } = {}) =>
+    authedRequest<ShiftAssignment[]>(
+      `/worktime/shift-assignments${query({ ...params })}`
+    ),
+  assign: (body: { userId: string; date: string; shiftId: string }) =>
+    authedRequest<ShiftAssignment>("/worktime/shift-assignments", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Диапазон дат; weekdays — [1..5] только будни */
+  assignRange: (body: {
+    userId: string;
+    from: string;
+    to: string;
+    shiftId: string;
+    weekdays?: number[];
+  }) =>
+    authedRequest<ShiftAssignment[]>("/worktime/shift-assignments/range", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  unassign: (id: string) =>
+    authedRequest<void>(`/worktime/shift-assignments/${id}`, {
+      method: "DELETE",
+    }),
+
+  // --- Отсутствия ---
+  leaves: (params: { userId?: string; from?: string; to?: string } = {}) =>
+    authedRequest<Leave[]>(`/worktime/leaves${query({ ...params })}`),
+  createLeave: (body: {
+    userId: string;
+    type: LeaveType;
+    from: string;
+    to: string;
+    paid?: boolean;
+    note?: string;
+  }) =>
+    authedRequest<Leave>("/worktime/leaves", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  removeLeave: (id: string) =>
+    authedRequest<void>(`/worktime/leaves/${id}`, { method: "DELETE" }),
+
+  // --- Табели ---
+  timesheets: (
+    params: { month?: string; status?: TimesheetStatus; userId?: string } = {}
+  ) => authedRequest<Timesheet[]>(`/worktime/timesheets${query({ ...params })}`),
+  timesheet: (id: string) =>
+    authedRequest<Timesheet>(`/worktime/timesheets/${id}`),
+  /** Собрать/пересобрать: userId — одному, all=true — всем */
+  generateTimesheet: (params: {
+    month: string;
+    userId?: string;
+    all?: boolean;
+  }) =>
+    authedRequest<Timesheet[]>(
+      `/worktime/timesheets/generate${query({ ...params })}`,
+      { method: "POST" }
+    ),
+  /** Утверждённый табель не пересобирается (ER2408) — нужен reopen */
+  approveTimesheet: (id: string) =>
+    authedRequest<Timesheet>(`/worktime/timesheets/${id}/approve`, {
+      method: "POST",
+    }),
+  reopenTimesheet: (id: string) =>
+    authedRequest<Timesheet>(`/worktime/timesheets/${id}/reopen`, {
+      method: "POST",
+    }),
+
+  // --- Расчёт ЗП (payroll.manage) ---
+  payrolls: (
+    params: { month?: string; userId?: string; status?: PayrollStatus } = {}
+  ) => authedRequest<Payroll[]>(`/worktime/payrolls${query({ ...params })}`),
+  payroll: (id: string) => authedRequest<Payroll>(`/worktime/payrolls/${id}`),
+  /** Только с утверждённого табеля: ER2410 — табель не утверждён, ER2411 — нет условий оплаты */
+  generatePayroll: (params: {
+    month: string;
+    userId?: string;
+    all?: boolean;
+  }) =>
+    authedRequest<Payroll[]>(
+      `/worktime/payrolls/generate${query({ ...params })}`,
+      { method: "POST" }
+    ),
+  /** Надбавки/удержания в тийинах; утверждённый лист не правится (ER2412) */
+  updatePayroll: (
+    id: string,
+    body: {
+      additions?: PayrollAdjustment[];
+      deductions?: PayrollAdjustment[];
+      note?: string;
+    }
+  ) =>
+    authedRequest<Payroll>(`/worktime/payrolls/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Утверждение начисляет net в личный леджер сотрудника */
+  approvePayroll: (id: string) =>
+    authedRequest<Payroll>(`/worktime/payrolls/${id}/approve`, {
+      method: "POST",
+    }),
+  reopenPayroll: (id: string) =>
+    authedRequest<Payroll>(`/worktime/payrolls/${id}/reopen`, {
+      method: "POST",
+    }),
+
+  // --- Личный леджер сотрудника ---
+  ledger: (params: { userId?: string } = {}) =>
+    authedRequest<EmployeeLedgerEntry[]>(
+      `/worktime/ledger${query({ ...params })}`
+    ),
+  ledgerBalance: (params: { userId?: string } = {}) =>
+    authedRequest<EmployeeLedgerBalance>(
+      `/worktime/ledger/balance${query({ ...params })}`
+    ),
+  /** Отчёт за месяц: начислено + текущий долг по каждому сотруднику */
+  ledgerSummary: (month: string) =>
+    authedRequest<EmployeeLedgerSummaryRow[]>(
+      `/worktime/ledger/summary${query({ month })}`
+    ),
+  /** Выплата (−) уменьшает долг */
+  pay: (body: {
+    userId: string;
+    amountTiyin: number;
+    period?: string;
+    comment?: string;
+  }) =>
+    authedRequest<EmployeeLedgerEntry>("/worktime/ledger/payments", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Знаковая корректировка */
+  correct: (body: { userId: string; amountTiyin: number; comment?: string }) =>
+    authedRequest<EmployeeLedgerEntry>("/worktime/ledger/corrections", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 };
