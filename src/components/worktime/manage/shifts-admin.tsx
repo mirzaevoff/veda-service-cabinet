@@ -699,11 +699,11 @@ function LeaveDialog({
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-1.5">
               <Label>{t("from")}</Label>
-              <DatePicker value={from} onChange={setFrom} placeholder="—" />
+              <DatePicker value={from} onChange={setFrom} placeholder="—" future />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>{t("to")}</Label>
-              <DatePicker value={to} onChange={setTo} placeholder="—" />
+              <DatePicker value={to} onChange={setTo} placeholder="—" future />
             </div>
           </div>
           <label className="flex items-center gap-2 text-sm">
@@ -807,11 +807,11 @@ function RangeDialog({
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-1.5">
               <Label>{t("from")}</Label>
-              <DatePicker value={from} onChange={setFrom} placeholder="—" />
+              <DatePicker value={from} onChange={setFrom} placeholder="—" future />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>{t("to")}</Label>
-              <DatePicker value={to} onChange={setTo} placeholder="—" />
+              <DatePicker value={to} onChange={setTo} placeholder="—" future />
             </div>
           </div>
           <label className="flex items-center gap-2 text-sm">

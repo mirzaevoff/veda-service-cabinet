@@ -22,6 +22,7 @@ import {
   Send,
   Server,
   Split,
+  SquareKanban,
   ShieldCheck,
   SlidersHorizontal,
   Ticket,
@@ -112,6 +113,17 @@ export const NAV_SECTIONS: NavSection[] = [
           PERMISSIONS.iikoPartnerView,
           PERMISSIONS.iikoInvoicesView,
           PERMISSIONS.iikoPartnerInvoicesView,
+        ],
+      },
+      {
+        // Внутренний трекер «команда → разработчик» (канбан-доска)
+        key: "devTasks",
+        href: "/dev-tasks",
+        icon: SquareKanban,
+        anyPermission: [
+          PERMISSIONS.devTasksView,
+          PERMISSIONS.devTasksCreate,
+          PERMISSIONS.devTasksManage,
         ],
       },
     ],

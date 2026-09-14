@@ -2060,3 +2060,118 @@ export interface EmployeeLedgerSummaryRow {
   accruedTiyin: number;
   balanceTiyin: number;
 }
+
+// --- Задачи разработчику (dev-tasks, API 0.54/0.55) -------------------------
+
+export type DevTaskStatus =
+  | "new"
+  | "accepted"
+  | "in_progress"
+  | "need_info"
+  | "done"
+  | "rejected";
+export type DevTaskPriority = "low" | "normal" | "high" | "urgent";
+
+/** Тип задачи — расширяемый справочник dev_task_types */
+export interface DevTaskType {
+  id: string;
+  name: string;
+  slug: string;
+  color?: string | null;
+  system: boolean;
+  active: boolean;
+  order: number;
+}
+
+export interface DevTaskUserRef {
+  id: string;
+  name: string;
+}
+
+/** Запись журнала внутри задачи — created/edited/assigned/status:<from>-><to> */
+export interface DevTaskLogEntry {
+  action: string;
+  user: DevTaskUserRef | null;
+  at: string;
+  note?: string | null;
+}
+
+export interface DevTaskListItem {
+  id: string;
+  title: string;
+  /** slug типа из справочника (маппится на DevTaskType для бейджа) */
+  type: string | null;
+  area?: string | null;
+  priority: DevTaskPriority;
+  status: DevTaskStatus;
+  tags: string[];
+  author: DevTaskUserRef | null;
+  /** снимок роли автора (role.slug) */
+  team?: string | null;
+  assignee: DevTaskUserRef | null;
+  /** «нужно к…» от автора */
+  desiredDueDate: string | null;
+  /** реальный срок от разработчика */
+  plannedDueDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DevTaskDetail extends DevTaskListItem {
+  description?: string | null;
+  attachments: FileAttachment[];
+  resolution?: string | null;
+  shippedVersion?: string | null;
+  log: DevTaskLogEntry[];
+  updatedBy?: DevTaskUserRef | null;
+}
+
+export type DevTasksPage = Page<DevTaskListItem>;
+
+export interface DevTaskComment {
+  id: string;
+  author: DevTaskUserRef | null;
+  text: string;
+  attachments: FileAttachment[];
+  createdAt: string;
+}
+
+/** Счётчики под канбан-доску (GET /dev-tasks/stats) */
+export interface DevTaskStats {
+  total: number;
+  open: number;
+  overdue: number;
+  byStatus: Record<DevTaskStatus, number>;
+  byPriority: Record<DevTaskPriority, number>;
+}
+
+export interface CreateDevTaskInput {
+  title: string;
+  description?: string;
+  type?: string;
+  area?: string;
+  priority?: DevTaskPriority;
+  tags?: string[];
+  attachmentIds?: string[];
+  desiredDueDate?: string;
+}
+
+export interface UpdateDevTaskInput {
+  title?: string;
+  description?: string;
+  type?: string;
+  area?: string;
+  priority?: DevTaskPriority;
+  tags?: string[];
+  attachmentIds?: string[];
+  desiredDueDate?: string;
+  /** менеджер (devTasks.manage): исполнитель + плановый срок */
+  assigneeId?: string | null;
+  plannedDueDate?: string | null;
+}
+
+export interface CreateDevTaskTypeInput {
+  name: string;
+  color?: string;
+  order?: number;
+}

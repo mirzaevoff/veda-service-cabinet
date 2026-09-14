@@ -27,16 +27,20 @@ export function DatePicker({
   onChange,
   placeholder,
   id,
+  future,
 }: {
   /** YYYY-MM-DD или пустая строка */
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   id?: string;
+  /** Разрешить будущие даты (сроки, отпуска, график). По умолчанию — только прошлое (даты рождения/найма) */
+  future?: boolean;
 }) {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
   const selected = value ? new Date(`${value}T00:00:00`) : undefined;
+  const now = new Date();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -78,11 +82,11 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={selected}
-          defaultMonth={selected ?? new Date(1990, 0)}
+          defaultMonth={selected ?? (future ? now : new Date(1990, 0))}
           captionLayout="dropdown"
           startMonth={new Date(1930, 0)}
-          endMonth={new Date()}
-          disabled={{ after: new Date() }}
+          endMonth={future ? new Date(now.getFullYear() + 3, 11) : now}
+          disabled={future ? undefined : { after: now }}
           locale={DAY_PICKER_LOCALES[locale as keyof typeof DAY_PICKER_LOCALES] ?? ru}
           onSelect={(date) => {
             onChange(date ? toIso(date) : "");

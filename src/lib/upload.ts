@@ -226,6 +226,63 @@ async function documentFileAttempt(
   return body as FileAttachment;
 }
 
+/** Вложение задачи разработчику → FileAttachment; id идёт в attachmentIds */
+export function uploadDevTaskFile(file: File): Promise<FileAttachment> {
+  return uploadPrivateFile("/dev-tasks/uploads/file", file);
+}
+
+/** Загрузка приватного вложения на указанный эндпоинт (поле file, с refresh на 401) */
+async function uploadPrivateFile(
+  endpoint: string,
+  file: File
+): Promise<FileAttachment> {
+  const limit = uploadLimitFor(file);
+  if (!limit) {
+    throw new ApiError(400, { code: "ER501", message: "Type not allowed" });
+  }
+  if (file.size > limit.maxBytes) {
+    throw new ApiError(400, {
+      code: "ER502",
+      message: "File too large",
+      data: { maxBytes: limit.maxBytes },
+    });
+  }
+  const token = getAccessToken();
+  if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
+  const attempt = async (bearer: string): Promise<FileAttachment> => {
+    const form = new FormData();
+    form.append("file", file);
+    let res: Response;
+    try {
+      res = await fetch(`${API_URL}${endpoint}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${bearer}` },
+        body: form,
+      });
+    } catch {
+      throw new ApiError(0, { code: "NETWORK", message: "Network error" });
+    }
+    const body = (await res.json().catch(() => null)) as
+      | FileAttachment
+      | ApiErrorBody
+      | null;
+    if (!res.ok) {
+      throw new ApiError(
+        res.status,
+        (body as ApiErrorBody) ?? { code: "ER100", message: "Upload failed" }
+      );
+    }
+    return body as FileAttachment;
+  };
+  try {
+    return await attempt(token);
+  } catch (e) {
+    if (!(e instanceof ApiError) || e.status !== 401) throw e;
+    const tokens = await refreshSession();
+    return attempt(tokens.accessToken);
+  }
+}
+
 /** Загрузка вложения документа (с refresh на 401) */
 export async function uploadDocumentFile(file: File): Promise<FileAttachment> {
   const limit = uploadLimitFor(file);

@@ -51,6 +51,9 @@ export const PERMISSIONS = {
   logsView: "logs.view",
   releaseNotesManage: "releaseNotes.manage",
   apiTokensManage: "apiTokens.manage",
+  devTasksView: "devTasks.view",
+  devTasksCreate: "devTasks.create",
+  devTasksManage: "devTasks.manage",
 } as const;
 
 export function can(

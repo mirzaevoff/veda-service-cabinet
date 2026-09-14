@@ -118,6 +118,16 @@ import {
   type EmployeeLedgerEntry,
   type EmployeeLedgerBalance,
   type EmployeeLedgerSummaryRow,
+  type DevTaskStatus,
+  type DevTaskPriority,
+  type DevTaskType,
+  type DevTaskDetail,
+  type DevTasksPage,
+  type DevTaskComment,
+  type DevTaskStats,
+  type CreateDevTaskInput,
+  type UpdateDevTaskInput,
+  type CreateDevTaskTypeInput,
 } from "./api";
 import {
   clearSession,
@@ -1699,4 +1709,74 @@ export const worktimeApi = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+};
+
+// --- Задачи разработчику (dev-tasks, API 0.54/0.55) -------------------------
+
+export const devTasksApi = {
+  list: (
+    params: {
+      page?: number;
+      limit?: number;
+      status?: DevTaskStatus;
+      type?: string;
+      priority?: DevTaskPriority;
+      area?: string;
+      authorId?: string;
+      assigneeId?: string;
+      mine?: boolean;
+      overdue?: boolean;
+      search?: string;
+      sort?: string;
+    } = {}
+  ) => authedRequest<DevTasksPage>(`/dev-tasks${query({ ...params })}`),
+  /** Счётчики под доску: byStatus (колонки), byPriority, total/open/overdue */
+  stats: () => authedRequest<DevTaskStats>("/dev-tasks/stats"),
+  get: (id: string) => authedRequest<DevTaskDetail>(`/dev-tasks/${id}`),
+  create: (body: CreateDevTaskInput) =>
+    authedRequest<DevTaskDetail>("/dev-tasks", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Автор правит свою пока new (ER2503); менеджер — всегда (assigneeId/plannedDueDate) */
+  update: (id: string, body: UpdateDevTaskInput) =>
+    authedRequest<DevTaskDetail>(`/dev-tasks/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Движение по циклу (devTasks.manage): ER2501 переход, ER2502 нужна причина */
+  setStatus: (
+    id: string,
+    body: { status: DevTaskStatus; resolution?: string; shippedVersion?: string }
+  ) =>
+    authedRequest<DevTaskDetail>(`/dev-tasks/${id}/status`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/dev-tasks/${id}`, { method: "DELETE" }),
+  comments: (id: string) =>
+    authedRequest<DevTaskComment[]>(`/dev-tasks/${id}/comments`),
+  addComment: (id: string, body: { text?: string; attachmentIds?: string[] }) =>
+    authedRequest<DevTaskComment>(`/dev-tasks/${id}/comments`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  types: () => authedRequest<DevTaskType[]>("/dev-task-types"),
+  createType: (body: CreateDevTaskTypeInput) =>
+    authedRequest<DevTaskType>("/dev-task-types", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  updateType: (
+    id: string,
+    body: Partial<CreateDevTaskTypeInput> & { active?: boolean }
+  ) =>
+    authedRequest<DevTaskType>(`/dev-task-types/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Удалить свой тип (не системный/используемый — иначе ER2505) */
+  removeType: (id: string) =>
+    authedRequest<void>(`/dev-task-types/${id}`, { method: "DELETE" }),
 };
