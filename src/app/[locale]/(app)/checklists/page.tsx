@@ -30,6 +30,7 @@ export default function ChecklistsPage() {
   /** Мои ЮЛ с деталями: members присутствуют только у owner'а (и staff) */
   const [entities, setEntities] = useState<LegalEntity[] | null>(null);
   const [scope, setScope] = useState<string>("personal");
+  const [tab, setTab] = useState("runs");
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
 
@@ -94,7 +95,7 @@ export default function ChecklistsPage() {
     <div className="mx-auto max-w-4xl">
       <PageHeader title={t("title")} description={t("description")} />
 
-      <Tabs defaultValue="runs" className="flex flex-col gap-5">
+      <Tabs value={tab} onValueChange={setTab} className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <TabsList>
             <TabsTrigger value="runs">{t("tabRuns")}</TabsTrigger>
@@ -106,23 +107,26 @@ export default function ChecklistsPage() {
               <TabsTrigger value="stats">{t("tabStats")}</TabsTrigger>
             )}
           </TabsList>
-          <Select
-            value={scope}
-            items={scopeItems}
-            onValueChange={(v) => setScope(v as string)}
-          >
-            <SelectTrigger className="w-56">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="personal">{t("scopePersonal")}</SelectItem>
-              {(entities ?? []).map((entity) => (
-                <SelectItem key={entity.id} value={entity.id}>
-                  {entity.establishment || entity.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {/* Скоуп (ЮЛ) влияет только на шаблоны/расписания/статистику — на «Задания» скрываем, чтобы не путать */}
+          {tab !== "runs" && (
+            <Select
+              value={scope}
+              items={scopeItems}
+              onValueChange={(v) => setScope(v as string)}
+            >
+              <SelectTrigger className="w-56">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="personal">{t("scopePersonal")}</SelectItem>
+                {(entities ?? []).map((entity) => (
+                  <SelectItem key={entity.id} value={entity.id}>
+                    {entity.establishment || entity.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         <TabsContent value="runs">

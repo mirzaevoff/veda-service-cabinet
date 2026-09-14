@@ -81,7 +81,7 @@ export function TemplateFormDialog({
       setItems(
         template
           ? template.items.map((item) => ({ ...item }))
-          : [{ type: "checkbox", title: "", required: false, requirePhoto: false }]
+          : [{ type: "checkbox", title: "", required: true, requirePhoto: false }]
       );
       setError(null);
     }
@@ -308,7 +308,7 @@ export function TemplateFormDialog({
               onClick={() =>
                 setItems((prev) => [
                   ...prev,
-                  { type: "checkbox", title: "", required: false, requirePhoto: false },
+                  { type: "checkbox", title: "", required: true, requirePhoto: false },
                 ])
               }
               className="gap-2 self-start"

@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ClipboardList, Play, Timer } from "lucide-react";
+import { ClipboardList, Play, Search, Timer } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {
   Dialog,
@@ -110,6 +111,7 @@ export function RunsList() {
 
   const [tab, setTab] = useState<"active" | "history">("active");
   const [sort, setSort] = useState<SortValue>("scheduledAt:desc");
+  const [search, setSearch] = useState("");
   const [runs, setRuns] = useState<ChecklistRun[] | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [choices, setChoices] = useState<
@@ -164,15 +166,18 @@ export function RunsList() {
     }
   }
 
-  const filtered = (runs ?? []).filter((run) =>
-    tab === "active"
-      ? run.status === "pending" || run.status === "in_progress"
-      : run.status !== "pending" && run.status !== "in_progress"
-  );
+  const q = search.trim().toLowerCase();
+  const filtered = (runs ?? [])
+    .filter((run) =>
+      tab === "active"
+        ? run.status === "pending" || run.status === "in_progress"
+        : run.status !== "pending" && run.status !== "in_progress"
+    )
+    .filter((run) => !q || run.templateName.toLowerCase().includes(q));
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1 rounded-full bg-secondary p-1">
           {(["active", "history"] as const).map((key) => (
             <button
@@ -190,22 +195,29 @@ export function RunsList() {
             </button>
           ))}
         </div>
-        <div className="ms-auto flex items-center gap-2">
-          <SortSelect
-            value={sort}
-            options={[
-              { value: "scheduledAt:desc", label: t("sortNewest") },
-              { value: "scheduledAt:asc", label: t("sortOldest") },
-              { value: "completedAt:desc", label: t("sortCompleted") },
-            ]}
-            onChange={setSort}
-            className="w-48"
+        <div className="relative min-w-40 flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("searchRuns")}
+            className="h-9 pl-8"
           />
-          <Button onClick={openPicker} className="gap-2">
-            <Play className="size-4" />
-            {t("startManual")}
-          </Button>
         </div>
+        <SortSelect
+          value={sort}
+          options={[
+            { value: "scheduledAt:desc", label: t("sortNewest") },
+            { value: "scheduledAt:asc", label: t("sortOldest") },
+            { value: "completedAt:desc", label: t("sortCompleted") },
+          ]}
+          onChange={setSort}
+          className="w-44"
+        />
+        <Button onClick={openPicker} className="gap-2">
+          <Play className="size-4" />
+          {t("startManual")}
+        </Button>
       </div>
 
       {!runs ? (
@@ -220,8 +232,12 @@ export function RunsList() {
             <ClipboardList className="size-[26px] text-primary" strokeWidth={1.75} />
           </div>
           <div className="flex flex-col gap-1">
-            <p className="font-medium">{t("runsEmptyTitle")}</p>
-            <p className="text-sm text-muted-foreground">{t("runsEmptyHint")}</p>
+            <p className="font-medium">
+              {q ? t("runsNothingFound") : t("runsEmptyTitle")}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {q ? t("runsNothingFoundHint") : t("runsEmptyHint")}
+            </p>
           </div>
         </div>
       ) : (

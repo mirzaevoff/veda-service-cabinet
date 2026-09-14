@@ -833,7 +833,10 @@
     "freshnessNotice": "Fotolar {minutes} daqiqadan eski bo'lmasligi kerak",
     "sortNewest": "Avval yangilari",
     "sortOldest": "Avval eskilari",
-    "sortCompleted": "Bajarilgan sana bo'yicha"
+    "sortCompleted": "Bajarilgan sana bo'yicha",
+    "searchRuns": "Nom boʻyicha qidirish",
+    "runsNothingFound": "Hech narsa topilmadi",
+    "runsNothingFoundHint": "Soʻrov yoki filtrni oʻzgartirib koʻring"
   },
   "AdminSeverities": {
     "title": "Murojaat turlari",

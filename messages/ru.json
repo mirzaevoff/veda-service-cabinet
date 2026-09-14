@@ -833,7 +833,10 @@
     "freshnessNotice": "Фото должны быть сняты не раньше, чем {minutes} мин назад",
     "sortNewest": "Сначала новые",
     "sortOldest": "Сначала старые",
-    "sortCompleted": "По дате выполнения"
+    "sortCompleted": "По дате выполнения",
+    "searchRuns": "Поиск по названию",
+    "runsNothingFound": "Ничего не найдено",
+    "runsNothingFoundHint": "Попробуйте изменить запрос или фильтр"
   },
   "AdminSeverities": {
     "title": "Типы обращений",

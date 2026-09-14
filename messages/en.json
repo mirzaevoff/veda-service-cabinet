@@ -833,7 +833,10 @@
     "freshnessNotice": "Photos must be taken no more than {minutes} min ago",
     "sortNewest": "Newest first",
     "sortOldest": "Oldest first",
-    "sortCompleted": "By completion date"
+    "sortCompleted": "By completion date",
+    "searchRuns": "Search by name",
+    "runsNothingFound": "Nothing found",
+    "runsNothingFoundHint": "Try a different query or filter"
   },
   "AdminSeverities": {
     "title": "Request types",
