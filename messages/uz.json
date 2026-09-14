@@ -293,7 +293,11 @@
       "systemSeverityChanged": "{name} murojaat turini o'zgartirdi",
       "slaReasonHint": "Murojaat SLA muddatini buzgan. Yopish uchun buzilish sababini koʻrsating.",
       "slaReasonPlaceholder": "masalan: uchinchi tomon yetkazib beruvchidan javob kutish",
-      "slaReasonRequired": "SLA buzilishi sababini kiriting"
+      "slaReasonRequired": "SLA buzilishi sababini kiriting",
+      "changeCategory": "Kategoriyani o’zgartirish",
+      "categoryChanged": "Kategoriya o’zgartirildi",
+      "category": "Kategoriya",
+      "subcategory": "Subkategoriya"
     },
     "attachments": {
       "add": "Fayl biriktirish",
@@ -312,7 +316,8 @@
       "ER408": "Avval tiketni ishga oling",
       "ER409": "Siz allaqachon ishtirokchisiz",
       "ER412": "Tiket yopilgan — ishga olib bo'lmaydi",
-      "ER413": "Qo'llab-quvvatlash murojaatlarga javob beradi, ularni yaratmaydi"
+      "ER413": "Qo'llab-quvvatlash murojaatlarga javob beradi, ularni yaratmaydi",
+      "ER403": "Notoʻgʻri subkategoriya"
     },
     "sla": {
       "breached": "SLA buzilgan",
@@ -321,6 +326,10 @@
     "tabs": {
       "queue": "Murojaatlar",
       "stats": "Statistika"
+    },
+    "alerts": {
+      "newTicket": "Yangi murojaat: {subject}",
+      "open": "Ochish"
     }
   },
   "Dashboard": {

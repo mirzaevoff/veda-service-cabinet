@@ -279,6 +279,15 @@ export const ticketsApi = {
       method: "PATCH",
       body: JSON.stringify({ severityId }),
     }),
+  /** Ручная смена категории (право tickets.answer): ER402 корень, ER403 субкатегория */
+  changeCategory: (
+    id: string,
+    body: { categoryId: string; subcategoryId?: string }
+  ) =>
+    authedRequest<Ticket>(`/tickets/${id}/category`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
 
   messages: (id: string, params: { page?: number; limit?: number } = {}) =>
     authedRequest<Page<TicketMessage>>(

@@ -32,6 +32,7 @@ export function useUnreadTickets() {
     const offs = [
       subscribe("ticket:message", debounced),
       subscribe("ticket:updated", debounced),
+      subscribe("ticket:created", debounced),
     ];
     window.addEventListener(UNREAD_CHANGED_EVENT, debounced);
     return () => {

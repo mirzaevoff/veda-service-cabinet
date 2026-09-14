@@ -1,6 +1,7 @@
 import { CurrentUserProvider } from "@/components/common/current-user-provider";
 import { AppHeader } from "@/components/shell/app-header";
 import { AppSidebar } from "@/components/shell/app-sidebar";
+import { TicketAlerts } from "@/components/shell/ticket-alerts";
 import { WebPushManager } from "@/components/notifications/web-push-manager";
 
 export default function AppLayout({
@@ -11,6 +12,7 @@ export default function AppLayout({
   return (
     <CurrentUserProvider>
       <WebPushManager />
+      <TicketAlerts />
       <div className="flex h-dvh overflow-hidden">
         <AppSidebar />
         <div className="flex min-w-0 flex-1 flex-col">

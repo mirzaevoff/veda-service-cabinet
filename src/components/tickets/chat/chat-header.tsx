@@ -25,6 +25,7 @@ import {
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { TicketStatusBadge } from "../ticket-status-badge";
 import { SeverityBadge, SlaIndicator } from "../severity-badge";
+import { CategoryEditor } from "./category-editor";
 import { useSocketConnected } from "@/hooks/use-ticket-socket";
 import type { Ticket, TicketSeverity } from "@/lib/api";
 import { ApiError } from "@/lib/api";
@@ -200,8 +201,7 @@ export function ChatHeader({
             )}
           </div>
           <span className="truncate text-xs text-muted-foreground">
-            {pickLocalized(ticket.category, locale)}
-            {ticket.subcategory && ` · ${pickLocalized(ticket.subcategory, locale)}`}
+            <CategoryEditor ticket={ticket} canEdit={canAnswer} onUpdated={onUpdated} />
             {ticket.legalEntity &&
               ` · ${
                 ticket.legalEntity.establishment

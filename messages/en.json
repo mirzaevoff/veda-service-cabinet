@@ -293,7 +293,11 @@
       "systemSeverityChanged": "{name} changed the request type",
       "slaReasonHint": "The ticket breached its SLA. A breach reason is required to close it.",
       "slaReasonPlaceholder": "e.g. waiting for a third-party vendor",
-      "slaReasonRequired": "Enter the SLA breach reason"
+      "slaReasonRequired": "Enter the SLA breach reason",
+      "changeCategory": "Change category",
+      "categoryChanged": "Category changed",
+      "category": "Category",
+      "subcategory": "Subcategory"
     },
     "attachments": {
       "add": "Attach file",
@@ -312,7 +316,8 @@
       "ER408": "Claim the ticket first",
       "ER409": "You are already a participant",
       "ER412": "The ticket is closed — cannot claim",
-      "ER413": "Support answers tickets rather than creating them"
+      "ER413": "Support answers tickets rather than creating them",
+      "ER403": "Invalid subcategory"
     },
     "sla": {
       "breached": "SLA breached",
@@ -321,6 +326,10 @@
     "tabs": {
       "queue": "Tickets",
       "stats": "Statistics"
+    },
+    "alerts": {
+      "newTicket": "New ticket: {subject}",
+      "open": "Open"
     }
   },
   "Dashboard": {

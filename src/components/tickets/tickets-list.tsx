@@ -87,8 +87,8 @@ export function TicketsList() {
   const from = searchParams.get("from") ?? "";
   const to = searchParams.get("to") ?? "";
   const urlSearch = searchParams.get("q") ?? "";
-  // Дефолт: очередь суппорта — по дедлайну, свои обращения — по активности
-  const sort = searchParams.get("sort") ?? (scope === "all" ? "deadline:asc" : "lastMessageAt:desc");
+  // Дефолт: сначала новые (свои обращения — по активности); дедлайн SLA — выбором
+  const sort = searchParams.get("sort") ?? (scope === "all" ? "createdAt:desc" : "lastMessageAt:desc");
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
   const cacheKey = `tickets:${scope}:${status}:${categoryId}:${entityId}:${severityId}:${breached}:${unclaimed}:${closedById}:${from}:${to}:${sort}:${urlSearch}:${page}`;
