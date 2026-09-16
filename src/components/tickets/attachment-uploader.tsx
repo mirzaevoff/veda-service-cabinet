@@ -50,7 +50,13 @@ const KIND_ICON: Record<FileKind, typeof FileText> = {
   file: FileText,
 };
 
-export function useAttachments() {
+/** Загрузчик вложения; дефолт — общий /files. Можно передать свой (напр. dev-tasks) */
+type Uploader = (
+  file: File,
+  opts?: { onProgress?: (fraction: number) => void; signal?: AbortSignal }
+) => Promise<FileAttachment>;
+
+export function useAttachments(uploader: Uploader = uploadFile) {
   const [items, setItems] = useState<PendingAttachment[]>([]);
   const t = useTranslations("Tickets.attachments");
 
@@ -65,7 +71,7 @@ export function useAttachments() {
 
   const startUpload = useCallback(
     (item: PendingAttachment) => {
-      uploadFile(item.file, {
+      uploader(item.file, {
         signal: item.abort.signal,
         onProgress: (fraction) => update(item.key, { progress: fraction }),
       })
@@ -86,7 +92,7 @@ export function useAttachments() {
           update(item.key, { error: message });
         });
     },
-    [update, t]
+    [update, t, uploader]
   );
 
   const add = useCallback(

@@ -5,7 +5,6 @@ import { useLocale, useTranslations } from "next-intl";
 import {
   ArrowLeft,
   History,
-  Paperclip,
   Pencil,
   Send,
   Trash2,
@@ -45,7 +44,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { UserPicker } from "@/components/common/user-picker";
-import { fileProxyUrl } from "@/components/knowledge/editor/shared";
+import {
+  useAttachments,
+  AttachmentList,
+  AttachmentPicker,
+} from "@/components/tickets/attachment-uploader";
+import { AttachmentView } from "@/components/tickets/chat/attachment-view";
+import { uploadDevTaskFile } from "@/lib/upload";
 import {
   ApiError,
   type DevTaskComment,
@@ -86,6 +91,7 @@ export function DevTaskView({ id }: { id: string }) {
   const [comments, setComments] = useState<DevTaskComment[] | null>(null);
   const [commentText, setCommentText] = useState("");
   const [sending, setSending] = useState(false);
+  const attach = useAttachments(uploadDevTaskFile);
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -207,11 +213,17 @@ export function DevTaskView({ id }: { id: string }) {
 
   async function sendComment() {
     const text = commentText.trim();
-    if (!text) return;
+    const ids = attach.attachmentIds;
+    if (!text && ids.length === 0) return;
+    if (attach.uploading) return;
     setSending(true);
     try {
-      await devTasksApi.addComment(id, { text });
+      await devTasksApi.addComment(id, {
+        text: text || undefined,
+        attachmentIds: ids.length ? ids : undefined,
+      });
       setCommentText("");
+      attach.clear();
       toast.success(t("commentAdded"));
       loadComments();
     } catch (e) {
@@ -394,20 +406,7 @@ export function DevTaskView({ id }: { id: string }) {
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {t("attachments")}
           </span>
-          <div className="flex flex-col gap-1">
-            {task.attachments.map((f) => (
-              <a
-                key={f.id}
-                href={fileProxyUrl(f.url)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-secondary"
-              >
-                <Paperclip className="size-4 shrink-0 text-muted-foreground" />
-                <span className="truncate">{f.originalName}</span>
-              </a>
-            ))}
-          </div>
+          <AttachmentView attachments={task.attachments} />
         </section>
       )}
 
@@ -450,48 +449,51 @@ export function DevTaskView({ id }: { id: string }) {
                 </div>
                 {c.text && <p className="whitespace-pre-wrap text-sm">{c.text}</p>}
                 {c.attachments.length > 0 && (
-                  <div className="flex flex-col gap-1">
-                    {c.attachments.map((f) => (
-                      <a
-                        key={f.id}
-                        href={fileProxyUrl(f.url)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-2 text-sm text-primary hover:underline"
-                      >
-                        <Paperclip className="size-3.5 shrink-0" />
-                        <span className="truncate">{f.originalName}</span>
-                      </a>
-                    ))}
-                  </div>
+                  <AttachmentView attachments={c.attachments} className="mt-0.5" />
                 )}
               </li>
             ))}
           </ul>
         )}
-        <div className="flex items-end gap-2">
-          <Textarea
-            rows={2}
-            value={commentText}
-            maxLength={4000}
-            placeholder={t("commentPlaceholder")}
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                e.preventDefault();
-                void sendComment();
-              }
-            }}
+        <div className="flex flex-col gap-2">
+          <AttachmentList
+            items={attach.items}
+            onRemove={attach.remove}
+            onRetry={attach.retry}
           />
-          <Button
-            size="sm"
-            className="gap-1.5"
-            disabled={sending || !commentText.trim()}
-            onClick={() => void sendComment()}
-          >
-            {sending ? <Spinner className="size-4" /> : <Send className="size-4" />}
-            {t("send")}
-          </Button>
+          <div className="flex items-end gap-2">
+            <AttachmentPicker
+              variant="ghost"
+              onPick={attach.add}
+              disabled={sending || attach.items.length >= 10}
+            />
+            <Textarea
+              rows={2}
+              value={commentText}
+              maxLength={4000}
+              placeholder={t("commentPlaceholder")}
+              onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault();
+                  void sendComment();
+                }
+              }}
+            />
+            <Button
+              size="sm"
+              className="gap-1.5"
+              disabled={
+                sending ||
+                attach.uploading ||
+                (!commentText.trim() && attach.attachmentIds.length === 0)
+              }
+              onClick={() => void sendComment()}
+            >
+              {sending ? <Spinner className="size-4" /> : <Send className="size-4" />}
+              {t("send")}
+            </Button>
+          </div>
         </div>
       </section>
 

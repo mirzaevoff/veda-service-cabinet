@@ -1,15 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "@/components/shell/page-header";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ScopePicker } from "@/components/checklists/scope-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { RunsList } from "@/components/checklists/runs-list";
@@ -31,6 +25,8 @@ export default function ChecklistsPage() {
   const [entities, setEntities] = useState<LegalEntity[] | null>(null);
   const [scope, setScope] = useState<string>("personal");
   const [tab, setTab] = useState("runs");
+  /** По умолчанию выбираем первое ЮЛ (а не «Личные») — один раз после загрузки */
+  const didDefaultScope = useRef(false);
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
 
@@ -50,6 +46,16 @@ export default function ChecklistsPage() {
       .then(setEntities)
       .catch(() => setEntities([]));
   }, [isStaffManager]);
+
+  // Как только ЮЛ загрузились — выбираем первое ЮЛ по умолчанию (не «Личные»)
+  useEffect(() => {
+    if (didDefaultScope.current) return;
+    if (entities && entities.length > 0) {
+      didDefaultScope.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- одноразовый дефолт после загрузки
+      setScope(entities[0].id);
+    }
+  }, [entities]);
 
   const current = useMemo(
     () => entities?.find((entity) => entity.id === scope) ?? null,
@@ -77,18 +83,6 @@ export default function ChecklistsPage() {
   // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс должностей при смене скоупа
   useEffect(reloadScope, [reloadScope]);
 
-  const scopeItems = useMemo(
-    () =>
-      Object.fromEntries([
-        ["personal", t("scopePersonal")],
-        ...(entities ?? []).map((entity) => [
-          entity.id,
-          entity.establishment || entity.name,
-        ]),
-      ]),
-    [entities, t]
-  );
-
   const entityScope = scope !== "personal";
 
   return (
@@ -109,23 +103,12 @@ export default function ChecklistsPage() {
           </TabsList>
           {/* Скоуп (ЮЛ) влияет только на шаблоны/расписания/статистику — на «Задания» скрываем, чтобы не путать */}
           {tab !== "runs" && (
-            <Select
+            <ScopePicker
               value={scope}
-              items={scopeItems}
-              onValueChange={(v) => setScope(v as string)}
-            >
-              <SelectTrigger className="w-56">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="personal">{t("scopePersonal")}</SelectItem>
-                {(entities ?? []).map((entity) => (
-                  <SelectItem key={entity.id} value={entity.id}>
-                    {entity.establishment || entity.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={setScope}
+              entities={entities ?? []}
+              personalLabel={t("scopePersonal")}
+            />
           )}
         </div>
 
