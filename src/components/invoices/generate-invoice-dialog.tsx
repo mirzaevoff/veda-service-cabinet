@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { ApiError, type Invoice, type LegalEntity } from "@/lib/api";
-import { invoicesApi, legalEntitiesApi } from "@/lib/api-authed";
+import { invoicesApi, legalEntitiesApi, venuesApi } from "@/lib/api-authed";
 import { logActivity } from "@/lib/activity-log";
 import { MonthPicker } from "@/components/common/month-picker";
 import { useDebouncedValue } from "@/hooks/use-debounce";
@@ -47,6 +47,8 @@ export function GenerateInvoiceDialog({
   const [q, setQ] = useState("");
   const debounced = useDebouncedValue(q, 350);
   const [options, setOptions] = useState<LegalEntity[] | null>(null);
+  /** legalEntityId → названия привязанных iiko-заведений (для подписи в списке) */
+  const [venuesByEntity, setVenuesByEntity] = useState<Record<string, string>>({});
 
   const [period, setPeriod] = useState("");
   const [preview, setPreview] = useState<Invoice | null>(null);
@@ -75,6 +77,31 @@ export function GenerateInvoiceDialog({
     setPartialMonthNote("");
     setPaymentLkBlock("");
   }, [open, legalEntity]);
+
+  // Привязанные iiko-заведения → карта ЮЛ → названия (подпись в списке)
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    venuesApi
+      .list({ linked: true, limit: 100 })
+      .then((page) => {
+        if (cancelled) return;
+        const map: Record<string, string[]> = {};
+        for (const v of page.items) {
+          const leId = v.legalEntity?.id;
+          if (leId) (map[leId] ??= []).push(v.name);
+        }
+        setVenuesByEntity(
+          Object.fromEntries(
+            Object.entries(map).map(([id, names]) => [id, names.join(", ")])
+          )
+        );
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [open]);
 
   // Поиск ЮЛ (когда не задано снаружи)
   useEffect(() => {
@@ -203,8 +230,13 @@ export function GenerateInvoiceDialog({
                       onClick={() => setSelected({ id: e.id, name: e.name })}
                       className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-left text-sm transition-colors hover:border-primary/40"
                     >
-                      <span className="min-w-0 truncate font-medium">
-                        {e.name}
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="truncate font-medium">{e.name}</span>
+                        {(venuesByEntity[e.id] || e.establishment) && (
+                          <span className="truncate text-xs text-muted-foreground">
+                            {venuesByEntity[e.id] || e.establishment}
+                          </span>
+                        )}
                       </span>
                       <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
                         {e.taxId}
