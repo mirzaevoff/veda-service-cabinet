@@ -1053,6 +1053,8 @@ export interface Invoice {
   publicUrl: string | null;
   /** Публичное скачивание PDF; null если PUBLIC_BASE_URL не задан */
   pdfUrl: string | null;
+  /** Черновик счёта в Didox (создан, но не подписан/не отправлен — это делает человек в вебе Didox) */
+  didox?: { documentId: string; createdAt: string; createdBy?: string | null } | null;
   createdAt: string;
 }
 

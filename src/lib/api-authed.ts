@@ -837,6 +837,9 @@ export const invoicesApi = {
     authedRequest<void>(`/invoices/${id}`, { method: "DELETE" }),
   /** Скачать PDF (Bearer) как Blob — для кнопки «Скачать» */
   pdfBlob: (id: string) => authedBlob(`/invoices/${id}/pdf`),
+  /** Создать черновик счёта в Didox (docType 000, подтип 4). ER1603 — уже создан */
+  sendToDidox: (id: string) =>
+    authedRequest<Invoice>(`/invoices/${id}/didox`, { method: "POST" }),
 };
 
 export const iikoPartnerApi = {

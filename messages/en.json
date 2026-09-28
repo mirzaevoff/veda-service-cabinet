@@ -99,6 +99,11 @@
     "tabs": {
       "people": "People",
       "roles": "Roles & access"
+    },
+    "audience": {
+      "all": "All",
+      "admins": "Admins",
+      "users": "Users"
     }
   },
   "AdminRoles": {
@@ -1458,7 +1463,16 @@
     "deleteConfirmText": "The invoice and its PDF will be removed, and the source iiko invoices will become available for billing again. This cannot be undone.",
     "periodMonth": "Month (optional)",
     "periodAll": "All unpaid",
-    "chainBadge": "chain"
+    "chainBadge": "chain",
+    "sendDidox": "Send to Didox",
+    "didoxDone": "Invoice created in Didox — sign it in Didox web",
+    "didoxExists": "This invoice is already in Didox",
+    "didoxNoTin": "Client has no TIN — Didox will reject the invoice",
+    "didoxPdfTooBig": "Invoice PDF is over 10 MB — Didox won’t accept it",
+    "didoxError": "Couldn’t create the document in Didox. Try again later",
+    "didoxDraftTitle": "Draft in Didox",
+    "didoxDraftHint": "The invoice is created in Didox as a draft. Sign and send it in Didox web (e-signature required).",
+    "didoxDocNo": "No. {id}"
   },
   "Equipment": {
     "title": "Equipment",

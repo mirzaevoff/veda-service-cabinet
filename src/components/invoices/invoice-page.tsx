@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, Download, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, ExternalLink, FileCheck2, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -48,6 +48,7 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
   const [downloading, setDownloading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [sendingDidox, setSendingDidox] = useState(false);
 
   const load = useCallback(() => {
     invoicesApi
@@ -83,6 +84,36 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
       else toast.error(t("genericError"));
     } finally {
       setDownloading(false);
+    }
+  }
+
+  async function sendDidox() {
+    if (!invoice) return;
+    setSendingDidox(true);
+    try {
+      const updated = await invoicesApi.sendToDidox(invoice.id);
+      setInvoice(updated);
+      toast.success(t("didoxDone"));
+    } catch (e) {
+      if (e instanceof SessionExpiredError) {
+        router.replace("/login");
+        return;
+      }
+      if (e instanceof ApiError && e.code === "ER1603") {
+        // Уже создан ранее — подтянем актуальную карточку (там будет didox)
+        toast.info(t("didoxExists"));
+        load();
+      } else if (e instanceof ApiError && e.code === "ER1604") {
+        toast.error(t("didoxNoTin"));
+      } else if (e instanceof ApiError && e.code === "ER1605") {
+        toast.error(t("didoxPdfTooBig"));
+      } else if (e instanceof ApiError && e.code === "ER1602") {
+        toast.error(t("pdfNotReady"));
+      } else {
+        toast.error(t("didoxError"));
+      }
+    } finally {
+      setSendingDidox(false);
     }
   }
 
@@ -167,6 +198,22 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
             )}
             {t("downloadPdf")}
           </Button>
+          {canManage && !invoice.didox && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              disabled={sendingDidox}
+              onClick={() => void sendDidox()}
+            >
+              {sendingDidox ? (
+                <Spinner className="size-4" />
+              ) : (
+                <Send className="size-4" />
+              )}
+              {t("sendDidox")}
+            </Button>
+          )}
           {canManage && (
             <Button
               variant="ghost"
@@ -185,6 +232,26 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
           )}
         </div>
       </div>
+
+      {/* Черновик в Didox */}
+      {invoice.didox && (
+        <div className="flex items-start gap-3 rounded-lg border border-success/30 bg-success-light/50 p-4">
+          <FileCheck2 className="mt-0.5 size-5 shrink-0 text-success" />
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <span className="text-sm font-medium text-success">
+              {t("didoxDraftTitle")}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {t("didoxDraftHint")}
+            </span>
+            <span className="mt-1 font-mono text-xs text-muted-foreground">
+              {t("didoxDocNo", { id: invoice.didox.documentId })}
+              {" · "}
+              {fmtDate(invoice.didox.createdAt)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Реквизиты */}
       <section className="grid gap-3 rounded-lg border border-border p-5 sm:grid-cols-2">

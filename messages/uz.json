@@ -99,6 +99,11 @@
     "tabs": {
       "people": "Odamlar",
       "roles": "Rollar va ruxsatlar"
+    },
+    "audience": {
+      "all": "Barchasi",
+      "admins": "Adminlar",
+      "users": "Foydalanuvchilar"
     }
   },
   "AdminRoles": {
@@ -1458,7 +1463,16 @@
     "deleteConfirmText": "Hisob va uning PDFi oʻchiriladi, manba iiko hisoblari esa qayta hisoblash uchun ochiladi. Bu amalni qaytarib boʻlmaydi.",
     "periodMonth": "Oy (ixtiyoriy)",
     "periodAll": "Barcha toʻlanmagan",
-    "chainBadge": "tarmoq"
+    "chainBadge": "tarmoq",
+    "sendDidox": "Didoxʼga yuborish",
+    "didoxDone": "Hisob Didoxʼda yaratildi — uni Didox vebida imzolang",
+    "didoxExists": "Bu hisob allaqachon Didoxʼda",
+    "didoxNoTin": "Mijozning INNi yoʻq — Didox hisobni qabul qilmaydi",
+    "didoxPdfTooBig": "Hisob PDFi 10 MB dan katta — Didox qabul qilmaydi",
+    "didoxError": "Didoxʼda hujjat yaratib boʻlmadi. Keyinroq urinib koʻring",
+    "didoxDraftTitle": "Didoxʼda qoralama",
+    "didoxDraftHint": "Hisob Didoxʼda qoralama sifatida yaratildi. Uni Didox vebida imzolang va yuboring (ERI kerak).",
+    "didoxDocNo": "№ {id}"
   },
   "Equipment": {
     "title": "Jihozlar",

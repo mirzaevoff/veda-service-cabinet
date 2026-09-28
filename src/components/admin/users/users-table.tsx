@@ -42,6 +42,11 @@ import { useDebouncedValue } from "@/hooks/use-debounce";
 import { useDelayed } from "@/hooks/use-delayed";
 import { formatRelativeTime, fullName, pickLocalized } from "@/lib/format";
 import { useRouter } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
+
+/** Размер клиентской страницы для суб-фильтров «Администраторы»/«Пользователи» */
+const CLIENT_PAGE_SIZE = 20;
+const AUDIENCES = ["all", "admins", "users"] as const;
 
 export function UsersTable() {
   const t = useTranslations("AdminUsers");
@@ -53,6 +58,7 @@ export function UsersTable() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 400);
   const [status, setStatus] = useState<"" | "active" | "blocked">("");
+  const [audience, setAudience] = useState<"all" | "admins" | "users">("all");
   const [roleId, setRoleId] = useState("");
   const [sort, setSort] = useState<SortValue>("");
   const [page, setPage] = useState(1);
@@ -65,11 +71,35 @@ export function UsersTable() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- сброс страницы при смене фильтров
     setPage(1);
-  }, [debouncedSearch, status, roleId, sort]);
+  }, [debouncedSearch, status, roleId, sort, audience]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
+      if (audience !== "all") {
+        // «Администраторы»/«Пользователи»: роль зашита в каждом профиле (u.role.slug),
+        // а API умеет только один roleId и не умеет «кроме роли» — фильтруем и пагинируем
+        // на клиенте по одной выборке (актуально при объёме до 100 пользователей).
+        const result = await adminApi.users.list({
+          limit: 100,
+          search: debouncedSearch || undefined,
+          status: status || undefined,
+          sort: sort || undefined,
+        });
+        const filtered = result.items.filter((u) =>
+          audience === "users"
+            ? u.role.slug === "user"
+            : u.role.slug !== "user"
+        );
+        const start = (page - 1) * CLIENT_PAGE_SIZE;
+        const slice = filtered.slice(start, start + CLIENT_PAGE_SIZE);
+        if (slice.length === 0 && page > 1) {
+          setPage(1);
+          return;
+        }
+        setData({ items: slice, total: filtered.length, page, limit: CLIENT_PAGE_SIZE });
+        return;
+      }
       const result = await adminApi.users.list({
         page,
         search: debouncedSearch || undefined,
@@ -89,7 +119,7 @@ export function UsersTable() {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- router/tc нестабильны, методы стабильны
-  }, [page, debouncedSearch, status, roleId, sort]);
+  }, [page, debouncedSearch, status, roleId, sort, audience]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- setLoading до await осознанный
@@ -112,7 +142,7 @@ export function UsersTable() {
       onRemove: () => setStatus(""),
     });
   }
-  if (roleId) {
+  if (roleId && audience === "all") {
     const role = roles.find((r) => r.id === roleId);
     activeFilters.push({
       key: "role",
@@ -123,6 +153,27 @@ export function UsersTable() {
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex w-fit items-center gap-1 rounded-full bg-secondary p-1">
+        {AUDIENCES.map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => {
+              setAudience(key);
+              if (key !== "all") setRoleId("");
+            }}
+            className={cn(
+              "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+              audience === key
+                ? "bg-card shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {t(`audience.${key}`)}
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap items-center gap-2 duration-450 animate-in fade-in slide-in-from-bottom-4">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -167,7 +218,7 @@ export function UsersTable() {
             </Select>
           </div>
 
-          {roles.length > 0 && (
+          {roles.length > 0 && audience === "all" && (
             <div className="flex flex-col gap-1.5">
               <Label className="text-sm font-medium text-muted-foreground">
                 {t("filterRoleLabel")}

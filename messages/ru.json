@@ -99,6 +99,11 @@
     "tabs": {
       "people": "Люди",
       "roles": "Роли и доступы"
+    },
+    "audience": {
+      "all": "Все",
+      "admins": "Администраторы",
+      "users": "Пользователи"
     }
   },
   "AdminRoles": {
@@ -1458,7 +1463,16 @@
     "deleteConfirmText": "Счёт и его PDF будут удалены, а исходные iiko-счета снова станут доступны для выставления. Действие необратимо.",
     "periodMonth": "Месяц (необязательно)",
     "periodAll": "Все неоплаченные",
-    "chainBadge": "сеть"
+    "chainBadge": "сеть",
+    "sendDidox": "Отправить в Didox",
+    "didoxDone": "Счёт создан в Didox — подпишите его в вебе Didox",
+    "didoxExists": "Этот счёт уже создан в Didox",
+    "didoxNoTin": "У клиента не указан ИНН — Didox не примет счёт",
+    "didoxPdfTooBig": "PDF счёта больше 10 МБ — Didox не примет",
+    "didoxError": "Не удалось создать документ в Didox. Попробуйте позже",
+    "didoxDraftTitle": "Черновик в Didox",
+    "didoxDraftHint": "Счёт создан в Didox черновиком. Подпишите и отправьте его в вебе Didox (нужна ЭЦП).",
+    "didoxDocNo": "№ {id}"
   },
   "Equipment": {
     "title": "Оборудование",
