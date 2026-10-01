@@ -16,6 +16,7 @@ import {
   LibraryBig,
   ListChecks,
   MapPin,
+  Newspaper,
   Package,
   ReceiptText,
   ScrollText,
@@ -126,6 +127,13 @@ export const NAV_SECTIONS: NavSection[] = [
           PERMISSIONS.devTasksCreate,
           PERMISSIONS.devTasksManage,
         ],
+      },
+      {
+        // Внешний контент: новости/статьи на сайте vedavector.com
+        key: "posts",
+        href: "/posts",
+        icon: Newspaper,
+        permission: PERMISSIONS.postsManage,
       },
     ],
   },

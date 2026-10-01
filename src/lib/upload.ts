@@ -196,6 +196,15 @@ export function uploadDocumentImage(file: File): Promise<EditorImageUpload> {
   return uploadEditorImage("/documents/uploads/image", file);
 }
 
+/**
+ * Картинка поста сайта — ПУБЛИЧНО (`/files/public/:id`, абсолютный url).
+ * Ответ содержит полный файл с `width`/`height` — image-tool сохраняет объект
+ * целиком, размеры нужны сайту, чтобы не прыгал layout.
+ */
+export function uploadPostImage(file: File): Promise<EditorImageUpload> {
+  return uploadEditorImage("/posts/uploads/image", file);
+}
+
 /** Вложение документа (pdf/…) → FileAttachment; id идёт в attachmentIds */
 async function documentFileAttempt(
   file: File,

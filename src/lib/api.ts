@@ -1708,6 +1708,80 @@ export interface CreateReleaseNoteInput {
   important?: boolean;
 }
 
+// --- Посты сайта vedavector.com (posts.md, API 0.60.1) ----------------------
+
+export type PostLocale = "ru" | "uz" | "en";
+export type PostStatus = "draft" | "published" | "archived";
+
+/** Файл-обложка/картинка поста (публичный — абсолютный url, с width/height) */
+export interface PostFile {
+  id: string;
+  kind: string;
+  mime: string;
+  size: number;
+  originalName: string;
+  isPublic: boolean;
+  /** Публичный — абсолютный адрес; размеры нужны сайту, чтобы не прыгал layout */
+  url: string;
+  width: number | null;
+  height: number | null;
+}
+
+/** Строка журнала публикаций */
+export interface PostPublication {
+  channel: "site" | "telegram";
+  /** chat_id группы (для telegram); пусто для site */
+  chatId: string;
+  chatTitle: string;
+  /** ISO */
+  at: string;
+  /** Дошло ли (false — сбой отправки, можно повторить) */
+  ok: boolean;
+}
+
+export interface Post {
+  id: string;
+  title: string;
+  /** SEO-адрес на сайте /posts/{slug} */
+  slug: string;
+  excerpt: string;
+  content: EditorJsData;
+  cover: PostFile | null;
+  locale: PostLocale;
+  tags: string[];
+  status: PostStatus;
+  /** ISO; ставится один раз при первой публикации на сайт */
+  publishedAt: string | null;
+  seo: { title: string; description: string };
+  publications: PostPublication[];
+  author: { id: string; name: string } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PostsPage = Page<Post>;
+
+export interface CreatePostInput {
+  title: string;
+  slug?: string;
+  locale?: PostLocale;
+  excerpt?: string;
+  content?: EditorJsData;
+  /** id загруженного файла; null — убрать обложку */
+  coverId?: string | null;
+  tags?: string[];
+  seo?: { title?: string; description?: string };
+}
+
+export type UpdatePostInput = Partial<CreatePostInput>;
+
+/** Выборочная публикация: каналы независимы */
+export interface PublishPostInput {
+  site?: boolean;
+  /** id привязок Telegram-групп (не сырые chat_id) */
+  telegramChatIds?: string[];
+}
+
 // --- API-токены (PAT, API 0.49) ---------------------------------------------
 
 export type ApiTokenState = "active" | "revoked" | "expired";

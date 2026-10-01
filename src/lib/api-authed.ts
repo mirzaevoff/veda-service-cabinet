@@ -95,6 +95,13 @@ import {
   type CreateReleaseNoteInput,
   type ApiToken,
   type ApiTokenCreated,
+  type Post,
+  type PostsPage,
+  type PostStatus,
+  type PostLocale,
+  type CreatePostInput,
+  type UpdatePostInput,
+  type PublishPostInput,
   type ProductMapEntry,
   type ProductMapInput,
   type Allocation,
@@ -1431,6 +1438,44 @@ export const releaseNotesApi = {
     }),
   remove: (id: string) =>
     authedRequest<void>(`/release-notes/${id}`, { method: "DELETE" }),
+};
+
+/** Посты сайта vedavector.com (posts.md, API 0.60.1) — право posts.manage */
+export const postsApi = {
+  list: (
+    params: {
+      page?: number;
+      limit?: number;
+      status?: PostStatus;
+      locale?: PostLocale;
+      tag?: string;
+      search?: string;
+      sort?: string;
+    } = {}
+  ) => authedRequest<PostsPage>(`/posts${query({ ...params })}`),
+  tags: () => authedRequest<string[]>("/posts/tags"),
+  get: (id: string) => authedRequest<Post>(`/posts/${id}`),
+  create: (body: CreatePostInput) =>
+    authedRequest<Post>("/posts", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  update: (id: string, body: UpdatePostInput) =>
+    authedRequest<Post>(`/posts/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/posts/${id}`, { method: "DELETE" }),
+  /** Выборочная публикация: {site?, telegramChatIds?}. ER2701 slug занят */
+  publish: (id: string, body: PublishPostInput) =>
+    authedRequest<Post>(`/posts/${id}/publish`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Снять с сайта (разосланное в Telegram не отменяет) */
+  unpublish: (id: string) =>
+    authedRequest<Post>(`/posts/${id}/unpublish`, { method: "POST" }),
 };
 
 /** API-токены (PAT, API 0.49) — право apiTokens.manage */

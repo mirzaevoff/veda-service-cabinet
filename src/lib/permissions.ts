@@ -51,6 +51,7 @@ export const PERMISSIONS = {
   documentsConfirm: "documents.confirm",
   logsView: "logs.view",
   releaseNotesManage: "releaseNotes.manage",
+  postsManage: "posts.manage",
   apiTokensManage: "apiTokens.manage",
   devTasksView: "devTasks.view",
   devTasksCreate: "devTasks.create",
