@@ -2468,7 +2468,7 @@
     "howStep3": "Yuridik shaxsni tanlab, «Bog‘lash»ni bosing",
     "discoverTitle": "Aniqlash",
     "discover": "Guruhlarni topish",
-    "discoverEmpty": "Hozircha hech narsa topilmadi. Telegram hodisalarni taxminan bir kun saqlaydi — guruhda /start ni yana yuboring va qayta urining.",
+    "discoverEmpty": "Hozircha hech narsa topilmadi. Bot guruhga qo‘shilganini tekshiring (buni guruh administratori qila oladi), so‘ng guruhda /start yuboring va qayta qidiring. Bot yo‘q guruh topilmaydi.",
     "boundTitle": "Bog‘langan guruhlar",
     "boundEmpty": "Hozircha bog‘langan guruhlar yo‘q",
     "pickEntity": "Yuridik shaxs",
@@ -2494,7 +2494,8 @@
       "notConfigured": "Telegram sozlanmagan — dasturchiga murojaat qiling",
       "webhook": "Ro‘yxatni olib bo‘lmadi: botda vebhuk o‘rnatilgan, dasturchiga murojaat qiling",
       "bindingNotFound": "Guruh topilmadi, ro‘yxatni yangilang"
-    }
+    },
+    "howStep0": "Bot guruhga qo‘shilganiga ishonch hosil qiling — buni guruh administratori qila oladi"
   },
   "Posts": {
     "title": "Sayt postlari",

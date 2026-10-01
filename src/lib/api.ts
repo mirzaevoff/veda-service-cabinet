@@ -1737,6 +1737,11 @@ export interface PostPublication {
   at: string;
   /** Дошло ли (false — сбой отправки, можно повторить) */
   ok: boolean;
+  /**
+   * Кто отправил. null — старые записи и системные отправки;
+   * отсутствует — на API без поля. В обоих случаях автора не показываем.
+   */
+  by?: { id: string; name: string } | null;
 }
 
 export interface Post {

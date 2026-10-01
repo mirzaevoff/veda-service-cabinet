@@ -111,6 +111,7 @@ export function TelegramGroupsPanel() {
         <div className="flex flex-col gap-1 text-sm">
           <span className="font-medium">{t("howTitle")}</span>
           <ol className="flex list-inside list-decimal flex-col gap-0.5 text-muted-foreground">
+            <li>{t("howStep0")}</li>
             <li>{t("howStep1")}</li>
             <li>{t("howStep2")}</li>
             <li>{t("howStep3")}</li>

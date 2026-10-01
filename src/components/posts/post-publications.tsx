@@ -38,8 +38,14 @@ export function PostPublications({
             ) : (
               <Send className="size-4 shrink-0 text-muted-foreground" />
             )}
-            <span className="min-w-0 flex-1 truncate">
-              {r.channel === "site" ? t("publish.channelSite") : r.chatTitle || r.chatId}
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate">
+                {r.channel === "site" ? t("publish.channelSite") : r.chatTitle || r.chatId}
+              </span>
+              {/* by: null/нет — системная или старая запись, автора не показываем */}
+              {r.by?.name && (
+                <span className="truncate text-xs text-muted-foreground">{r.by.name}</span>
+              )}
             </span>
             <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
               {fmt(r.at)}

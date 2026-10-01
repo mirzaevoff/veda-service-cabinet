@@ -2468,7 +2468,7 @@
     "howStep3": "Pick a legal entity and click “Bind”",
     "discoverTitle": "Discovery",
     "discover": "Find groups",
-    "discoverEmpty": "Nothing found yet. Telegram keeps events for about a day — send /start in the group again and retry.",
+    "discoverEmpty": "Nothing found yet. Check that the bot is in the group (the group admin can add it), then send /start there and search again. A group without the bot can’t be found.",
     "boundTitle": "Bound groups",
     "boundEmpty": "No bound groups yet",
     "pickEntity": "Legal entity",
@@ -2494,7 +2494,8 @@
       "notConfigured": "Telegram is not set up — contact the developer",
       "webhook": "Couldn’t fetch the list: the bot has a webhook, contact the developer",
       "bindingNotFound": "Group not found, refresh the list"
-    }
+    },
+    "howStep0": "Make sure the bot has been added to the group — the group admin can do it"
   },
   "Posts": {
     "title": "Site posts",
