@@ -33,6 +33,7 @@ export const PERMISSIONS = {
   venuesManage: "venues.manage",
   invoicesView: "invoices.view",
   invoicesManage: "invoices.manage",
+  telegramManage: "telegram.manage",
   locationsView: "locations.view",
   locationsManage: "locations.manage",
   equipmentView: "equipment.view",

@@ -210,7 +210,10 @@
     "nothingFound": "Nothing found",
     "clear": "Clear",
     "refresh": "Refresh",
-    "close": "Close"
+    "close": "Close",
+    "select": "Select",
+    "back": "Back",
+    "done": "Done"
   },
   "Tickets": {
     "list": {
@@ -674,7 +677,29 @@
       "errorER1401": "The venue is linked to another legal entity"
     },
     "pinfl": "PINFL",
-    "pinflHint": "Individual's PINFL (for sole proprietors) — auto-filled from the TIN"
+    "pinflHint": "Individual's PINFL (for sole proprietors) — auto-filled from the TIN",
+    "billing": {
+      "title": "Billing",
+      "saved": "Settings saved",
+      "saveError": "Couldn’t save settings",
+      "telegramAutoSend": "Send invoice to Telegram automatically",
+      "clientSees": "The client will see the message",
+      "noGroup": "This legal entity has no bound Telegram group.",
+      "bindGroup": "Bind a group",
+      "autoInvoice": "Issue invoice automatically",
+      "autoInvoiceHint": "A cron issues the invoice on the chosen day of month",
+      "dayOfMonth": "Day of month",
+      "dayHint": "1–28 — so the day exists in any month, including February",
+      "lastRun": "Last auto-run: {month}",
+      "flaggedTitle": "On watch since {date}",
+      "flaggedHint": "An internal debt note. Nothing is blocked — it’s a signal to us, not to the client.",
+      "cycle": {
+        "autoIssue": "Auto-issue",
+        "dueReminder": "Payment due day",
+        "overdue": "Overdue",
+        "flag": "“On watch” flag"
+      }
+    }
   },
   "Checklists": {
     "title": "Checklists",
@@ -1472,7 +1497,44 @@
     "didoxError": "Couldn’t create the document in Didox. Try again later",
     "didoxDraftTitle": "Draft in Didox",
     "didoxDraftHint": "The invoice is created in Didox as a draft. Sign and send it in Didox web (e-signature required).",
-    "didoxDocNo": "No. {id}"
+    "didoxDocNo": "No. {id}",
+    "sendTelegram": "Send to Telegram",
+    "telegramResend": "Send again",
+    "telegramSent": "Invoice sent to Telegram",
+    "telegramError": "Couldn’t send to Telegram",
+    "telegramNoGroup": "This legal entity has no bound Telegram group",
+    "telegramNotConfigured": "Telegram is not set up — contact the developer",
+    "telegramConfirmTitle": "Send the invoice to the client?",
+    "telegramConfirmNamed": "Send invoice № {number} to group “{group}”? The client will see the message.",
+    "telegramConfirmGeneric": "Send invoice № {number} to the client’s Telegram group? The client will see the message.",
+    "telegramAlreadySent": "This invoice was already sent in this session.",
+    "bulk": {
+      "open": "Bulk invoicing",
+      "title": "Bulk invoicing",
+      "subtitle": "Preview first, then issue. Nothing is sent to clients.",
+      "period": "Period",
+      "periodAll": "All unpaid",
+      "modeAll": "All legal entities",
+      "modePick": "Pick manually",
+      "allWarning": "Invoices will be issued to ALL legal entities with unpaid iiko invoices.",
+      "searchEntity": "Search by name or TIN",
+      "picked": "Selected: {count}",
+      "noEntities": "Nothing found",
+      "doPreview": "Preview",
+      "previewError": "Couldn’t build the preview",
+      "toIssue": "To issue",
+      "total": "Total",
+      "breakdown": "Breakdown by legal entity",
+      "overLimit": "Selected {count} — up to {max} at a time. Each invoice renders a PDF, so split it up.",
+      "errorsTitle": "Failed: {count} — you can retry these",
+      "noSourcesTitle": "Nothing to issue: {count}",
+      "doGenerate": "Issue ({count})",
+      "tooMany": "Up to {max} at a time. Selected {count} — split it up.",
+      "generateError": "Couldn’t issue invoices",
+      "generated": "Invoices issued: {count}",
+      "resultTitle": "Invoices issued: {count}",
+      "resultTotal": "For {total}"
+    }
   },
   "Equipment": {
     "title": "Equipment",
@@ -1818,7 +1880,8 @@
       "transactions": "Transactions",
       "invoices": "Invoices",
       "bank": "Bank",
-      "chainSplit": "Chain split"
+      "chainSplit": "Chain split",
+      "telegram": "Telegram"
     }
   },
   "AdminSystem": {
@@ -2396,5 +2459,40 @@
     "typeSaved": "Type saved",
     "typeDeleted": "Type deleted",
     "noTypes": "No types"
+  },
+  "Telegram": {
+    "howTitle": "How to bind a group",
+    "howStep1": "Send /start in the Telegram group (mention the bot: /start@bot)",
+    "howStep2": "Click “Find groups” below",
+    "howStep3": "Pick a legal entity and click “Bind”",
+    "discoverTitle": "Discovery",
+    "discover": "Find groups",
+    "discoverEmpty": "Nothing found yet. Telegram keeps events for about a day — send /start in the group again and retry.",
+    "boundTitle": "Bound groups",
+    "boundEmpty": "No bound groups yet",
+    "pickEntity": "Legal entity",
+    "bind": "Bind",
+    "bound": "Group bound to {name}",
+    "alreadyBound": "Already bound",
+    "untitled": "Untitled",
+    "manualToggle": "Enter chat_id manually",
+    "manualTitle": "Manual binding",
+    "manualHint": "If discovery didn’t work — enter the group’s chat_id manually.",
+    "test": "Test",
+    "testSent": "Test message sent",
+    "inactive": "Off",
+    "activate": "Turn on",
+    "deactivate": "Turn off",
+    "noEntity": "No legal entity",
+    "remove": "Delete",
+    "removed": "Binding deleted",
+    "removeConfirmTitle": "Delete binding?",
+    "removeConfirmText": "The group will stop receiving invoices and reminders. For a pause, turning the binding off keeps the history.",
+    "errors": {
+      "generic": "Something went wrong. Try again.",
+      "notConfigured": "Telegram is not set up — contact the developer",
+      "webhook": "Couldn’t fetch the list: the bot has a webhook, contact the developer",
+      "bindingNotFound": "Group not found, refresh the list"
+    }
   }
 }

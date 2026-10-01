@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, FileText, Plus, ReceiptText } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, Layers, Plus, ReceiptText } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import {
   type SortValue,
 } from "@/components/common/sortable-table-head";
 import { GenerateInvoiceDialog } from "./generate-invoice-dialog";
+import { BulkInvoiceDialog } from "./bulk-invoice-dialog";
 import { invoiceStatusStyle, formatSum } from "./invoice-format";
 import type { InvoicesPage } from "@/lib/api";
 import { invoicesApi, SessionExpiredError } from "@/lib/api-authed";
@@ -42,6 +43,7 @@ export function InvoicesList() {
   const [data, setData] = useState<InvoicesPage | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [bulk, setBulk] = useState(false);
   const showSkeleton = useDelayed(loading && !data);
 
   const fmtDate = (iso: string) =>
@@ -87,7 +89,11 @@ export function InvoicesList() {
           </span>
         )}
         {canManage && (
-          <div className="ms-auto">
+          <div className="ms-auto flex items-center gap-2">
+            <Button variant="outline" onClick={() => setBulk(true)} className="gap-2">
+              <Layers className="size-4" />
+              {t("bulk.open")}
+            </Button>
             <Button onClick={() => setGenerating(true)} className="gap-2">
               <Plus className="size-4" />
               {t("generate")}
@@ -208,6 +214,12 @@ export function InvoicesList() {
         open={generating}
         onClose={() => setGenerating(false)}
         onCreated={(inv) => router.push(`/invoices/${inv.id}`)}
+      />
+
+      <BulkInvoiceDialog
+        open={bulk}
+        onClose={() => setBulk(false)}
+        onDone={() => void load()}
       />
     </div>
   );

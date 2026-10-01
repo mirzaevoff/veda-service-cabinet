@@ -406,6 +406,8 @@ export interface LegalEntity {
   address: string;
   director: LegalEntityDirector | null;
   registrationDate: string | null;
+  /** Настройки биллинг-цикла (Telegram-автоотправка, автовыставление, пометка должника) */
+  billing: BillingSettings;
   /** Кэш баланса в тийинах (ведёт модуль balances) */
   balanceTiyin: number;
   /** balanceTiyin / 100 */
@@ -413,6 +415,34 @@ export interface LegalEntity {
   /** Только для staff и owner'ов в GET /legal-entities/:id */
   members?: LegalEntityMember[];
   createdAt: string;
+}
+
+/**
+ * Настройки биллинг-цикла ЮЛ (billing-cycle.md). Оба переключателя по
+ * умолчанию ВЫКЛ: сообщения видит клиент, а выставлять счёт можно не всем.
+ */
+export interface BillingSettings {
+  /** Слать счёт в Telegram-группу автоматически при выставлении */
+  telegramAutoSendInvoice: boolean;
+  autoInvoice: {
+    /** Выставлять счёт автоматически (крон) */
+    enabled: boolean;
+    /** День месяца выставления (1–28) */
+    dayOfMonth: number;
+    /** «YYYY-MM» последнего автопрогона (пусто — ещё не было) */
+    lastRunMonth: string;
+  };
+  /**
+   * ISO-дата, когда ЮЛ помечен критическим должником (5-е число); null — нет.
+   * Внутренняя пометка «на контроле», НЕ блокировка.
+   */
+  criticalFlaggedAt: string | null;
+}
+
+/** Патч настроек биллинга (PATCH /legal-entities/:id { billing }) */
+export interface BillingSettingsInput {
+  telegramAutoSendInvoice?: boolean;
+  autoInvoice?: { enabled?: boolean; dayOfMonth?: number };
 }
 
 export interface LegalEntityLookup {
@@ -1071,6 +1101,92 @@ export interface CreateInvoiceInput {
   partialMonthNote?: string;
   /** Блок «оплата в кабинете» под назначением платежа */
   paymentLkBlock?: string;
+}
+
+// --- Telegram-группы клиентов (billing-cycle.md, API 0.59) ------------------
+
+/** Чат, обнаруженный через getUpdates («найти группы») — ещё не привязан */
+export interface TelegramDiscoveredChat {
+  /** Telegram chat id (отрицательный у групп/супергрупп) */
+  chatId: string;
+  /** Название группы или имя пользователя для привата */
+  title: string;
+  /** group | supergroup | channel | private */
+  type: string;
+}
+
+/** Привязанная Telegram-группа ЮЛ */
+export interface TelegramChat {
+  id: string;
+  chatId: string;
+  title: string;
+  /** ЮЛ, к которому привязана группа */
+  legalEntity: { id: string; name: string } | null;
+  /** Выключена — хранится для истории, ничего не получает */
+  active: boolean;
+}
+
+// --- Массовое выставление счетов (invoices.md, API 0.59) --------------------
+
+/** Тело запроса предпросмотра/генерации массового выставления */
+export interface BulkInvoiceInput {
+  /** Период YYYY-MM; без него — все неоплаченные разом */
+  period?: string;
+  /** ЮЛ для выставления; пусто/не передано — ВСЕ */
+  legalEntityIds?: string[];
+  didoxWarning?: string;
+  partialMonthNote?: string;
+  paymentLkBlock?: string;
+}
+
+export interface BulkPreviewItem {
+  legalEntityId: string;
+  name: string;
+  tin: string;
+  /** Сколько iiko-счетов войдёт в сводный */
+  sourceCount: number;
+  totalTiyin: number;
+  totalSum: number;
+}
+
+export interface BulkSkippedItem {
+  legalEntityId: string;
+  name: string;
+  tin: string;
+  /** no-sources — нечего выставлять (норма); error — сбой генерации */
+  reason: "no-sources" | "error";
+}
+
+/** Ответ POST /invoices/bulk/preview (ничего не пишет, PDF не рендерит) */
+export interface BulkInvoicePreview {
+  period: string | null;
+  entitiesTotal: number;
+  toIssue: number;
+  skippedCount: number;
+  totalTiyin: number;
+  totalSum: number;
+  items: BulkPreviewItem[];
+  skipped: BulkSkippedItem[];
+}
+
+export interface BulkCreatedItem {
+  legalEntityId: string;
+  name: string;
+  invoiceId: string;
+  number: string;
+  totalTiyin: number;
+  totalSum: number;
+}
+
+/** Ответ POST /invoices/bulk */
+export interface BulkInvoiceResult {
+  period: string | null;
+  createdCount: number;
+  skippedCount: number;
+  totalTiyin: number;
+  totalSum: number;
+  created: BulkCreatedItem[];
+  skipped: BulkSkippedItem[];
 }
 
 export interface IikoServersSyncResult {

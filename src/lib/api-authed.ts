@@ -7,6 +7,12 @@ import {
   type CreateInvoiceInput,
   type Invoice,
   type InvoicesPage,
+  type BillingSettingsInput,
+  type BulkInvoiceInput,
+  type BulkInvoicePreview,
+  type BulkInvoiceResult,
+  type TelegramChat,
+  type TelegramDiscoveredChat,
   type Office,
   type Department,
   type DictionaryItem,
@@ -445,6 +451,7 @@ export const legalEntitiesApi = {
       address: string;
       director: { firstName: string; lastName: string; middleName: string } | null;
       registrationDate: string | null;
+      billing: BillingSettingsInput;
     }>
   ) =>
     authedRequest<LegalEntity>(`/legal-entities/${id}`, {
@@ -840,6 +847,55 @@ export const invoicesApi = {
   /** Создать черновик счёта в Didox (docType 000, подтип 4). ER1603 — уже создан */
   sendToDidox: (id: string) =>
     authedRequest<Invoice>(`/invoices/${id}/didox`, { method: "POST" }),
+  /** Предпросмотр массового выставления — без записи, без PDF (безопасно) */
+  bulkPreview: (body: BulkInvoiceInput) =>
+    authedRequest<BulkInvoicePreview>("/invoices/bulk/preview", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Массовое выставление (создаёт счета). Лимит 100 ЮЛ → ER1606 */
+  bulk: (body: BulkInvoiceInput) =>
+    authedRequest<BulkInvoiceResult>("/invoices/bulk", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Отправить счёт в Telegram-группу клиента. ER2603 — нет привязанной группы */
+  sendToTelegram: (id: string) =>
+    authedRequest<{ sent: boolean }>(`/invoices/${id}/telegram`, {
+      method: "POST",
+    }),
+};
+
+/**
+ * Telegram-группы клиентов (billing-cycle.md) — право telegram.manage.
+ * Бот send-only: привязка групп делается руками здесь.
+ */
+export const telegramApi = {
+  /** «Найти группы»: разовый getUpdates. Пустой список — не ошибка. ER2601 — вебхук */
+  discover: () =>
+    authedRequest<TelegramDiscoveredChat[]>("/telegram/chats/discover"),
+  list: (legalEntityId?: string) =>
+    authedRequest<TelegramChat[]>(`/telegram/chats${query({ legalEntityId })}`),
+  /** Привязать группу к ЮЛ (идемпотентно по chatId) */
+  bind: (body: { chatId: string; title?: string; legalEntityId: string }) =>
+    authedRequest<TelegramChat>("/telegram/chats", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  /** Перепривязать к другому ЮЛ или выключить/включить */
+  update: (id: string, body: { legalEntityId?: string; active?: boolean }) =>
+    authedRequest<TelegramChat>(`/telegram/chats/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+  /** Тестовое сообщение — убедиться, что бот может писать в группу */
+  test: (id: string, text?: string) =>
+    authedRequest<{ sent: boolean }>(`/telegram/chats/${id}/test`, {
+      method: "POST",
+      body: JSON.stringify(text ? { text } : {}),
+    }),
+  remove: (id: string) =>
+    authedRequest<void>(`/telegram/chats/${id}`, { method: "DELETE" }),
 };
 
 export const iikoPartnerApi = {

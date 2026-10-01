@@ -8,6 +8,7 @@ import { LedgerFeed } from "@/components/balances/ledger-feed";
 import { InvoicesList } from "@/components/invoices/invoices-list";
 import { ChainSplitWorkshop } from "@/components/iiko-partner/chain-invoices/chain-split-workshop";
 import { BankPanel } from "@/components/bank/bank-panel";
+import { TelegramGroupsPanel } from "@/components/telegram/telegram-groups-panel";
 import { NoAccess } from "@/components/admin/no-access";
 import { useCurrentUser } from "@/components/common/current-user-provider";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -26,6 +27,7 @@ export default function FinancePage() {
     { key: "invoices", visible: can(PERMISSIONS.invoicesView) },
     { key: "chainSplit", visible: can(PERMISSIONS.iikoInvoicesView) },
     { key: "bank", visible: can(PERMISSIONS.bankView) },
+    { key: "telegram", visible: can(PERMISSIONS.telegramManage) },
   ].filter((tab) => tab.visible);
 
   if (loading) return null;
@@ -60,6 +62,9 @@ export default function FinancePage() {
         </TabsContent>
         <TabsContent value="bank">
           <BankPanel />
+        </TabsContent>
+        <TabsContent value="telegram">
+          <TelegramGroupsPanel />
         </TabsContent>
       </Tabs>
     </div>

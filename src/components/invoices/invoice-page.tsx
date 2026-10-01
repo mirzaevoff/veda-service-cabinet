@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, Download, ExternalLink, FileCheck2, Send, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  ExternalLink,
+  FileCheck2,
+  Send,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -30,7 +38,7 @@ import {
 } from "@/components/ui/table";
 import type { Invoice } from "@/lib/api";
 import { ApiError } from "@/lib/api";
-import { invoicesApi, SessionExpiredError } from "@/lib/api-authed";
+import { invoicesApi, telegramApi, SessionExpiredError } from "@/lib/api-authed";
 import { Link, useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { invoiceStatusStyle, formatSum, downloadBlob } from "./invoice-format";
@@ -43,12 +51,19 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
   const router = useRouter();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.invoicesManage);
+  const canTelegram = can(PERMISSIONS.telegramManage);
 
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [sendingDidox, setSendingDidox] = useState(false);
+  const [confirmTelegram, setConfirmTelegram] = useState(false);
+  const [sendingTelegram, setSendingTelegram] = useState(false);
+  /** Название привязанной группы для подтверждения (null — неизвестно/нет) */
+  const [tgGroup, setTgGroup] = useState<string | null>(null);
+  /** Уже отправляли в рамках этой сессии — чтобы не слать дважды */
+  const [tgSent, setTgSent] = useState(false);
 
   const load = useCallback(() => {
     invoicesApi
@@ -114,6 +129,49 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
       }
     } finally {
       setSendingDidox(false);
+    }
+  }
+
+  // Название привязанной Telegram-группы — для подтверждения перед отправкой
+  useEffect(() => {
+    if (!invoice || !canManage || !canTelegram) return;
+    let cancelled = false;
+    telegramApi
+      .list(invoice.legalEntityId)
+      .then((chats) => {
+        if (cancelled) return;
+        const active = chats.find((c) => c.active) ?? chats[0];
+        setTgGroup(active?.title || null);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [invoice, canManage, canTelegram]);
+
+  async function sendTelegram() {
+    if (!invoice) return;
+    setSendingTelegram(true);
+    try {
+      await invoicesApi.sendToTelegram(invoice.id);
+      setTgSent(true);
+      setConfirmTelegram(false);
+      toast.success(t("telegramSent"));
+    } catch (e) {
+      if (e instanceof SessionExpiredError) {
+        router.replace("/login");
+        return;
+      }
+      setConfirmTelegram(false);
+      if (e instanceof ApiError && e.code === "ER2603") {
+        toast.error(t("telegramNoGroup"));
+      } else if (e instanceof ApiError && e.code === "ER2600") {
+        toast.error(t("telegramNotConfigured"));
+      } else {
+        toast.error(t("telegramError"));
+      }
+    } finally {
+      setSendingTelegram(false);
     }
   }
 
@@ -209,9 +267,25 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
               {sendingDidox ? (
                 <Spinner className="size-4" />
               ) : (
-                <Send className="size-4" />
+                <Upload className="size-4" />
               )}
               {t("sendDidox")}
+            </Button>
+          )}
+          {canManage && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              disabled={sendingTelegram}
+              onClick={() => setConfirmTelegram(true)}
+            >
+              {sendingTelegram ? (
+                <Spinner className="size-4" />
+              ) : (
+                <Send className="size-4" />
+              )}
+              {tgSent ? t("telegramResend") : t("sendTelegram")}
             </Button>
           )}
           {canManage && (
@@ -310,6 +384,32 @@ export function InvoicePage({ invoiceId }: { invoiceId: string }) {
           <span className="tabular-nums">{formatSum(invoice.totalSum, locale)}</span>
         </div>
       </section>
+
+      <AlertDialog open={confirmTelegram} onOpenChange={setConfirmTelegram}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("telegramConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {tgGroup
+                ? t("telegramConfirmNamed", { number: invoice.number, group: tgGroup })
+                : t("telegramConfirmGeneric", { number: invoice.number })}
+              {tgSent && ` ${t("telegramAlreadySent")}`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tc("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                void sendTelegram();
+              }}
+              disabled={sendingTelegram}
+            >
+              {sendingTelegram ? <Spinner className="size-4" /> : t("sendTelegram")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>

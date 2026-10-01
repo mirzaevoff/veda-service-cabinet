@@ -79,6 +79,7 @@ export const NAV_SECTIONS: NavSection[] = [
           PERMISSIONS.bankView,
           PERMISSIONS.balancesView,
           PERMISSIONS.invoicesView,
+          PERMISSIONS.telegramManage,
         ],
       },
       {
@@ -236,6 +237,14 @@ export const NAV_SUBITEMS: NavSubItem[] = [
     labelKey: "Finance.tabs.chainSplit",
     sectionKey: "finance",
     permission: PERMISSIONS.iikoInvoicesView,
+  },
+  {
+    key: "finance-telegram",
+    href: "/finance?tab=telegram",
+    icon: Send,
+    labelKey: "Finance.tabs.telegram",
+    sectionKey: "finance",
+    permission: PERMISSIONS.telegramManage,
   },
   {
     key: "tickets-stats",

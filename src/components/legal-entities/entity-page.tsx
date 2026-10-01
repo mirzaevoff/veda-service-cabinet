@@ -33,6 +33,7 @@ import { EntityBalanceSection } from "./entity-balance";
 import { EntityInvoices } from "./entity-invoices";
 import { EntityVenues } from "./entity-venues";
 import { EntityBills } from "./entity-bills";
+import { EntityBilling } from "./entity-billing";
 import type { LegalEntity } from "@/lib/api";
 import { legalEntitiesApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -258,6 +259,11 @@ export function EntityPage({ entityId }: { entityId: string }) {
       {/* Счета на оплату (PDF) */}
       {can(PERMISSIONS.invoicesView) && (
         <EntityBills entityId={entity.id} entityName={entity.name} />
+      )}
+
+      {/* Биллинг: автоотправка в Telegram, автовыставление, пометка должника */}
+      {can(PERMISSIONS.invoicesView) && (
+        <EntityBilling entity={entity} onChanged={reload} />
       )}
 
       {/* Участники */}

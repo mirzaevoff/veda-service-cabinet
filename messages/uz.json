@@ -210,7 +210,10 @@
     "nothingFound": "Hech narsa topilmadi",
     "clear": "Tozalash",
     "refresh": "Yangilash",
-    "close": "Yopish"
+    "close": "Yopish",
+    "select": "Tanlash",
+    "back": "Orqaga",
+    "done": "Tayyor"
   },
   "Tickets": {
     "list": {
@@ -674,7 +677,29 @@
       "errorER1401": "Muassasa boshqa yuridik shaxsga bogʻlangan"
     },
     "pinfl": "JSHSHIR",
-    "pinflHint": "Jismoniy shaxs JSHSHIR (YaTT uchun) — STIR bo'yicha avtomatik to'ldiriladi"
+    "pinflHint": "Jismoniy shaxs JSHSHIR (YaTT uchun) — STIR bo'yicha avtomatik to'ldiriladi",
+    "billing": {
+      "title": "Billing",
+      "saved": "Sozlamalar saqlandi",
+      "saveError": "Sozlamalarni saqlab bo‘lmadi",
+      "telegramAutoSend": "Hisob-fakturani Telegram’ga avtomatik yuborish",
+      "clientSees": "Xabarni mijoz ko‘radi",
+      "noGroup": "Yuridik shaxsga bog‘langan Telegram guruhi yo‘q.",
+      "bindGroup": "Guruh bog‘lash",
+      "autoInvoice": "Hisob-fakturani avtomatik chiqarish",
+      "autoInvoiceHint": "Kron tanlangan kunda umumiy hisob-faktura chiqaradi",
+      "dayOfMonth": "Oy kuni",
+      "dayHint": "1–28 — kun har qanday oyda, jumladan fevralda ham bo‘lishi uchun",
+      "lastRun": "Oxirgi avto-ishga tushirish: {month}",
+      "flaggedTitle": "{date} dan nazoratda",
+      "flaggedHint": "Qarz bo‘yicha ichki belgi. Hech narsa bloklanmaydi — bu bizga signal, mijozga emas.",
+      "cycle": {
+        "autoIssue": "Avto-chiqarish",
+        "dueReminder": "To‘lovning oxirgi kuni",
+        "overdue": "Muddati o‘tgan",
+        "flag": "«Nazoratda» belgisi"
+      }
+    }
   },
   "Checklists": {
     "title": "Cheklistlar",
@@ -1472,7 +1497,44 @@
     "didoxError": "Didoxʼda hujjat yaratib boʻlmadi. Keyinroq urinib koʻring",
     "didoxDraftTitle": "Didoxʼda qoralama",
     "didoxDraftHint": "Hisob Didoxʼda qoralama sifatida yaratildi. Uni Didox vebida imzolang va yuboring (ERI kerak).",
-    "didoxDocNo": "№ {id}"
+    "didoxDocNo": "№ {id}",
+    "sendTelegram": "Telegram’ga yuborish",
+    "telegramResend": "Yana yuborish",
+    "telegramSent": "Hisob-faktura Telegram’ga yuborildi",
+    "telegramError": "Telegram’ga yuborib bo‘lmadi",
+    "telegramNoGroup": "Bu yuridik shaxsga Telegram guruhi bog‘lanmagan",
+    "telegramNotConfigured": "Telegram sozlanmagan — dasturchiga murojaat qiling",
+    "telegramConfirmTitle": "Hisob-fakturani mijozga yuborasizmi?",
+    "telegramConfirmNamed": "№ {number} hisob-fakturani «{group}» guruhiga yuborasizmi? Xabarni mijoz ko‘radi.",
+    "telegramConfirmGeneric": "№ {number} hisob-fakturani mijozning Telegram guruhiga yuborasizmi? Xabarni mijoz ko‘radi.",
+    "telegramAlreadySent": "Bu hisob-faktura shu sessiyada allaqachon yuborilgan.",
+    "bulk": {
+      "open": "Ommaviy chiqarish",
+      "title": "Hisob-fakturalarni ommaviy chiqarish",
+      "subtitle": "Avval ko‘rib chiqing, keyin chiqaring. Mijozlarga hech narsa yuborilmaydi.",
+      "period": "Davr",
+      "periodAll": "Barcha to‘lanmaganlar",
+      "modeAll": "Barcha yuridik shaxslar",
+      "modePick": "Qo‘lda tanlash",
+      "allWarning": "Hisob-fakturalar iikoda to‘lanmagan hisobi bor BARCHA yuridik shaxslarga chiqariladi.",
+      "searchEntity": "Nomi yoki STIR bo‘yicha qidirish",
+      "picked": "Tanlangan: {count}",
+      "noEntities": "Hech narsa topilmadi",
+      "doPreview": "Ko‘rib chiqish",
+      "previewError": "Ko‘rib chiqishni tuzib bo‘lmadi",
+      "toIssue": "Chiqariladi",
+      "total": "Jami",
+      "breakdown": "Yuridik shaxslar bo‘yicha taqsimot",
+      "overLimit": "{count} tanlandi — bir martada {max} tadan ko‘p emas. Har bir hisob-faktura PDF chizadi, shuning uchun bo‘lib chiqaring.",
+      "errorsTitle": "Nosozlik: {count} — ularni qayta urinib ko‘rish mumkin",
+      "noSourcesTitle": "Chiqarishga hech narsa yo‘q: {count}",
+      "doGenerate": "Chiqarish ({count})",
+      "tooMany": "Bir martada {max} tadan ko‘p emas. {count} tanlandi — bo‘lib chiqaring.",
+      "generateError": "Hisob-fakturalarni chiqarib bo‘lmadi",
+      "generated": "Chiqarilgan hisob-fakturalar: {count}",
+      "resultTitle": "Chiqarilgan hisob-fakturalar: {count}",
+      "resultTotal": "{total} summaga"
+    }
   },
   "Equipment": {
     "title": "Jihozlar",
@@ -1818,7 +1880,8 @@
       "transactions": "Tranzaksiyalar",
       "invoices": "Hisoblar",
       "bank": "Bank",
-      "chainSplit": "Tarmoq bo‘lish"
+      "chainSplit": "Tarmoq bo‘lish",
+      "telegram": "Telegram"
     }
   },
   "AdminSystem": {
@@ -2396,5 +2459,40 @@
     "typeSaved": "Tur saqlandi",
     "typeDeleted": "Tur o'chirildi",
     "noTypes": "Turlar yo'q"
+  },
+  "Telegram": {
+    "howTitle": "Guruhni qanday bog‘lash",
+    "howStep1": "Kerakli Telegram guruhida /start buyrug‘ini yuboring (botni belgilang: /start@bot)",
+    "howStep2": "Quyidagi «Guruhlarni topish» tugmasini bosing",
+    "howStep3": "Yuridik shaxsni tanlab, «Bog‘lash»ni bosing",
+    "discoverTitle": "Aniqlash",
+    "discover": "Guruhlarni topish",
+    "discoverEmpty": "Hozircha hech narsa topilmadi. Telegram hodisalarni taxminan bir kun saqlaydi — guruhda /start ni yana yuboring va qayta urining.",
+    "boundTitle": "Bog‘langan guruhlar",
+    "boundEmpty": "Hozircha bog‘langan guruhlar yo‘q",
+    "pickEntity": "Yuridik shaxs",
+    "bind": "Bog‘lash",
+    "bound": "Guruh {name} ga bog‘landi",
+    "alreadyBound": "Allaqachon bog‘langan",
+    "untitled": "Nomsiz",
+    "manualToggle": "chat_id ni qo‘lda kiritish",
+    "manualTitle": "Qo‘lda bog‘lash",
+    "manualHint": "Aniqlash ishlamasa — guruh chat_id sini qo‘lda kiriting.",
+    "test": "Test",
+    "testSent": "Test xabar yuborildi",
+    "inactive": "O‘chiq",
+    "activate": "Yoqish",
+    "deactivate": "O‘chirish",
+    "noEntity": "Yuridik shaxs tanlanmagan",
+    "remove": "O‘chirish",
+    "removed": "Bog‘lanish o‘chirildi",
+    "removeConfirmTitle": "Bog‘lanishni o‘chirasizmi?",
+    "removeConfirmText": "Guruh hisob-fakturalar va eslatmalarni olmay qo‘yadi. Vaqtincha to‘xtatish uchun bog‘lanishni o‘chirib qo‘ygan ma’qul — tarix saqlanadi.",
+    "errors": {
+      "generic": "Bo‘lmadi. Yana urinib ko‘ring.",
+      "notConfigured": "Telegram sozlanmagan — dasturchiga murojaat qiling",
+      "webhook": "Ro‘yxatni olib bo‘lmadi: botda vebhuk o‘rnatilgan, dasturchiga murojaat qiling",
+      "bindingNotFound": "Guruh topilmadi, ro‘yxatni yangilang"
+    }
   }
 }
