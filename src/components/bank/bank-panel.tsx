@@ -3,19 +3,33 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BankTransactions } from "@/components/bank/bank-transactions";
+import {
+  BankTransactions,
+  CATEGORY_FILTER_SUPPORTED,
+  type TransactionsPreset,
+} from "@/components/bank/bank-transactions";
 import { BankAccounts } from "@/components/bank/bank-accounts";
 import { BankReconciliations } from "@/components/bank/bank-reconciliations";
+import { BankCategories } from "@/components/bank/bank-categories";
+import { CashFlowReport } from "@/components/bank/cash-flow-report";
+import { useCashCategories } from "@/components/bank/use-cash-categories";
 import type { BankAccount } from "@/lib/api";
 import { bankApi } from "@/lib/api-authed";
 
-const TABS = ["transactions", "accounts", "reconciliations"] as const;
+const TABS = ["transactions", "accounts", "report", "categories", "reconciliations"] as const;
 
-/** Банк Kapitalbank: транзакции, счета, сверка. Под-вкладки — локальным состоянием (вложен в хаб «Финансы») */
+/**
+ * Банк: операции, счета (Капиталбанк + ручные + карты), отчёт по статьям,
+ * справочник статей, сверка. Под-вкладки — локальным состоянием (вложен в хаб «Финансы»)
+ */
 export function BankPanel() {
   const t = useTranslations("Bank");
   const [accounts, setAccounts] = useState<BankAccount[] | null>(null);
   const [active, setActive] = useState<string>("transactions");
+  const { categories, reload: reloadCategories } = useCashCategories();
+  /** Сигнал «операции изменились» для списка транзакций */
+  const [opsKey, setOpsKey] = useState(0);
+  const [preset, setPreset] = useState<TransactionsPreset | null>(null);
 
   const reloadAccounts = useCallback(() => {
     bankApi.accounts
@@ -36,10 +50,45 @@ export function BankPanel() {
         ))}
       </TabsList>
       <TabsContent value="transactions">
-        <BankTransactions accounts={accounts ?? []} />
+        <BankTransactions
+          accounts={accounts ?? []}
+          categories={categories ?? []}
+          reloadKey={opsKey}
+          preset={preset}
+          onBalancesChanged={reloadAccounts}
+        />
       </TabsContent>
       <TabsContent value="accounts">
-        <BankAccounts accounts={accounts} onChanged={reloadAccounts} />
+        <BankAccounts
+          accounts={accounts}
+          categories={categories ?? []}
+          onChanged={reloadAccounts}
+          onOperationsChanged={() => setOpsKey((k) => k + 1)}
+        />
+      </TabsContent>
+      <TabsContent value="report">
+        <CashFlowReport
+          accounts={accounts ?? []}
+          onDrillDown={
+            CATEGORY_FILTER_SUPPORTED
+              ? (target) => {
+                  setPreset({
+                    categoryId: target.categoryId ?? "none",
+                    dateFrom: target.from,
+                    dateTo: target.to,
+                    account: target.accountId,
+                    // как в отчёте: сторнированные в обороты не входят
+                    voided: false,
+                    nonce: Date.now(),
+                  });
+                  setActive("transactions");
+                }
+              : undefined
+          }
+        />
+      </TabsContent>
+      <TabsContent value="categories">
+        <BankCategories categories={categories} onChanged={reloadCategories} />
       </TabsContent>
       <TabsContent value="reconciliations">
         <BankReconciliations accounts={accounts ?? []} />

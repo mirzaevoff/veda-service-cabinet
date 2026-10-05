@@ -33,6 +33,15 @@ import {
   type AuthSession,
   type Bank,
   type BankAccount,
+  type BankAccountKind,
+  type BankAccountForm,
+  type CashCategory,
+  type CashCategoryDirection,
+  type ManualTransactionInput,
+  type ManualTransactionUpdate,
+  type StatementImportPreview,
+  type StatementImportResult,
+  type CashFlowReport,
   type BankRates,
   type BankReconciliation,
   type BankReconciliationStatus,
@@ -142,6 +151,7 @@ import {
   type UpdateDevTaskInput,
   type CreateDevTaskTypeInput,
 } from "./api";
+import { postFileJson } from "./upload";
 import {
   clearSession,
   getAccessToken,
@@ -1091,23 +1101,53 @@ export interface BankTransactionListParams {
   /** Ташкентские дни YYYY-MM-DD */
   dateFrom?: string;
   dateTo?: string;
+  /** Статья; «none» — без статьи (API 76cb781+, см. CATEGORY_FILTER_SUPPORTED) */
+  categoryId?: string;
+  /** false — без сторнированных, true — только они; не задано — все */
+  voided?: boolean;
 }
 
 export const bankApi = {
   accounts: {
-    list: (params: { enabled?: boolean; sort?: string } = {}) =>
-      authedRequest<Page<BankAccount>>(`/bank/accounts${query({ ...params })}`),
+    list: (
+      params: {
+        enabled?: boolean;
+        kind?: BankAccountKind;
+        search?: string;
+        sort?: string;
+        limit?: number;
+      } = {}
+    ) =>
+      authedRequest<Page<BankAccount>>(`/bank/accounts${query({ limit: 100, ...params })}`),
+    /**
+     * Счёт/карта. synced — branch(5)+account(20); manual account — то же;
+     * manual card — только account (номер карты), МФО нет. ER1209 — не хватает реквизитов
+     */
     create: (body: {
-      branch: string;
-      account: string;
       title: string;
+      kind?: BankAccountKind;
+      form?: BankAccountForm;
+      branch?: string;
+      account?: string;
+      legalEntityId?: string;
+      openingBalanceTiyin?: number;
+      openingDate?: string;
       enabled?: boolean;
     }) =>
       authedRequest<BankAccount>("/bank/accounts", {
         method: "POST",
         body: JSON.stringify(body),
       }),
-    update: (id: string, body: Partial<{ title: string; enabled: boolean }>) =>
+    update: (
+      id: string,
+      body: Partial<{
+        title: string;
+        enabled: boolean;
+        legalEntityId: string;
+        openingBalanceTiyin: number;
+        openingDate: string;
+      }>
+    ) =>
       authedRequest<BankAccount>(`/bank/accounts/${id}`, {
         method: "PATCH",
         body: JSON.stringify(body),
@@ -1133,6 +1173,31 @@ export const bankApi = {
         `/bank/transactions/${id}/refresh-details`,
         { method: "POST" }
       ),
+    /** Операция вручную на ручной счёт/карту. ER1207 — счёт синхронизируемый, ER1212 — статья не того направления */
+    createManual: (accountId: string, body: ManualTransactionInput) =>
+      authedRequest<BankTransaction>(`/bank/accounts/${accountId}/transactions`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    /** Правка — только ручных (ER1208 для банковских/импортированных) */
+    update: (id: string, body: ManualTransactionUpdate) =>
+      authedRequest<BankTransaction>(`/bank/transactions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+    /** Сторно: остаётся видна, в баланс не идёт. Работает для любых */
+    void: (id: string, reason: string) =>
+      authedRequest<BankTransaction>(`/bank/transactions/${id}/void`, {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+      }),
+    unvoid: (id: string) =>
+      authedRequest<BankTransaction>(`/bank/transactions/${id}/unvoid`, {
+        method: "POST",
+      }),
+    /** Удалить — только ручную */
+    remove: (id: string) =>
+      authedRequest<void>(`/bank/transactions/${id}`, { method: "DELETE" }),
   },
 
   reconciliations: {
@@ -1157,6 +1222,50 @@ export const bankApi = {
   },
 
   rates: () => authedRequest<BankRates>("/bank/rates"),
+
+  /** Статьи движения денег (справочник общий). Удаления нет — archived */
+  categories: {
+    list: (includeArchived = false) =>
+      authedRequest<CashCategory[]>(
+        `/bank/categories${includeArchived ? "?includeArchived=true" : ""}`
+      ),
+    /** ER1211 — такая статья уже есть */
+    create: (body: { name: string; direction?: CashCategoryDirection }) =>
+      authedRequest<CashCategory>("/bank/categories", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    update: (
+      id: string,
+      body: Partial<{ name: string; direction: CashCategoryDirection; archived: boolean }>
+    ) =>
+      authedRequest<CashCategory>(`/bank/categories/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(body),
+      }),
+  },
+
+  /** Импорт выписки .xlsx — строго два шага */
+  statements: {
+    /** Разбор без записи. ER1213 не читается · ER1214 формат не опознан */
+    preview: (accountId: string, file: File) =>
+      postFileJson<StatementImportPreview>(
+        `/bank/accounts/${accountId}/import/preview`,
+        file
+      ),
+    /** Запись. Идемпотентно; ER1215 — суммы не сошлись с выпиской */
+    commit: (accountId: string, file: File) =>
+      postFileJson<StatementImportResult>(`/bank/accounts/${accountId}/import`, file),
+  },
+
+  /** Отчёт «куда ушли деньги»: вход + приход − расход = исход */
+  cashFlow: (params: {
+    from: string;
+    to: string;
+    accountId?: string;
+    legalEntityId?: string;
+    kind?: BankAccountKind;
+  }) => authedRequest<CashFlowReport>(`/bank/report/cash-flow${query({ ...params })}`),
 };
 
 export interface ProductListParams {

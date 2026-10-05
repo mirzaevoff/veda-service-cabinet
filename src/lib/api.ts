@@ -677,10 +677,25 @@ export interface BankAccount {
   lastSyncOkAt: string | null;
   lastSyncError: string | null;
   createdAt: string;
+  /** synced — Капиталбанк тянется сам; manual — ведём руками (API 0.62) */
+  kind: BankAccountKind;
+  /** account — счёт с МФО; card — карта (МФО нет) */
+  form: BankAccountForm;
+  /** Чей кошелёк */
+  legalEntityId: string | null;
+  currency: string;
+  /** Входящий остаток, тийины */
+  openingBalanceTiyin: number;
+  /** YYYY-MM-DD */
+  openingDate: string | null;
+  /** Текущий остаток, тийины (для ручных — считается из операций) */
+  balanceTiyin: number;
 }
 
 export type BankTransactionDirection = "in" | "out";
-export type BankTransactionSource = "kapitalbank" | "system";
+export type BankTransactionSource = "kapitalbank" | "system" | "import" | "manual";
+export type BankAccountKind = "synced" | "manual";
+export type BankAccountForm = "account" | "card";
 
 /** Банковские поля хранятся дословно (snake_case банка); суммы в тийинах */
 export interface BankTransaction {
@@ -710,8 +725,135 @@ export interface BankTransaction {
   dtype: string;
   state: number | null;
   syncedAt: string;
-  raw: Record<string, unknown>;
-  detailsRaw: Record<string, unknown> | null;
+  /** Статья движения денег */
+  categoryId: string | null;
+  /** Сторнирована — видна, но в баланс не идёт */
+  voided: boolean;
+  voidReason: string;
+  /** Контрагент ручных/импортированных операций (у банковских — name_dt/name_ct) */
+  counterpartyName: string;
+  /** История правок «было → стало» */
+  changes: BankTransactionChange[];
+  raw?: Record<string, unknown>;
+  detailsRaw?: Record<string, unknown> | null;
+}
+
+export interface BankTransactionChange {
+  /** ISO */
+  at: string;
+  /** Кто правил: id (старый ответ API) или {id, name}; null — система */
+  by: string | { id: string; name: string } | null;
+  /** docDate | direction | amount (тийины) | purpose | counterpartyName | category (id) | voided */
+  field: string;
+  from: string;
+  to: string;
+}
+
+// --- Ручные счета, статьи, импорт выписок, отчёт (API 0.62) -----------------
+
+export type CashCategoryDirection = "in" | "out" | "both";
+
+/** Статья движения денег — справочник общий на систему */
+export interface CashCategory {
+  id: string;
+  name: string;
+  direction: CashCategoryDirection;
+  /** Удаления нет — только архив */
+  archived: boolean;
+}
+
+export interface ManualTransactionInput {
+  /** YYYY-MM-DD */
+  docDate: string;
+  direction: BankTransactionDirection;
+  /** ТИЙИНЫ, целое > 0 */
+  amount: number;
+  categoryId?: string;
+  purpose?: string;
+  counterpartyName?: string;
+  docNumber?: string;
+  /** UUID формы — повтор с тем же id не создаёт вторую операцию */
+  requestId: string;
+}
+
+export type ManualTransactionUpdate = Partial<
+  Omit<ManualTransactionInput, "requestId" | "docNumber" | "categoryId">
+> & {
+  /** null — снять статью. При смене direction шлём всегда: API перепроверит пару */
+  categoryId?: string | null;
+};
+
+export interface StatementBalanceCheck {
+  label: string;
+  expectedTiyin: number;
+  actualTiyin: number;
+  matches: boolean;
+}
+
+export interface StatementSkippedRow {
+  sheetRow: number;
+  reason: string;
+  preview: string;
+}
+
+export interface StatementRow {
+  sheetRow: number;
+  /** ISO */
+  docDate: string;
+  direction: BankTransactionDirection;
+  amountTiyin: number;
+  docNumber: string;
+  counterpartyName: string;
+  counterpartyInn: string;
+  purpose: string;
+  /** new — запишется; duplicate — уже загружена раньше */
+  status: "new" | "duplicate";
+}
+
+/** POST /bank/accounts/:id/import/preview — НИЧЕГО не пишет */
+export interface StatementImportPreview {
+  bank: string;
+  accountNumber: string;
+  rowsParsed: number;
+  rowsNew: number;
+  rowsDuplicate: number;
+  totalInTiyin: number;
+  totalOutTiyin: number;
+  period: { from: string; to: string } | null;
+  checks: StatementBalanceCheck[];
+  /** false — стоп: суммы не сошлись с выпиской, загрузка запрещена (ER1215) */
+  balanced: boolean;
+  skipped: StatementSkippedRow[];
+  rows: StatementRow[];
+}
+
+/** POST /bank/accounts/:id/import */
+export interface StatementImportResult {
+  inserted: number;
+  duplicates: number;
+  balanceTiyin: number;
+  /** Поступления, ушедшие в балансы ЮЛ (для карт — нули) */
+  topups: { created: number; recognized: number };
+}
+
+export interface CashFlowCategory {
+  /** null — «Без статьи» */
+  categoryId: string | null;
+  name: string;
+  inTiyin: number;
+  outTiyin: number;
+  count: number;
+}
+
+export interface CashFlowReport {
+  from: string;
+  to: string;
+  accounts: { id: string; title: string }[];
+  openingTiyin: number;
+  closingTiyin: number;
+  inTiyin: number;
+  outTiyin: number;
+  categories: CashFlowCategory[];
 }
 
 export type BankReconciliationStatus =

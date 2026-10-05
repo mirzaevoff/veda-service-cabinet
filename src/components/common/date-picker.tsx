@@ -28,6 +28,7 @@ export function DatePicker({
   placeholder,
   id,
   future,
+  recent,
 }: {
   /** YYYY-MM-DD или пустая строка */
   value: string;
@@ -36,6 +37,11 @@ export function DatePicker({
   id?: string;
   /** Разрешить будущие даты (сроки, отпуска, график). По умолчанию — только прошлое (даты рождения/найма) */
   future?: boolean;
+  /**
+   * Недавнее прошлое (операции, выписки, периоды отчётов): будущее закрыто, но
+   * календарь открывается на текущем месяце, а не на 1990-м (дефолт для дат рождения)
+   */
+  recent?: boolean;
 }) {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -82,7 +88,7 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={selected}
-          defaultMonth={selected ?? (future ? now : new Date(1990, 0))}
+          defaultMonth={selected ?? (future || recent ? now : new Date(1990, 0))}
           captionLayout="dropdown"
           startMonth={new Date(1930, 0)}
           endMonth={future ? new Date(now.getFullYear() + 3, 11) : now}

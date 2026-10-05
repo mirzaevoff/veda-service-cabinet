@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Landmark, Plus, RefreshCw, Trash2, TriangleAlert } from "lucide-react";
+import {
+  Building2,
+  CreditCard,
+  FileSpreadsheet,
+  Landmark,
+  Pencil,
+  Plus,
+  RefreshCw,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -14,73 +24,56 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { useCurrentUser } from "@/components/common/current-user-provider";
-import type { BankAccount } from "@/lib/api";
+import type { BankAccount, CashCategory } from "@/lib/api";
 import { ApiError } from "@/lib/api";
 import { bankApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
-import { formatRelativeTime } from "@/lib/format";
+import { formatDay, formatRelativeTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { AccountFormDialog } from "./account-form-dialog";
 import { formatTiyin } from "./bank-money";
+import { ManualOperationDialog } from "./manual-operation-dialog";
+import { StatementImportDialog } from "./statement-import-dialog";
+import { useEntityNames } from "./use-entity-names";
 
-/** Отслеживаемые счета: снапшоты остатков, ручной синк, добавление */
+/**
+ * Счета: синхронизируемые (Капиталбанк, тянутся сами), ручные счета и карты.
+ * Ручным — операции вручную и загрузка выписки; синхронизируемым их нет вовсе.
+ */
 export function BankAccounts({
   accounts,
+  categories,
   onChanged,
+  onOperationsChanged,
 }: {
   accounts: BankAccount[] | null;
+  categories: CashCategory[];
   onChanged: () => void;
+  /** Операции изменились (ручной ввод / импорт) — освежить список транзакций */
+  onOperationsChanged: () => void;
 }) {
   const t = useTranslations("Bank.accounts");
   const tc = useTranslations("Common");
-  const locale = useLocale();
   const { can } = useCurrentUser();
   const canManage = can(PERMISSIONS.bankManage);
+  const names = useEntityNames((accounts ?? []).map((a) => a.legalEntityId));
 
-  const [creating, setCreating] = useState(false);
-  const [branch, setBranch] = useState("");
-  const [account, setAccount] = useState("");
-  const [title, setTitle] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<BankAccount | null>(null);
+  const [operationFor, setOperationFor] = useState<BankAccount | null>(null);
+  const [importFor, setImportFor] = useState<BankAccount | null>(null);
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<BankAccount | null>(null);
 
-  async function create() {
-    if (!/^\d{5}$/.test(branch) || !/^\d{20}$/.test(account) || !title.trim()) {
-      setError(t("validation"));
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    try {
-      await bankApi.accounts.create({ branch, account, title: title.trim() });
-      toast.success(t("created"));
-      setCreating(false);
-      setBranch("");
-      setAccount("");
-      setTitle("");
-      onChanged();
-    } catch (e) {
-      if (e instanceof ApiError && e.code === "ER1203") setError(t("duplicate"));
-      else setError(t("genericError"));
-    } finally {
-      setBusy(false);
-    }
-  }
+  const synced = (accounts ?? []).filter((a) => a.kind !== "manual");
+  const manual = (accounts ?? []).filter((a) => a.kind === "manual" && a.form !== "card");
+  const cards = (accounts ?? []).filter((a) => a.kind === "manual" && a.form === "card");
 
   async function toggleEnabled(acc: BankAccount, enabled: boolean) {
     try {
@@ -97,6 +90,7 @@ export function BankAccounts({
       const result = await bankApi.accounts.sync(acc.id);
       toast.success(t("synced", { upserted: result.upserted }));
       onChanged();
+      onOperationsChanged();
     } catch {
       toast.error(t("syncFailed"));
     } finally {
@@ -112,17 +106,61 @@ export function BankAccounts({
       setDeleting(null);
       onChanged();
     } catch (e) {
-      if (e instanceof ApiError && e.code === "ER1206")
-        toast.error(t("hasHistory"));
+      if (e instanceof ApiError && e.code === "ER1206") toast.error(t("hasHistory"));
       else toast.error(t("genericError"));
       setDeleting(null);
     }
   }
 
+  const actions = (acc: BankAccount) =>
+    canManage && (
+      <div className="flex items-start gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Button size="sm" className="gap-1.5" onClick={() => setOperationFor(acc)}>
+            <Plus className="size-4" />
+            {t("addOperation")}
+          </Button>
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setImportFor(acc)}>
+            <FileSpreadsheet className="size-4" />
+            {t("importStatement")}
+          </Button>
+        </div>
+        <div className="ms-auto flex shrink-0 items-center">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t("edit")}
+            onClick={() => {
+              setEditing(acc);
+              setFormOpen(true);
+            }}
+            className="text-muted-foreground"
+          >
+            <Pencil className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={tc("delete")}
+            onClick={() => setDeleting(acc)}
+            className="text-muted-foreground hover:text-destructive"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
+      </div>
+    );
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {canManage && (
-        <Button onClick={() => setCreating(true)} className="gap-2 self-start">
+        <Button
+          onClick={() => {
+            setEditing(null);
+            setFormOpen(true);
+          }}
+          className="gap-2 self-start"
+        >
           <Plus className="size-4" />
           {t("add")}
         </Button>
@@ -136,173 +174,120 @@ export function BankAccounts({
           <p className="text-sm text-muted-foreground">{t("empty")}</p>
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {accounts.map((acc, i) => (
-            <Card
-              key={acc.id}
-              className={`gap-3 rounded-lg p-5 duration-450 animate-in fade-in slide-in-from-bottom-2 [animation-fill-mode:backwards] ${acc.enabled ? "" : "opacity-60"}`}
-              style={{ animationDelay: `${Math.min(i * 60, 240)}ms` }}
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-light">
-                  <Landmark className="size-5 text-primary" strokeWidth={1.75} />
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <h3 className="truncate font-semibold">{acc.title}</h3>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {acc.account}
-                  </span>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {t("branch")}: {acc.branch}
-                    {acc.snapshot?.stateName && ` · ${acc.snapshot.stateName}`}
-                  </span>
-                </div>
-                {canManage && (
-                  <Switch
-                    checked={acc.enabled}
-                    onCheckedChange={(v) => toggleEnabled(acc, v)}
-                    aria-label={t("enabled")}
-                  />
-                )}
-              </div>
-
-              {acc.snapshot && (
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <dt className="text-muted-foreground">{t("balance")}</dt>
-                  <dd className="text-right font-semibold tabular-nums">
-                    {formatTiyin(acc.snapshot.s_out)}
-                  </dd>
-                  <dt className="text-muted-foreground">{t("available")}</dt>
-                  <dd className="text-right tabular-nums">
-                    {formatTiyin(acc.snapshot.canpay)}
-                  </dd>
-                  <dt className="text-muted-foreground">{t("turnovers")}</dt>
-                  <dd className="text-right text-xs tabular-nums">
-                    −{formatTiyin(acc.snapshot.dt)} / +{formatTiyin(acc.snapshot.ct)}
-                  </dd>
-                </dl>
-              )}
-
-              {acc.lastSyncError && (
-                <p className="flex items-start gap-1.5 text-xs text-destructive">
-                  <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
-                  {acc.lastSyncError}
-                </p>
-              )}
-
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">
-                  {acc.lastSyncOkAt
-                    ? t("lastSync", {
-                        time: formatRelativeTime(acc.lastSyncOkAt, locale),
-                      })
-                    : t("neverSynced")}
-                </span>
-                {canManage && (
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      disabled={syncingId === acc.id}
-                      aria-label={t("syncNow")}
-                      onClick={() => sync(acc)}
-                      className="text-muted-foreground"
-                    >
-                      {syncingId === acc.id ? (
-                        <Spinner className="size-4" />
-                      ) : (
-                        <RefreshCw className="size-4" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={tc("delete")}
-                      onClick={() => setDeleting(acc)}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
+        <>
+          {/* Ручные счета */}
+          {manual.length > 0 && (
+            <Section title={t("groupManual")} hint={t("groupManualHint")}>
+              {manual.map((acc) => (
+                <Card key={acc.id} className="gap-3 rounded-lg p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                      <Landmark className="size-5 text-muted-foreground" strokeWidth={1.75} />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <h3 className="truncate font-semibold">{acc.title}</h3>
+                      <span className="text-xs text-muted-foreground tabular-nums">{acc.account}</span>
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {t("branch")}: {acc.branch}
+                      </span>
+                    </div>
+                    <Badge variant="secondary" className="shrink-0 text-muted-foreground">
+                      {t("manualBadge")}
+                    </Badge>
                   </div>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
+                  <ManualBalance acc={acc} entity={names[acc.legalEntityId ?? ""]} />
+                  {actions(acc)}
+                </Card>
+              ))}
+            </Section>
+          )}
+
+          {/* Карты — карточкой, это другой объект */}
+          {cards.length > 0 && (
+            <Section title={t("groupCards")} hint={t("groupCardsHint")}>
+              {cards.map((acc) => (
+                <div key={acc.id} className="flex flex-col gap-3">
+                  <div className="relative flex aspect-[1.7/1] max-h-48 flex-col justify-between overflow-hidden rounded-xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 p-5 text-white shadow-sm">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="truncate text-sm font-medium text-white/90">{acc.title}</span>
+                      <CreditCard className="size-6 shrink-0 text-white/70" strokeWidth={1.5} />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[11px] uppercase tracking-wider text-white/50">
+                        {t("balance")}
+                      </span>
+                      <span className="text-2xl font-bold tabular-nums">
+                        {formatTiyin(acc.balanceTiyin)}{" "}
+                        <span className="text-sm font-medium text-white/60">{acc.currency || "UZS"}</span>
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-between gap-2">
+                      <span className="font-mono text-base tracking-widest tabular-nums">{acc.account}</span>
+                      {acc.legalEntityId && names[acc.legalEntityId] && (
+                        <span className="max-w-[55%] truncate text-xs text-white/60">
+                          {names[acc.legalEntityId]}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {acc.openingDate && (
+                    <span className="text-xs text-muted-foreground">
+                      <OpeningLine acc={acc} />
+                    </span>
+                  )}
+                  {actions(acc)}
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {/* Синхронизируемые — как раньше */}
+          {synced.length > 0 && (
+            <Section title={t("groupSynced")} hint={t("groupSyncedHint")}>
+              {synced.map((acc) => (
+                <SyncedCard
+                  key={acc.id}
+                  acc={acc}
+                  canManage={canManage}
+                  syncing={syncingId === acc.id}
+                  onSync={() => sync(acc)}
+                  onToggle={(v) => toggleEnabled(acc, v)}
+                  onDelete={() => setDeleting(acc)}
+                />
+              ))}
+            </Section>
+          )}
+        </>
       )}
 
-      {/* Добавление счёта */}
-      <Dialog open={creating} onOpenChange={setCreating}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("add")}</DialogTitle>
-            <DialogDescription>{t("addHint")}</DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ba-title" className="text-sm font-medium text-muted-foreground">
-                {t("title")}
-              </Label>
-              <Input
-                id="ba-title"
-                value={title}
-                maxLength={200}
-                placeholder={t("titlePlaceholder")}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  setError(null);
-                }}
-              />
-            </div>
-            <div className="grid grid-cols-[8rem_minmax(0,1fr)] gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ba-branch" className="text-sm font-medium text-muted-foreground">
-                  {t("branch")}
-                </Label>
-                <Input
-                  id="ba-branch"
-                  value={branch}
-                  inputMode="numeric"
-                  maxLength={5}
-                  placeholder="01158"
-                  onChange={(e) => {
-                    setBranch(e.target.value.replace(/\D/g, ""));
-                    setError(null);
-                  }}
-                  className="tabular-nums"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ba-account" className="text-sm font-medium text-muted-foreground">
-                  {t("account")}
-                </Label>
-                <Input
-                  id="ba-account"
-                  value={account}
-                  inputMode="numeric"
-                  maxLength={20}
-                  placeholder="20208000900000000001"
-                  onChange={(e) => {
-                    setAccount(e.target.value.replace(/\D/g, ""));
-                    setError(null);
-                  }}
-                  className="tabular-nums"
-                />
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground">{t("immutableHint")}</p>
-            {error && <p className="text-xs text-destructive">{error}</p>}
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setCreating(false)}>
-              {tc("cancel")}
-            </Button>
-            <Button onClick={create} disabled={busy}>
-              {busy ? <Spinner className="size-4" /> : tc("save")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AccountFormDialog
+        open={formOpen}
+        account={editing}
+        entityName={editing?.legalEntityId ? names[editing.legalEntityId] : undefined}
+        onClose={() => setFormOpen(false)}
+        onSaved={onChanged}
+      />
+
+      <ManualOperationDialog
+        open={!!operationFor}
+        account={operationFor}
+        categories={categories}
+        onClose={() => setOperationFor(null)}
+        onSaved={() => {
+          onChanged();
+          onOperationsChanged();
+        }}
+      />
+
+      <StatementImportDialog
+        open={!!importFor}
+        account={importFor}
+        onClose={() => setImportFor(null)}
+        onImported={() => {
+          onChanged();
+          onOperationsChanged();
+        }}
+      />
 
       <AlertDialog open={!!deleting} onOpenChange={(v) => !v && setDeleting(null)}>
         <AlertDialogContent>
@@ -324,5 +309,151 @@ export function BankAccounts({
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+function Section({
+  title,
+  hint,
+  children,
+}: {
+  title: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="flex flex-col gap-3">
+      <div className="flex flex-col">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
+        <span className="text-xs text-muted-foreground">{hint}</span>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">{children}</div>
+    </section>
+  );
+}
+
+function OpeningLine({ acc }: { acc: BankAccount }) {
+  const t = useTranslations("Bank.accounts");
+  const locale = useLocale();
+  if (!acc.openingDate) return null;
+  return (
+    <>
+      {t("openingLine", {
+        sum: formatTiyin(acc.openingBalanceTiyin),
+        date: formatDay(acc.openingDate, locale),
+      })}
+    </>
+  );
+}
+
+function ManualBalance({ acc, entity }: { acc: BankAccount; entity?: string }) {
+  const t = useTranslations("Bank.accounts");
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-sm text-muted-foreground">{t("balance")}</span>
+        <span className="text-lg font-bold tabular-nums">{formatTiyin(acc.balanceTiyin)}</span>
+      </div>
+      <span className="text-xs text-muted-foreground">
+        <OpeningLine acc={acc} />
+      </span>
+      {entity && (
+        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <Building2 className="size-3" />
+          {entity}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function SyncedCard({
+  acc,
+  canManage,
+  syncing,
+  onSync,
+  onToggle,
+  onDelete,
+}: {
+  acc: BankAccount;
+  canManage: boolean;
+  syncing: boolean;
+  onSync: () => void;
+  onToggle: (v: boolean) => void;
+  onDelete: () => void;
+}) {
+  const t = useTranslations("Bank.accounts");
+  const tc = useTranslations("Common");
+  const locale = useLocale();
+  return (
+    <Card className={cn("gap-3 rounded-lg p-5", !acc.enabled && "opacity-60")}>
+      <div className="flex items-start gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-light">
+          <Landmark className="size-5 text-primary" strokeWidth={1.75} />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <h3 className="truncate font-semibold">{acc.title}</h3>
+          <span className="text-xs text-muted-foreground tabular-nums">{acc.account}</span>
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {t("branch")}: {acc.branch}
+            {acc.snapshot?.stateName && ` · ${acc.snapshot.stateName}`}
+          </span>
+        </div>
+        {canManage && (
+          <Switch checked={acc.enabled} onCheckedChange={onToggle} aria-label={t("enabled")} />
+        )}
+      </div>
+
+      {acc.snapshot && (
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+          <dt className="text-muted-foreground">{t("balance")}</dt>
+          <dd className="text-right font-semibold tabular-nums">{formatTiyin(acc.snapshot.s_out)}</dd>
+          <dt className="text-muted-foreground">{t("available")}</dt>
+          <dd className="text-right tabular-nums">{formatTiyin(acc.snapshot.canpay)}</dd>
+          <dt className="text-muted-foreground">{t("turnovers")}</dt>
+          <dd className="text-right text-xs tabular-nums">
+            −{formatTiyin(acc.snapshot.dt)} / +{formatTiyin(acc.snapshot.ct)}
+          </dd>
+        </dl>
+      )}
+
+      {acc.lastSyncError && (
+        <p className="flex items-start gap-1.5 text-xs text-destructive">
+          <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
+          {acc.lastSyncError}
+        </p>
+      )}
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs text-muted-foreground">
+          {acc.lastSyncOkAt
+            ? t("lastSync", { time: formatRelativeTime(acc.lastSyncOkAt, locale) })
+            : t("neverSynced")}
+        </span>
+        {canManage && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              disabled={syncing}
+              aria-label={t("syncNow")}
+              onClick={onSync}
+              className="text-muted-foreground"
+            >
+              {syncing ? <Spinner className="size-4" /> : <RefreshCw className="size-4" />}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={tc("delete")}
+              onClick={onDelete}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }

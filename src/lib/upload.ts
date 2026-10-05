@@ -316,6 +316,48 @@ export async function uploadDocumentFile(file: File): Promise<FileAttachment> {
   }
 }
 
+/**
+ * POST файла (multipart, одно поле) с JSON-ответом и refresh на 401.
+ * Без клиентской проверки типа: формат проверяет сервер (напр. выписки .xlsx).
+ */
+export async function postFileJson<T>(
+  endpoint: string,
+  file: File,
+  field = "file"
+): Promise<T> {
+  const attempt = async (bearer: string): Promise<T> => {
+    const form = new FormData();
+    form.append(field, file);
+    let res: Response;
+    try {
+      res = await fetch(`${API_URL}${endpoint}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${bearer}` },
+        body: form,
+      });
+    } catch {
+      throw new ApiError(0, { code: "NETWORK", message: "Network error" });
+    }
+    const body = (await res.json().catch(() => null)) as T | ApiErrorBody | null;
+    if (!res.ok) {
+      throw new ApiError(
+        res.status,
+        (body as ApiErrorBody) ?? { code: "ER100", message: "Upload failed" }
+      );
+    }
+    return body as T;
+  };
+  const token = getAccessToken();
+  if (!token) throw new ApiError(401, { code: "ER208", message: "No token" });
+  try {
+    return await attempt(token);
+  } catch (e) {
+    if (!(e instanceof ApiError) || e.status !== 401) throw e;
+    const tokens = await refreshSession();
+    return attempt(tokens.accessToken);
+  }
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
