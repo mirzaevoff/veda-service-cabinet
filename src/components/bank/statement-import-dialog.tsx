@@ -31,6 +31,7 @@ import { bankApi } from "@/lib/api-authed";
 import { formatDay } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { formatTiyin } from "./bank-money";
+import { CardsPilotNote } from "./cards-pilot";
 
 const ROWS_SHOWN = 50;
 
@@ -169,6 +170,7 @@ export function StatementImportDialog({
         ) : !preview ? (
           // --- Шаг 1: файл ---
           <div className="flex flex-col gap-4">
+            {account?.form === "card" && <CardsPilotNote />}
             <button
               type="button"
               disabled={busy}

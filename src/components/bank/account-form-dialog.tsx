@@ -25,6 +25,7 @@ import { ApiError, type BankAccount } from "@/lib/api";
 import { bankApi } from "@/lib/api-authed";
 import { cn } from "@/lib/utils";
 import { formatTiyin, parseSignedSumToTiyin, tiyinToSumInput } from "./bank-money";
+import { CardsPilotNote } from "./cards-pilot";
 
 type AccountType = "synced" | "manual-account" | "card";
 
@@ -186,6 +187,8 @@ export function AccountFormDialog({
               ))}
             </div>
           )}
+
+          {isCard && <CardsPilotNote />}
 
           <Field label={t("title")}>
             <Input

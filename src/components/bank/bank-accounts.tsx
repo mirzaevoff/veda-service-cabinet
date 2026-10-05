@@ -37,6 +37,7 @@ import { PERMISSIONS } from "@/lib/permissions";
 import { formatDay, formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { AccountFormDialog } from "./account-form-dialog";
+import { CardsPilotNote } from "./cards-pilot";
 import { formatTiyin } from "./bank-money";
 import { ManualOperationDialog } from "./manual-operation-dialog";
 import { StatementImportDialog } from "./statement-import-dialog";
@@ -204,7 +205,11 @@ export function BankAccounts({
 
           {/* Карты — карточкой, это другой объект */}
           {cards.length > 0 && (
-            <Section title={t("groupCards")} hint={t("groupCardsHint")}>
+            <Section
+              title={t("groupCards")}
+              hint={t("groupCardsHint")}
+              note={<CardsPilotNote />}
+            >
               {cards.map((acc) => (
                 <div key={acc.id} className="flex flex-col gap-3">
                   <div className="relative flex aspect-[1.7/1] max-h-48 flex-col justify-between overflow-hidden rounded-xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 p-5 text-white shadow-sm">
@@ -315,10 +320,12 @@ export function BankAccounts({
 function Section({
   title,
   hint,
+  note,
   children,
 }: {
   title: string;
   hint: string;
+  note?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -327,6 +334,7 @@ function Section({
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
         <span className="text-xs text-muted-foreground">{hint}</span>
       </div>
+      {note}
       <div className="grid gap-3 sm:grid-cols-2">{children}</div>
     </section>
   );

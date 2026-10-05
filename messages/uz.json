@@ -1321,6 +1321,10 @@
       "uncategorized": "Moddasiz",
       "uncategorizedHint": "Hali moddalarga taqsimlanmagan",
       "showOperations": "Operatsiyalarni ko‘rsatish"
+    },
+    "cardsPilot": {
+      "title": "Kartalar — sinov rejimida",
+      "text": "Tizimning navbatdagi yangilanishigacha karta tushumlari tunda xato ravishda mijozlar to‘lovlariga tushadi. Kartani qo‘shish mumkin, operatsiyalarni esa yangilanishdan keyin kiritgan ma’qul."
     }
   },
   "IikoPartner": {

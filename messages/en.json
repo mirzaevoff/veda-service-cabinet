@@ -1321,6 +1321,10 @@
       "uncategorized": "No category",
       "uncategorizedHint": "Not assigned to categories yet",
       "showOperations": "Show entries"
+    },
+    "cardsPilot": {
+      "title": "Cards are in pilot",
+      "text": "Until the next system update, card income is wrongly added to client payments overnight. You can add a card, but record its entries after the update."
     }
   },
   "IikoPartner": {
