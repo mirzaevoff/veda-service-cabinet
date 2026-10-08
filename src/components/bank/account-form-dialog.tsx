@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CreditCard, Landmark, RefreshCw } from "lucide-react";
+import { CreditCard, Landmark, RefreshCw, WalletCards } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,9 +25,8 @@ import { ApiError, type BankAccount } from "@/lib/api";
 import { bankApi } from "@/lib/api-authed";
 import { cn } from "@/lib/utils";
 import { formatTiyin, parseSignedSumToTiyin, tiyinToSumInput } from "./bank-money";
-import { CardsPilotNote } from "./cards-pilot";
 
-type AccountType = "synced" | "manual-account" | "card";
+type AccountType = "synced" | "manual-account" | "card" | "transit";
 
 /**
  * Экран 1: добавить счёт (синхронизируемый Капиталбанк / ручной счёт / карта)
@@ -69,7 +68,9 @@ export function AccountFormDialog({
     setError(null);
     setBusy(false);
     if (account) {
-      setType(account.form === "card" ? "card" : "manual-account");
+      setType(
+        account.form === "card" ? "card" : account.form === "transit" ? "transit" : "manual-account"
+      );
       setTitle(account.title);
       setBranch(account.branch);
       setNumber(account.account);
@@ -90,7 +91,10 @@ export function AccountFormDialog({
   }, [open]);
 
   const isCard = type === "card";
+  const isTransit = type === "transit";
   const isManual = type !== "synced";
+  /** Входящий остаток просим у ручных счетов и карт; транзит начинается с нуля */
+  const needsOpening = isManual && !isTransit;
   const openingTiyin = opening.trim() ? parseSignedSumToTiyin(opening) : null;
 
   function validate(): string | null {
@@ -100,7 +104,7 @@ export function AccountFormDialog({
       if (!isCard && !/^\d{20}$/.test(number)) return t("errors.account");
       if (isCard && !number.trim()) return t("errors.cardNumber");
     }
-    if (isManual) {
+    if (needsOpening) {
       if (openingTiyin === null) return t("errors.opening");
       if (!openingDate) return t("errors.openingDate");
     }
@@ -117,7 +121,9 @@ export function AccountFormDialog({
     try {
       if (account) {
         const openingChanged =
-          openingTiyin !== account.openingBalanceTiyin || openingDate !== (account.openingDate ?? "");
+          needsOpening &&
+          (openingTiyin !== account.openingBalanceTiyin ||
+            openingDate !== (account.openingDate ?? ""));
         await bankApi.accounts.update(account.id, {
           title: title.trim(),
           ...(entity?.id && entity.id !== account.legalEntityId ? { legalEntityId: entity.id } : {}),
@@ -128,11 +134,11 @@ export function AccountFormDialog({
         await bankApi.accounts.create({
           title: title.trim(),
           kind: isManual ? "manual" : "synced",
-          form: isCard ? "card" : "account",
+          form: isCard ? "card" : isTransit ? "transit" : "account",
           ...(isCard ? {} : { branch }),
           account: number.trim(),
           ...(entity ? { legalEntityId: entity.id } : {}),
-          ...(isManual ? { openingBalanceTiyin: openingTiyin ?? 0, openingDate } : {}),
+          ...(needsOpening ? { openingBalanceTiyin: openingTiyin ?? 0, openingDate } : {}),
         });
         toast.success(t("created"));
       }
@@ -152,6 +158,7 @@ export function AccountFormDialog({
   const types: { key: AccountType; icon: typeof Landmark }[] = [
     { key: "manual-account", icon: Landmark },
     { key: "card", icon: CreditCard },
+    { key: "transit", icon: WalletCards },
     { key: "synced", icon: RefreshCw },
   ];
 
@@ -165,7 +172,7 @@ export function AccountFormDialog({
 
         <div className="flex flex-col gap-4">
           {!editing && (
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {types.map(({ key, icon: Icon }) => (
                 <button
                   key={key}
@@ -187,8 +194,6 @@ export function AccountFormDialog({
               ))}
             </div>
           )}
-
-          {isCard && <CardsPilotNote />}
 
           <Field label={t("title")}>
             <Input
@@ -244,7 +249,7 @@ export function AccountFormDialog({
             />
           </Field>
 
-          {isManual && (
+          {needsOpening && (
             <div className="flex flex-col gap-2 rounded-lg border border-border bg-secondary/30 p-3">
               <span className="text-sm font-medium">{t("openingTitle")}</span>
               <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">

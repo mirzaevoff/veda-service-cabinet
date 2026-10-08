@@ -1077,7 +1077,8 @@
       "filterVoided": "Reversals",
       "allVoided": "All entries",
       "withoutVoided": "Without reversed",
-      "onlyVoided": "Reversed only"
+      "onlyVoided": "Reversed only",
+      "sourceFile": "Statement file"
     },
     "accounts": {
       "add": "Add account",
@@ -1115,7 +1116,11 @@
       "groupSynced": "Synced automatically",
       "groupSyncedHint": "Kapitalbank — entries and balance are pulled automatically",
       "manualBadge": "Manual",
-      "openingLine": "Opening balance {sum} as of {date}"
+      "openingLine": "Opening balance {sum} as of {date}",
+      "groupTransit": "Salary transit",
+      "groupTransitHint": "The account salaries are paid from: the bank statement is already broken down by employee",
+      "transitBadge": "Transit",
+      "transitJournal": "Journal"
     },
     "reconciliations": {
       "anyStatus": "All statuses",
@@ -1152,12 +1157,14 @@
       "typeHint": {
         "manual-account": "An account at another bank (Asaka, OFB…): kept by hand, statements uploaded",
         "card": "A physical card: number and balance; cards have no MFO",
-        "synced": "A Kapitalbank account: entries and balance are pulled automatically"
+        "synced": "A Kapitalbank account: entries and balance are pulled automatically",
+        "transit": "Salary transit account (23106…): upload its statement as usual, payouts are matched to employees automatically. Opening balance is zero"
       },
       "type": {
         "manual-account": "Manual account",
         "card": "Card",
-        "synced": "Kapitalbank"
+        "synced": "Kapitalbank",
+        "transit": "Transit"
       },
       "title": "Name",
       "titlePlaceholder": "e.g. Asaka — main",
@@ -1320,11 +1327,114 @@
       "colCount": "Entries",
       "uncategorized": "No category",
       "uncategorizedHint": "Not assigned to categories yet",
-      "showOperations": "Show entries"
+      "showOperations": "Show entries",
+      "internal": "Internal transfers",
+      "internalHint": "Between our own accounts (e.g. to the salary transit) — neither income nor expense"
     },
-    "cardsPilot": {
-      "title": "Cards are in pilot",
-      "text": "Until the next system update, card income is wrongly added to client payments overnight. You can add a card, but record its entries after the update."
+    "transit": {
+      "back": "Finance · Bank",
+      "title": "Salary transit",
+      "subtitle": "Payout journal",
+      "branch": "MFO",
+      "import": "Upload statement",
+      "rebuild": "Match to transfers",
+      "rebuildHint": "Link payouts and returns to transfers, earliest open transfer first. Manual links are kept",
+      "postPayouts": "Post payouts to employees",
+      "postConfirmTitle": "Post payouts to employee settlements?",
+      "postConfirmText": "Each payout reduces what we owe the employee. A balance can go negative — that’s an overpayment, not an error. Running it again won’t duplicate anything. Payouts to unlinked cards are skipped — link them to employees first.",
+      "posted": "Payouts posted: {posted}",
+      "postedPartial": "Payouts posted: {posted}. Skipped without employee: {skipped} — link the cards",
+      "rebuilt": "Links to transfers: {count}",
+      "unlinked": "Link removed",
+      "period": "Period",
+      "from": "From",
+      "to": "To",
+      "periodHint": "No period — the whole history. Opening balance is computed from earlier entries.",
+      "opening": "Opening",
+      "closing": "Closing",
+      "undistributed": "Undistributed",
+      "undistributedHint": "Sum of all transfers’ remainders",
+      "needsReview": "Needs review",
+      "needsReviewHint": "Outflows not linked to any transfer",
+      "reviewTitle": "Needs review: {sum} — rows: {count}",
+      "reviewText": "Money came back after everything had been paid out. The system deliberately doesn’t use it to close someone else’s transfer — decide by hand which transfer each row belongs to.",
+      "showReview": "Show rows",
+      "transfersTitle": "Remainder per transfer ({count})",
+      "noTransfers": "No transfers yet — upload the transit account statement.",
+      "colDate": "Date",
+      "colTransfer": "Transfer",
+      "colAllocated": "Distributed",
+      "colRemaining": "Remainder",
+      "colStatus": "Status",
+      "journalTitle": "Statement: every entry with the balance after it",
+      "filter": {
+        "all": "All",
+        "transfer": "Transfers",
+        "payout": "Payouts",
+        "return": "Returns",
+        "review": "Needs review"
+      },
+      "emptyJournal": "No entries yet — upload the transit account statement.",
+      "emptyFilter": "No such entries.",
+      "colWho": "Who",
+      "colIn": "In",
+      "colOut": "Out",
+      "colBalance": "Balance",
+      "kind": {
+        "transfer": "Transfer",
+        "payout": "Payout",
+        "return": "Return",
+        "other": "Other"
+      },
+      "bankName": "in bank: {name}",
+      "cardNotLinked": "Card not linked to an employee",
+      "fromTransfer": "from transfer {date}: {sum}",
+      "fromTransfers": "from transfers: {dates}",
+      "manualLink": "manual",
+      "unlink": "unlink",
+      "unallocated": "Unlinked: {sum}",
+      "allocateAction": "Link to transfer",
+      "status": {
+        "none": "Not distributed",
+        "partial": "Partial",
+        "full": "Fully distributed"
+      },
+      "errors": {
+        "notTransit": "This is not a transit account.",
+        "generic": "Something went wrong. Try again."
+      },
+      "allocate": {
+        "title": "Link to transfer",
+        "subtitle": "{party} — {sum} unlinked",
+        "hint": "Pick the transfer this money came from. You can’t link more than the transfer’s remainder.",
+        "noOpenTransfers": "All transfers have a zero remainder — nothing to link to.",
+        "transferOf": "Transfer {date}",
+        "transferTotal": "total {sum}",
+        "remaining": "Remainder",
+        "amount": "Amount, UZS",
+        "maxHint": "Up to {max}",
+        "submit": "Link",
+        "done": "Linked",
+        "errors": {
+          "amount": "Enter an amount above zero",
+          "tooMuch": "Up to {max}",
+          "overRemaining": "Amount exceeds the remainder — refresh the page",
+          "wrongPair": "This entry can’t be linked to this transfer",
+          "generic": "Couldn’t link"
+        }
+      },
+      "unknown": {
+        "title": "Cards without an employee: {count}",
+        "hint": "Link a card account to an employee once — their payouts are then matched automatically, past ones included. The bank name is a hint; the card account number is the key.",
+        "noName": "No name",
+        "pickEmployee": "Pick an employee",
+        "link": "Link",
+        "linked": "Card linked: {name}",
+        "error": "Couldn’t link"
+      },
+      "notDistributedTitle": "Outflows aren’t matched to transfers yet",
+      "notDistributedText": "Press “Match to transfers”: payouts and returns are linked to transfers by time. Whatever stays unlinked after that goes to review.",
+      "reviewRebuildHint": "Just uploaded a statement? Press “Match to transfers” first — new rows will link themselves."
     }
   },
   "IikoPartner": {

@@ -42,6 +42,8 @@ import {
   type StatementImportPreview,
   type StatementImportResult,
   type CashFlowReport,
+  type TransitJournal,
+  type TransitCard,
   type BankRates,
   type BankReconciliation,
   type BankReconciliationStatus,
@@ -1258,7 +1260,55 @@ export const bankApi = {
       postFileJson<StatementImportResult>(`/bank/accounts/${accountId}/import`, file),
   },
 
-  /** Отчёт «куда ушли деньги»: вход + приход − расход = исход */
+  /** Зарплатный транзит (API 0.64). ER1216 — счёт не транзитный */
+  transit: {
+    journal: (accountId: string, params: { from?: string; to?: string } = {}) =>
+      authedRequest<TransitJournal>(
+        `/bank/accounts/${accountId}/transit/journal${query({ ...params })}`
+      ),
+    journalXlsx: (accountId: string, params: { from?: string; to?: string } = {}) =>
+      authedBlob(`/bank/accounts/${accountId}/transit/journal.xlsx${query({ ...params })}`),
+    /** Разнести расходы по переводам (ранний непогашенный — первым); ручные связи сохраняются */
+    rebuild: (accountId: string) =>
+      authedRequest<{ allocations: number }>(`/bank/accounts/${accountId}/transit/rebuild`, {
+        method: "POST",
+      }),
+    /** Выплаты → расчёты с сотрудниками (гасят долг). Повтор не задваивает */
+    postPayouts: (accountId: string) =>
+      authedRequest<{ posted: number; skippedNoEmployee: number }>(
+        `/bank/accounts/${accountId}/transit/post-payouts`,
+        { method: "POST" }
+      ),
+    /** Привязать расход к переводу руками. ER1217 не та пара, ER1218 больше остатка */
+    allocate: (body: { outflowId: string; transferId: string; amountTiyin: number }) =>
+      authedRequest<{ transferRemainingTiyin: number }>("/bank/transit/allocate", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    unallocate: (outflowId: string, transferId: string) =>
+      authedRequest<void>(`/bank/transit/allocate/${outflowId}/${transferId}`, {
+        method: "DELETE",
+      }),
+    cards: {
+      list: () => authedRequest<TransitCard[]>("/bank/transit/cards"),
+      /** Повтор перепривязывает (человек на карте мог смениться) */
+      link: (body: {
+        cardAccount: string;
+        userId: string;
+        bankName?: string;
+        cardNumber?: string;
+        legalEntityId?: string;
+      }) =>
+        authedRequest<{ id: string; cardAccount: string }>("/bank/transit/cards", {
+          method: "POST",
+          body: JSON.stringify(body),
+        }),
+      unlink: (cardAccount: string) =>
+        authedRequest<void>(`/bank/transit/cards/${cardAccount}`, { method: "DELETE" }),
+    },
+  },
+
+  /** Отчёт «куда ушли деньги»: вход + приход + внутр. − расход − внутр. = исход */
   cashFlow: (params: {
     from: string;
     to: string;

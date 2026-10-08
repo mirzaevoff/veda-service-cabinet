@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
+  BookOpenText,
   Building2,
   CreditCard,
   FileSpreadsheet,
@@ -12,6 +13,7 @@ import {
   RefreshCw,
   Trash2,
   TriangleAlert,
+  WalletCards,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -25,7 +27,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
@@ -36,8 +38,8 @@ import { bankApi } from "@/lib/api-authed";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatDay, formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
 import { AccountFormDialog } from "./account-form-dialog";
-import { CardsPilotNote } from "./cards-pilot";
 import { formatTiyin } from "./bank-money";
 import { ManualOperationDialog } from "./manual-operation-dialog";
 import { StatementImportDialog } from "./statement-import-dialog";
@@ -73,7 +75,8 @@ export function BankAccounts({
   const [deleting, setDeleting] = useState<BankAccount | null>(null);
 
   const synced = (accounts ?? []).filter((a) => a.kind !== "manual");
-  const manual = (accounts ?? []).filter((a) => a.kind === "manual" && a.form !== "card");
+  const manual = (accounts ?? []).filter((a) => a.kind === "manual" && a.form === "account");
+  const transits = (accounts ?? []).filter((a) => a.form === "transit");
   const cards = (accounts ?? []).filter((a) => a.kind === "manual" && a.form === "card");
 
   async function toggleEnabled(acc: BankAccount, enabled: boolean) {
@@ -203,13 +206,91 @@ export function BankAccounts({
             </Section>
           )}
 
+          {/* Зарплатный транзит: выписка банка уже расшифрована по сотрудникам */}
+          {transits.length > 0 && (
+            <Section title={t("groupTransit")} hint={t("groupTransitHint")}>
+              {transits.map((acc) => (
+                <Card key={acc.id} className="gap-3 rounded-lg p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent-light">
+                      <WalletCards className="size-5 text-primary" strokeWidth={1.75} />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <h3 className="truncate font-semibold">{acc.title}</h3>
+                      <span className="text-xs text-muted-foreground tabular-nums">{acc.account}</span>
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {t("branch")}: {acc.branch}
+                      </span>
+                    </div>
+                    <Badge variant="secondary" className="shrink-0 bg-accent-light text-primary">
+                      {t("transitBadge")}
+                    </Badge>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-sm text-muted-foreground">{t("balance")}</span>
+                    <span className="text-lg font-bold tabular-nums">{formatTiyin(acc.balanceTiyin)}</span>
+                  </div>
+                  {acc.legalEntityId && names[acc.legalEntityId] && (
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Building2 className="size-3" />
+                      {names[acc.legalEntityId]}
+                    </span>
+                  )}
+                  <div className="flex items-start gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Link
+                        href={`/finance/transit/${acc.id}`}
+                        className={cn(buttonVariants({ size: "sm" }), "gap-1.5")}
+                      >
+                        <BookOpenText className="size-4" />
+                        {t("transitJournal")}
+                      </Link>
+                      {canManage && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1.5"
+                          onClick={() => setImportFor(acc)}
+                        >
+                          <FileSpreadsheet className="size-4" />
+                          {t("importStatement")}
+                        </Button>
+                      )}
+                    </div>
+                    {canManage && (
+                      <div className="ms-auto flex shrink-0 items-center">
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={t("edit")}
+                          onClick={() => {
+                            setEditing(acc);
+                            setFormOpen(true);
+                          }}
+                          className="text-muted-foreground"
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={tc("delete")}
+                          onClick={() => setDeleting(acc)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </Section>
+          )}
+
           {/* Карты — карточкой, это другой объект */}
           {cards.length > 0 && (
-            <Section
-              title={t("groupCards")}
-              hint={t("groupCardsHint")}
-              note={<CardsPilotNote />}
-            >
+            <Section title={t("groupCards")} hint={t("groupCardsHint")}>
               {cards.map((acc) => (
                 <div key={acc.id} className="flex flex-col gap-3">
                   <div className="relative flex aspect-[1.7/1] max-h-48 flex-col justify-between overflow-hidden rounded-xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 p-5 text-white shadow-sm">
@@ -320,12 +401,10 @@ export function BankAccounts({
 function Section({
   title,
   hint,
-  note,
   children,
 }: {
   title: string;
   hint: string;
-  note?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -334,7 +413,6 @@ function Section({
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</h3>
         <span className="text-xs text-muted-foreground">{hint}</span>
       </div>
-      {note}
       <div className="grid gap-3 sm:grid-cols-2">{children}</div>
     </section>
   );

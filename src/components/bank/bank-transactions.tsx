@@ -664,6 +664,15 @@ export function BankTransactions({
                       </dd>
                     </div>
                   )}
+                  {selected.sourceFile && (
+                    <div className="flex items-baseline justify-between gap-4">
+                      <dt className="shrink-0 text-muted-foreground">{t("sourceFile")}</dt>
+                      <dd className="flex min-w-0 items-center gap-1.5 text-right font-medium [overflow-wrap:anywhere]">
+                        <FileSpreadsheet className="size-3.5 shrink-0 text-muted-foreground" />
+                        {selected.sourceFile}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
 
                 {/* Действия */}

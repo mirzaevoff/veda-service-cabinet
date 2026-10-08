@@ -1077,7 +1077,8 @@
       "filterVoided": "Storno",
       "allVoided": "Barcha operatsiyalar",
       "withoutVoided": "Stornolanganlarsiz",
-      "onlyVoided": "Faqat stornolanganlar"
+      "onlyVoided": "Faqat stornolanganlar",
+      "sourceFile": "Ko‘chirma fayli"
     },
     "accounts": {
       "add": "Hisob qo'shish",
@@ -1115,7 +1116,11 @@
       "groupSynced": "Avtomatik sinxronlanadi",
       "groupSyncedHint": "Kapitalbank — operatsiyalar va qoldiq avtomatik tortiladi",
       "manualBadge": "Qo‘lda",
-      "openingLine": "{date} holatiga kirish qoldig‘i {sum}"
+      "openingLine": "{date} holatiga kirish qoldig‘i {sum}",
+      "groupTransit": "Ish haqi tranziti",
+      "groupTransitHint": "Ish haqi to‘lanadigan hisob: bank ko‘chirmasi xodimlar bo‘yicha allaqachon ochilgan",
+      "transitBadge": "Tranzit",
+      "transitJournal": "Jurnal"
     },
     "reconciliations": {
       "anyStatus": "Barcha holatlar",
@@ -1152,12 +1157,14 @@
       "typeHint": {
         "manual-account": "Boshqa bankdagi hisob (Asaka, OFB…): qo‘lda yuritiladi, ko‘chirmalar yuklanadi",
         "card": "Jismoniy karta: raqam va qoldiq, kartada MFO yo‘q",
-        "synced": "Kapitalbankdagi hisob: operatsiyalar va qoldiq avtomatik tortiladi"
+        "synced": "Kapitalbankdagi hisob: operatsiyalar va qoldiq avtomatik tortiladi",
+        "transit": "Ish haqi tranzit hisobi (23106…): ko‘chirma odatdagidek yuklanadi, to‘lovlar xodimlarga o‘zi taqsimlanadi. Boshlang‘ich qoldiq — nol"
       },
       "type": {
         "manual-account": "Qo‘lda hisob",
         "card": "Karta",
-        "synced": "Kapitalbank"
+        "synced": "Kapitalbank",
+        "transit": "Tranzit"
       },
       "title": "Nomi",
       "titlePlaceholder": "Masalan: Asaka — asosiy",
@@ -1320,11 +1327,114 @@
       "colCount": "Operatsiyalar",
       "uncategorized": "Moddasiz",
       "uncategorizedHint": "Hali moddalarga taqsimlanmagan",
-      "showOperations": "Operatsiyalarni ko‘rsatish"
+      "showOperations": "Operatsiyalarni ko‘rsatish",
+      "internal": "Ichki o‘tkazmalar",
+      "internalHint": "O‘z hisoblarimiz o‘rtasida (masalan, ish haqi tranzitiga) — kirim ham, chiqim ham emas"
     },
-    "cardsPilot": {
-      "title": "Kartalar — sinov rejimida",
-      "text": "Tizimning navbatdagi yangilanishigacha karta tushumlari tunda xato ravishda mijozlar to‘lovlariga tushadi. Kartani qo‘shish mumkin, operatsiyalarni esa yangilanishdan keyin kiritgan ma’qul."
+    "transit": {
+      "back": "Moliya · Bank",
+      "title": "Ish haqi tranziti",
+      "subtitle": "To‘lovlar jurnali",
+      "branch": "MFO",
+      "import": "Ko‘chirmani yuklash",
+      "rebuild": "O‘tkazmalarga taqsimlash",
+      "rebuildHint": "To‘lov va qaytarishlarni o‘tkazmalarga bog‘lash: eng erta yopilmagani birinchi. Qo‘lda bog‘lashlar saqlanadi",
+      "postPayouts": "To‘lovlarni xodimlarga o‘tkazish",
+      "postConfirmTitle": "To‘lovlarni xodimlar bilan hisob-kitobga o‘tkazasizmi?",
+      "postConfirmText": "Har bir to‘lov xodim oldidagi qarzni kamaytiradi. Balans minusga tushishi mumkin — bu ortiqcha to‘lov, xato emas. Qayta ishga tushirish hech narsani ikkilamaydi. Bog‘lanmagan kartalarga to‘lovlar o‘tkazib yuboriladi — avval ularni xodimlarga bog‘lang.",
+      "posted": "O‘tkazilgan to‘lovlar: {posted}",
+      "postedPartial": "O‘tkazilgan to‘lovlar: {posted}. Xodimsiz o‘tkazib yuborildi: {skipped} — kartalarni bog‘lang",
+      "rebuilt": "O‘tkazmalarga bog‘lashlar: {count}",
+      "unlinked": "Bog‘lash olib tashlandi",
+      "period": "Davr",
+      "from": "Dan",
+      "to": "Gacha",
+      "periodHint": "Davrsiz — butun tarix. Boshlang‘ich qoldiq oldingi operatsiyalardan hisoblanadi.",
+      "opening": "Boshida",
+      "closing": "Oxirida",
+      "undistributed": "Taqsimlanmagan",
+      "undistributedHint": "Barcha o‘tkazmalar qoldiqlari yig‘indisi",
+      "needsReview": "Tekshiruvda",
+      "needsReviewHint": "Hech bir o‘tkazmaga bog‘lanmagan chiqimlar",
+      "reviewTitle": "Tekshiruvda: {sum} — qatorlar: {count}",
+      "reviewText": "Hammasi tarqatilgandan keyin pul qaytgan. Tizim ataylab u bilan boshqa o‘tkazmani yopmaydi — har bir qator qaysi o‘tkazmaga tegishli ekanini qo‘lda hal qiling.",
+      "showReview": "Qatorlarni ko‘rsatish",
+      "transfersTitle": "Har bir o‘tkazma qoldig‘i ({count})",
+      "noTransfers": "Hozircha o‘tkazmalar yo‘q — tranzit hisobi ko‘chirmasini yuklang.",
+      "colDate": "Sana",
+      "colTransfer": "O‘tkazma",
+      "colAllocated": "Taqsimlangan",
+      "colRemaining": "Qoldiq",
+      "colStatus": "Holat",
+      "journalTitle": "Ko‘chirma: har bir operatsiya va undan keyingi qoldiq",
+      "filter": {
+        "all": "Hammasi",
+        "transfer": "O‘tkazmalar",
+        "payout": "To‘lovlar",
+        "return": "Qaytarishlar",
+        "review": "Tekshiruvda"
+      },
+      "emptyJournal": "Hozircha operatsiyalar yo‘q — tranzit hisobi ko‘chirmasini yuklang.",
+      "emptyFilter": "Bunday operatsiyalar yo‘q.",
+      "colWho": "Kim",
+      "colIn": "Kirim",
+      "colOut": "Chiqim",
+      "colBalance": "Qoldiq",
+      "kind": {
+        "transfer": "O‘tkazma",
+        "payout": "To‘lov",
+        "return": "Qaytarish",
+        "other": "Boshqa"
+      },
+      "bankName": "bankda: {name}",
+      "cardNotLinked": "Karta xodimga bog‘lanmagan",
+      "fromTransfer": "{date} o‘tkazmasidan: {sum}",
+      "fromTransfers": "o‘tkazmalardan: {dates}",
+      "manualLink": "qo‘lda",
+      "unlink": "bog‘lashni olib tashlash",
+      "unallocated": "Bog‘lanmagan: {sum}",
+      "allocateAction": "O‘tkazmaga bog‘lash",
+      "status": {
+        "none": "Taqsimlanmagan",
+        "partial": "Qisman",
+        "full": "To‘liq taqsimlangan"
+      },
+      "errors": {
+        "notTransit": "Bu tranzit hisob emas.",
+        "generic": "Bo‘lmadi. Yana urinib ko‘ring."
+      },
+      "allocate": {
+        "title": "O‘tkazmaga bog‘lash",
+        "subtitle": "{party} — bog‘lanmagan {sum}",
+        "hint": "Bu pul qaysi o‘tkazmadan ketganini tanlang. O‘tkazma qoldig‘idan ko‘pini bog‘lab bo‘lmaydi.",
+        "noOpenTransfers": "Barcha o‘tkazmalar qoldig‘i nol — bog‘laydigan narsa yo‘q.",
+        "transferOf": "{date} o‘tkazmasi",
+        "transferTotal": "jami {sum}",
+        "remaining": "Qoldiq",
+        "amount": "Summa, so‘m",
+        "maxHint": "{max} dan ko‘p emas",
+        "submit": "Bog‘lash",
+        "done": "Bog‘landi",
+        "errors": {
+          "amount": "Noldan katta summa kiriting",
+          "tooMuch": "{max} dan ko‘p emas",
+          "overRemaining": "Summa qoldiqdan katta — sahifani yangilang",
+          "wrongPair": "Bu operatsiyani bu o‘tkazmaga bog‘lab bo‘lmaydi",
+          "generic": "Bog‘lab bo‘lmadi"
+        }
+      },
+      "unknown": {
+        "title": "Xodimsiz kartalar: {count}",
+        "hint": "Karta hisobini xodimga bir marta bog‘lang — keyin uning to‘lovlari o‘zi taqsimlanadi, o‘tganlari ham. Bankdagi ism — maslahat, kalit — karta hisob raqami.",
+        "noName": "Ismsiz",
+        "pickEmployee": "Xodimni tanlang",
+        "link": "Bog‘lash",
+        "linked": "Karta bog‘landi: {name}",
+        "error": "Bog‘lab bo‘lmadi"
+      },
+      "notDistributedTitle": "Chiqimlar hali o‘tkazmalarga taqsimlanmagan",
+      "notDistributedText": "«O‘tkazmalarga taqsimlash»ni bosing: to‘lov va qaytarishlar vaqt bo‘yicha o‘tkazmalarga bog‘lanadi. Shundan keyin bog‘lanmay qolgani tekshiruvga o‘tadi.",
+      "reviewRebuildHint": "Ko‘chirmani hozirgina yukladingizmi? Avval «O‘tkazmalarga taqsimlash»ni bosing — yangi qatorlar o‘zi bog‘lanadi."
     }
   },
   "IikoPartner": {

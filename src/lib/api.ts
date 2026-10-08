@@ -695,7 +695,7 @@ export interface BankAccount {
 export type BankTransactionDirection = "in" | "out";
 export type BankTransactionSource = "kapitalbank" | "system" | "import" | "manual";
 export type BankAccountKind = "synced" | "manual";
-export type BankAccountForm = "account" | "card";
+export type BankAccountForm = "account" | "card" | "transit";
 
 /** Банковские поля хранятся дословно (snake_case банка); суммы в тийинах */
 export interface BankTransaction {
@@ -734,6 +734,8 @@ export interface BankTransaction {
   counterpartyName: string;
   /** История правок «было → стало» */
   changes: BankTransactionChange[];
+  /** Имя файла выписки, из которого пришла операция (API 0.64) */
+  sourceFile?: string;
   raw?: Record<string, unknown>;
   detailsRaw?: Record<string, unknown> | null;
 }
@@ -853,7 +855,83 @@ export interface CashFlowReport {
   closingTiyin: number;
   inTiyin: number;
   outTiyin: number;
+  /**
+   * Переводы между нашими же счетами (напр. на зарплатный транзит) — НЕ доход
+   * и не расход, но деньги двигались: исход = вход + приход + внутр.приход −
+   * расход − внутр.расход (API 0.64)
+   */
+  internalInTiyin?: number;
+  internalOutTiyin?: number;
   categories: CashFlowCategory[];
+}
+
+// --- Зарплатный транзит (salary-transit.md, API 0.64) ------------------------
+
+/** Статус перевода: «полностью» — только при НУЛЕВОМ остатке этого перевода */
+export type TransitTransferStatus = "none" | "partial" | "full";
+
+/** Зарплатный перевод на транзит и его собственный остаток */
+export interface TransitTransfer {
+  id: string;
+  /** YYYY-MM-DD */
+  date: string;
+  totalTiyin: number;
+  allocatedTiyin: number;
+  remainingTiyin: number;
+  status: TransitTransferStatus;
+  purpose: string;
+}
+
+export type TransitRowKind = "transfer" | "payout" | "return" | "other";
+
+/** Привязка расхода к переводу (если API отдаёт детали) */
+export interface TransitRowAllocation {
+  transferId: string;
+  amountTiyin: number;
+  /** true — проставлена автоматически (rebuild её пересоздаст) */
+  auto: boolean;
+}
+
+export interface TransitJournalRow {
+  id: string;
+  /** YYYY-MM-DD */
+  date: string;
+  kind: TransitRowKind;
+  /** Расчётный счёт для прихода, имя получателя из банка для выплаты */
+  party: string;
+  /** Сотрудник, если карточный счёт связан */
+  employeeId: string | null;
+  inTiyin: number;
+  outTiyin: number;
+  balanceAfterTiyin: number;
+  transferIds: string[];
+  allocations?: TransitRowAllocation[];
+  /** Не привязано ни к одному переводу — на ручную проверку */
+  unallocatedTiyin: number;
+}
+
+export interface TransitJournal {
+  accountId: string;
+  openingTiyin: number;
+  closingTiyin: number;
+  /** Сумма остатков всех переводов */
+  undistributedTiyin: number;
+  /** Расходы без привязки к переводу — рабочий экран, а не техническое поле */
+  needsReviewTiyin: number;
+  rows: TransitJournalRow[];
+  transfers: TransitTransfer[];
+  /** Выплаты на карточные счета, не связанные с сотрудником */
+  unknownCards: { cardAccount: string; bankName: string; cardNumber: string }[];
+}
+
+/** Карточный счёт ↔ сотрудник */
+export interface TransitCard {
+  id: string;
+  cardAccount: string;
+  cardNumber: string;
+  bankName: string;
+  user: { id: string; name: string } | null;
+  legalEntityId: string | null;
 }
 
 export type BankReconciliationStatus =

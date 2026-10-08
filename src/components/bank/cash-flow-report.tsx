@@ -63,8 +63,14 @@ export function CashFlowReport({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- t нестабилен
   }, [from, to, accountId, kind]);
 
+  // Переводы между нашими счетами — не доход и не расход, но в остатке участвуют
+  const internalIn = report?.internalInTiyin ?? 0;
+  const internalOut = report?.internalOutTiyin ?? 0;
+  const hasInternal = internalIn !== 0 || internalOut !== 0;
   const balancedEquation =
-    !!report && report.openingTiyin + report.inTiyin - report.outTiyin === report.closingTiyin;
+    !!report &&
+    report.openingTiyin + report.inTiyin + internalIn - report.outTiyin - internalOut ===
+      report.closingTiyin;
 
   return (
     <div className="flex flex-col gap-4">
@@ -116,6 +122,18 @@ export function CashFlowReport({
             <Tile label={t("out")} value={`−${formatTiyin(report.outTiyin)}`} tone="out" />
             <Tile label={t("closing")} value={formatTiyin(report.closingTiyin)} strong />
           </div>
+          {/* Внутренние переводы — отдельно: деньги двигались, но это не доход/расход */}
+          {hasInternal && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-sm">
+              <span className="flex flex-col">
+                <span className="font-medium">{t("internal")}</span>
+                <span className="text-xs text-muted-foreground">{t("internalHint")}</span>
+              </span>
+              <span className="tabular-nums text-muted-foreground">
+                +{formatTiyin(internalIn)} / −{formatTiyin(internalOut)}
+              </span>
+            </div>
+          )}
           <p
             className={cn(
               "rounded-lg border px-3 py-2 text-sm tabular-nums",
@@ -124,8 +142,10 @@ export function CashFlowReport({
                 : "border-destructive/40 bg-destructive/5 text-destructive"
             )}
           >
-            {formatTiyin(report.openingTiyin)} + {formatTiyin(report.inTiyin)} −{" "}
-            {formatTiyin(report.outTiyin)} = <b>{formatTiyin(report.closingTiyin)}</b>
+            {formatTiyin(report.openingTiyin)} + {formatTiyin(report.inTiyin)}
+            {hasInternal && ` + ${formatTiyin(internalIn)}`} − {formatTiyin(report.outTiyin)}
+            {hasInternal && ` − ${formatTiyin(internalOut)}`} ={" "}
+            <b>{formatTiyin(report.closingTiyin)}</b>
             {" · "}
             {balancedEquation ? t("equationOk") : t("equationBroken")}
           </p>

@@ -29,7 +29,6 @@ import { bankApi } from "@/lib/api-authed";
 import { cn } from "@/lib/utils";
 import { formatTiyin, parseSumToTiyin, tiyinToSumInput } from "./bank-money";
 import { categoriesFor } from "./use-cash-categories";
-import { CardsPilotNote } from "./cards-pilot";
 
 function todayYmd(): string {
   const d = new Date();
@@ -206,8 +205,6 @@ export function ManualOperationDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
-          {account?.form === "card" && <CardsPilotNote />}
-
           {/* Направление */}
           <div className="grid grid-cols-2 gap-2">
             {(["in", "out"] as const).map((d) => (
